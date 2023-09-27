@@ -1,0 +1,5818 @@
+; Based on CPU DB MC9S12ZVL32_48, version 3.00.000 (RegistersPrg V2.33)
+
+; ###################################################################
+;     Filename  : mc9s12zvl32.inc
+;     Processor : MC9S12ZVL32MLF
+;     FileFormat: V2.33
+;     DataSheet : MC9S12ZVLRMV1 Rev. 2.00 Draft A November 7, 2014
+;     Compiler  : CodeWarrior compiler
+;     Date/Time : 12/10/2014, 8:01 PM
+;     Abstract  :
+;         This header implements the mapping of I/O devices.
+;
+;     Copyright : 1997 - 2014 Freescale Semiconductor, Inc. 
+;     All Rights Reserved.
+;     
+;     Redistribution and use in source and binary forms, with or without modification,
+;     are permitted provided that the following conditions are met:
+;     
+;     o Redistributions of source code must retain the above copyright notice, this list
+;       of conditions and the following disclaimer.
+;     
+;     o Redistributions in binary form must reproduce the above copyright notice, this
+;       list of conditions and the following disclaimer in the documentation and/or
+;       other materials provided with the distribution.
+;     
+;     o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+;       contributors may be used to endorse or promote products derived from this
+;       software without specific prior written permission.
+;     
+;     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+;     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+;     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;     
+;     http: www.freescale.com
+;     mail: support@freescale.com
+;
+;     CPU Registers Revisions:
+;      - 07.02.2012, V0.09:
+;              - New features : SCI V6, ADC10B_LBA_V1, S12LINPHYV2
+;      - 05.12.2014, V0.10:
+;              - Updated changes according to manual revision 2.00 Draft A November 7, 2014.
+;
+;     File-Format-Revisions:
+;               - none
+;
+;     Not all general-purpose I/O pins are available on all packages or on all mask sets of a specific
+;     derivative device. To avoid extra current drain from floating input pins, the user’s reset
+;     initialization routine in the application program must either enable on-chip pull-up devices
+;     or change the direction of unconnected pins to outputs so the pins do not float.
+; ###################################################################
+
+;*** Memory Map and Interrupt Vectors
+;******************************************
+RAMStart:           equ   $00001000
+RAMEnd:             equ   $000013FF
+EEPROMStart:        equ   $00100000
+EEPROMEnd:          equ   $0010007F
+ROMStart:           equ   $00FF8000
+ROMEnd:             equ   $00FFFDFF
+;
+VReserved123:       equ   $00FFFE10
+VReserved122:       equ   $00FFFE14
+VReserved121:       equ   $00FFFE18
+VReserved120:       equ   $00FFFE1C
+VReserved119:       equ   $00FFFE20
+VReserved118:       equ   $00FFFE24
+VReserved117:       equ   $00FFFE28
+VReserved116:       equ   $00FFFE2C
+VReserved115:       equ   $00FFFE30
+VReserved114:       equ   $00FFFE34
+VReserved113:       equ   $00FFFE38
+VReserved112:       equ   $00FFFE3C
+VReserved111:       equ   $00FFFE40
+VReserved110:       equ   $00FFFE44
+VReserved109:       equ   $00FFFE48
+VReserved108:       equ   $00FFFE4C
+VReserved107:       equ   $00FFFE50
+VReserved106:       equ   $00FFFE54
+VReserved105:       equ   $00FFFE58
+VReserved104:       equ   $00FFFE5C
+Viic:               equ   $00FFFE60
+VReserved102:       equ   $00FFFE64
+VReserved101:       equ   $00FFFE68
+VReserved100:       equ   $00FFFE6C
+VReserved99:        equ   $00FFFE70
+VReserved98:        equ   $00FFFE74
+VReserved97:        equ   $00FFFE78
+VReserved96:        equ   $00FFFE7C
+VReserved95:        equ   $00FFFE80
+VReserved94:        equ   $00FFFE84
+VReserved93:        equ   $00FFFE88
+Vtim1ovf:           equ   $00FFFE8C
+VReserved91:        equ   $00FFFE90
+VReserved90:        equ   $00FFFE94
+VReserved89:        equ   $00FFFE98
+VReserved88:        equ   $00FFFE9C
+VReserved87:        equ   $00FFFEA0
+VReserved86:        equ   $00FFFEA4
+Vtim1ch1:           equ   $00FFFEA8
+Vtim1ch0:           equ   $00FFFEAC
+VReserved83:        equ   $00FFFEB0
+VReserved82:        equ   $00FFFEB4
+VReserved81:        equ   $00FFFEB8
+VReserved80:        equ   $00FFFEBC
+Vportl:             equ   $00FFFEC0
+VReserved78:        equ   $00FFFEC4
+VReserved77:        equ   $00FFFEC8
+VReserved76:        equ   $00FFFECC
+VReserved75:        equ   $00FFFED0
+VReserved74:        equ   $00FFFED4
+VReserved73:        equ   $00FFFED8
+VReserved72:        equ   $00FFFEDC
+VReserved71:        equ   $00FFFEE0
+VReserved70:        equ   $00FFFEE4
+VReserved69:        equ   $00FFFEE8
+VReserved68:        equ   $00FFFEEC
+VReserved67:        equ   $00FFFEF0
+Vportad:            equ   $00FFFEF4
+VReserved65:        equ   $00FFFEF8
+Vhti:               equ   $00FFFEFC
+Vapi:               equ   $00FFFF00
+Vlvi:               equ   $00FFFF04
+Vevdd1ppx:          equ   $00FFFF08
+Vportp:             equ   $00FFFF0C
+VReserved59:        equ   $00FFFF10
+VReserved58:        equ   $00FFFF14
+VReserved57:        equ   $00FFFF18
+VReserved56:        equ   $00FFFF1C
+VReserved55:        equ   $00FFFF20
+Vports:             equ   $00FFFF24
+VReserved53:        equ   $00FFFF28
+VReserved52:        equ   $00FFFF2C
+VReserved51:        equ   $00FFFF30
+VReserved50:        equ   $00FFFF34
+VReserved49:        equ   $00FFFF38
+VReserved48:        equ   $00FFFF3C
+Vbats:              equ   $00FFFF40
+Vlinphy0:           equ   $00FFFF44
+VReserved45:        equ   $00FFFF48
+VReserved44:        equ   $00FFFF4C
+VReserved43:        equ   $00FFFF50
+VReserved42:        equ   $00FFFF54
+VReserved41:        equ   $00FFFF58
+VReserved40:        equ   $00FFFF5C
+Vflash:             equ   $00FFFF60
+Vflasherr:          equ   $00FFFF64
+VReserved37:        equ   $00FFFF68
+VReserved36:        equ   $00FFFF6C
+VRAM_err:           equ   $00FFFF70
+VReserved34:        equ   $00FFFF74
+VReserved33:        equ   $00FFFF78
+Vcpmuplllck:        equ   $00FFFF7C
+Vcpmuosc:           equ   $00FFFF80
+Vadc0conv_compl:    equ   $00FFFF84
+Vadc0conv_seq_abrt: equ   $00FFFF88
+Vadc0err:           equ   $00FFFF8C
+VReserved27:        equ   $00FFFF90
+VReserved26:        equ   $00FFFF94
+Vsci1:              equ   $00FFFF98
+Vsci0:              equ   $00FFFF9C
+Vspi0:              equ   $00FFFFA0
+VReserved22:        equ   $00FFFFA4
+VReserved21:        equ   $00FFFFA8
+Vtim0ovf:           equ   $00FFFFAC
+VReserved19:        equ   $00FFFFB0
+VReserved18:        equ   $00FFFFB4
+Vtim0ch5:           equ   $00FFFFB8
+Vtim0ch4:           equ   $00FFFFBC
+Vtim0ch3:           equ   $00FFFFC0
+Vtim0ch2:           equ   $00FFFFC4
+Vtim0ch1:           equ   $00FFFFC8
+Vtim0ch0:           equ   $00FFFFCC
+Vrti:               equ   $00FFFFD0
+Virq:               equ   $00FFFFD4
+Vxirq:              equ   $00FFFFD8
+Vsi:                equ   $00FFFFDC
+VReserved7:         equ   $00FFFFE0
+VReserved6:         equ   $00FFFFE4
+Vme:                equ   $00FFFFE8
+Vsys:               equ   $00FFFFEC
+Vswi:               equ   $00FFFFF0
+Vtrap:              equ   $00FFFFF4
+Vspare:             equ   $00FFFFF8
+Vreset:             equ   $00FFFFFC
+;
+
+
+;*** PARTID - Part ID Register; 0x00000000 ***
+PARTID:             equ    $00000000                                ;*** PARTID - Part ID Register; 0x00000000 ***
+
+
+;*** PARTID0 - Part ID Register 0; 0x00000000 ***
+PARTID0:            equ    $00000000                                ;*** PARTID0 - Part ID Register 0; 0x00000000 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PARTID0_ID0:        equ    0                                         ; Part ID 0
+; bit position masks
+mPARTID0_ID0:       equ    %11111111
+
+
+;*** PARTID1 - Part ID Register 1; 0x00000001 ***
+PARTID1:            equ    $00000001                                ;*** PARTID1 - Part ID Register 1; 0x00000001 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PARTID1_ID1:        equ    0                                         ; Part ID 1
+; bit position masks
+mPARTID1_ID1:       equ    %11111111
+
+
+;*** PARTID2 - Part ID Register 2; 0x00000002 ***
+PARTID2:            equ    $00000002                                ;*** PARTID2 - Part ID Register 2; 0x00000002 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PARTID2_ID2:        equ    0                                         ; Part ID 2
+; bit position masks
+mPARTID2_ID2:       equ    %11111111
+
+
+;*** PARTID3 - Part ID Register 3; 0x00000003 ***
+PARTID3:            equ    $00000003                                ;*** PARTID3 - Part ID Register 3; 0x00000003 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PARTID3_ID3:        equ    0                                         ; Part ID 3
+; bit position masks
+mPARTID3_ID3:       equ    %11111111
+
+
+;*** IVBR - Interrupt Vector Base Register; 0x00000010 ***
+IVBR:               equ    $00000010                                ;*** IVBR - Interrupt Vector Base Register; 0x00000010 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IVBR_IVB_ADDR:      equ    1                                         ; Interrupt Vector Base Address Bits
+; bit position masks
+mIVBR_IVB_ADDR:     equ    %1111111111111110
+
+
+;*** INT_CFADDR - Interrupt Request Configuration Address Register; 0x00000017 ***
+INT_CFADDR:         equ    $00000017                                ;*** INT_CFADDR - Interrupt Request Configuration Address Register; 0x00000017 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFADDR_INT_CFADDR: equ    3                                      ; Interrupt Request Configuration Data Register Select Bits
+; bit position masks
+mINT_CFADDR_INT_CFADDR: equ    %01111000
+
+
+;*** INT_CFDATA0 - Interrupt Request Configuration Data Register 0; 0x00000018 ***
+INT_CFDATA0:        equ    $00000018                                ;*** INT_CFDATA0 - Interrupt Request Configuration Data Register 0; 0x00000018 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA0_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA0_PRIOLVL: equ    %00000111
+
+
+;*** INT_CFDATA1 - Interrupt Request Configuration Data Register 1; 0x00000019 ***
+INT_CFDATA1:        equ    $00000019                                ;*** INT_CFDATA1 - Interrupt Request Configuration Data Register 1; 0x00000019 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA1_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA1_PRIOLVL: equ    %00000111
+
+
+;*** INT_CFDATA2 - Interrupt Request Configuration Data Register 2; 0x0000001A ***
+INT_CFDATA2:        equ    $0000001A                                ;*** INT_CFDATA2 - Interrupt Request Configuration Data Register 2; 0x0000001A ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA2_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA2_PRIOLVL: equ    %00000111
+
+
+;*** INT_CFDATA3 - Interrupt Request Configuration Data Register 3; 0x0000001B ***
+INT_CFDATA3:        equ    $0000001B                                ;*** INT_CFDATA3 - Interrupt Request Configuration Data Register 3; 0x0000001B ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA3_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA3_PRIOLVL: equ    %00000111
+
+
+;*** INT_CFDATA4 - Interrupt Request Configuration Data Register 4; 0x0000001C ***
+INT_CFDATA4:        equ    $0000001C                                ;*** INT_CFDATA4 - Interrupt Request Configuration Data Register 4; 0x0000001C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA4_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA4_PRIOLVL: equ    %00000111
+
+
+;*** INT_CFDATA5 - Interrupt Request Configuration Data Register 5; 0x0000001D ***
+INT_CFDATA5:        equ    $0000001D                                ;*** INT_CFDATA5 - Interrupt Request Configuration Data Register 5; 0x0000001D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA5_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA5_PRIOLVL: equ    %00000111
+
+
+;*** INT_CFDATA6 - Interrupt Request Configuration Data Register 6; 0x0000001E ***
+INT_CFDATA6:        equ    $0000001E                                ;*** INT_CFDATA6 - Interrupt Request Configuration Data Register 6; 0x0000001E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA6_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA6_PRIOLVL: equ    %00000111
+
+
+;*** INT_CFDATA7 - Interrupt Request Configuration Data Register 7; 0x0000001F ***
+INT_CFDATA7:        equ    $0000001F                                ;*** INT_CFDATA7 - Interrupt Request Configuration Data Register 7; 0x0000001F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+INT_CFDATA7_PRIOLVL: equ    0                                        ; Interrupt Request Priority Level Bits
+; bit position masks
+mINT_CFDATA7_PRIOLVL: equ    %00000111
+
+
+;*** MODE - Mode Register; 0x00000070 ***
+MODE:               equ    $00000070                                ;*** MODE - Mode Register; 0x00000070 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MODE_MODC:          equ    7                                         ; Mode Select Bit
+; bit position masks
+mMODE_MODC:         equ    %10000000
+
+
+;*** MMCEC - Error code register; 0x00000080 ***
+MMCEC:              equ    $00000080                                ;*** MMCEC - Error code register; 0x00000080 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCEC_ERR:          equ    0                                         ; Error Type Field
+MMCEC_ACC:          equ    4                                         ; Access Type Field
+MMCEC_TGT:          equ    8                                         ; Target Field
+MMCEC_ITR:          equ    12                                        ; Initiator Field
+; bit position masks
+mMMCEC_ERR:         equ    %00001111
+mMMCEC_ACC:         equ    %11110000
+mMMCEC_TGT:         equ    %111100000000
+mMMCEC_ITR:         equ    %1111000000000000
+
+
+;*** MMCECH - Error code register high; 0x00000080 ***
+MMCECH:             equ    $00000080                                ;*** MMCECH - Error code register high; 0x00000080 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCECH_TGT:         equ    0                                         ; Target Field
+MMCECH_ITR:         equ    4                                         ; Initiator Field
+; bit position masks
+mMMCECH_TGT:        equ    %00001111
+mMMCECH_ITR:        equ    %11110000
+
+
+;*** MMCECL - Error code register low; 0x00000081 ***
+MMCECL:             equ    $00000081                                ;*** MMCECL - Error code register low; 0x00000081 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCECL_ERR:         equ    0                                         ; Error Type Field
+MMCECL_ACC:         equ    4                                         ; Access Type Field
+; bit position masks
+mMMCECL_ERR:        equ    %00001111
+mMMCECL_ACC:        equ    %11110000
+
+
+;*** MMCCCR - Captured S12ZCPU Condition Code Register; 0x00000082 ***
+MMCCCR:             equ    $00000082                                ;*** MMCCCR - Captured S12ZCPU Condition Code Register; 0x00000082 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCCCR_CPUI:        equ    4                                         ; S12ZCPU I-Interrupt Mask
+MMCCCR_CPUX:        equ    6                                         ; S12ZCPU X-Interrupt Mask
+MMCCCR_CPUU:        equ    15                                        ; S12ZCPU User State Flag
+; bit position masks
+mMMCCCR_CPUI:       equ    %00010000
+mMMCCCR_CPUX:       equ    %01000000
+mMMCCCR_CPUU:       equ    %1000000000000000
+
+
+;*** MMCCCRH - Captured S12ZCPU Condition Code Register High; 0x00000082 ***
+MMCCCRH:            equ    $00000082                                ;*** MMCCCRH - Captured S12ZCPU Condition Code Register High; 0x00000082 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCCCRH_CPUU:       equ    7                                         ; S12ZCPU User State Flag
+; bit position masks
+mMMCCCRH_CPUU:      equ    %10000000
+
+
+;*** MMCCCRL - Captured S12ZCPU Condition Code Register Low; 0x00000083 ***
+MMCCCRL:            equ    $00000083                                ;*** MMCCCRL - Captured S12ZCPU Condition Code Register Low; 0x00000083 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCCCRL_CPUI:       equ    4                                         ; S12ZCPU I-Interrupt Mask
+MMCCCRL_CPUX:       equ    6                                         ; S12ZCPU X-Interrupt Mask
+; bit position masks
+mMMCCCRL_CPUI:      equ    %00010000
+mMMCCCRL_CPUX:      equ    %01000000
+
+
+;*** MMCPCH - Captured S12ZCPU Program Counter High; 0x00000085 ***
+MMCPCH:             equ    $00000085                                ;*** MMCPCH - Captured S12ZCPU Program Counter High; 0x00000085 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCPCH_CPUPC:       equ    0                                         ; S12ZCPU Program Counter Value
+; bit position masks
+mMMCPCH_CPUPC:      equ    %11111111
+
+
+;*** MMCPCM - Captured S12ZCPU Program Counter Middle; 0x00000086 ***
+MMCPCM:             equ    $00000086                                ;*** MMCPCM - Captured S12ZCPU Program Counter Middle; 0x00000086 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCPCM_CPUPC:       equ    0                                         ; S12ZCPU Program Counter Value
+; bit position masks
+mMMCPCM_CPUPC:      equ    %11111111
+
+
+;*** MMCPCL - Captured S12ZCPU Program Counter Low; 0x00000087 ***
+MMCPCL:             equ    $00000087                                ;*** MMCPCL - Captured S12ZCPU Program Counter Low; 0x00000087 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MMCPCL_CPUPC:       equ    0                                         ; S12ZCPU Program Counter Value
+; bit position masks
+mMMCPCL_CPUPC:      equ    %11111111
+
+
+;*** DBGC1 - Debug Control Register 1; 0x00000100 ***
+DBGC1:              equ    $00000100                                ;*** DBGC1 - Debug Control Register 1; 0x00000100 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGC1_EEVE1:        equ    1                                         ; External Event Enable
+DBGC1_BRKCPU:       equ    3                                         ; CPU Breakpoint Enable
+DBGC1_BDMBP:        equ    4                                         ; Background Debug Mode Enable
+DBGC1_TRIG:         equ    6                                         ; Immediate Trigger Request Bit
+DBGC1_ARM:          equ    7                                         ; Arm Bit
+; bit position masks
+mDBGC1_EEVE1:       equ    %00000010
+mDBGC1_BRKCPU:      equ    %00001000
+mDBGC1_BDMBP:       equ    %00010000
+mDBGC1_TRIG:        equ    %01000000
+mDBGC1_ARM:         equ    %10000000
+
+
+;*** DBGC2 - Debug Control Register 2; 0x00000101 ***
+DBGC2:              equ    $00000101                                ;*** DBGC2 - Debug Control Register 2; 0x00000101 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGC2_ABCM:         equ    0                                         ; A and B Comparator Match Control
+; bit position masks
+mDBGC2_ABCM:        equ    %00000011
+
+
+;*** DBGSCR1 - Debug State Control Register 1; 0x00000107 ***
+DBGSCR1:            equ    $00000107                                ;*** DBGSCR1 - Debug State Control Register 1; 0x00000107 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGSCR1_C0SC:       equ    0                                         ; Channel 0 State Control
+DBGSCR1_C1SC:       equ    2                                         ; Channel 1 State Control
+DBGSCR1_C3SC:       equ    6                                         ; Channel 3 State Control
+; bit position masks
+mDBGSCR1_C0SC:      equ    %00000011
+mDBGSCR1_C1SC:      equ    %00001100
+mDBGSCR1_C3SC:      equ    %11000000
+
+
+;*** DBGSCR2 - Debug State Control Register 2; 0x00000108 ***
+DBGSCR2:            equ    $00000108                                ;*** DBGSCR2 - Debug State Control Register 2; 0x00000108 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGSCR2_C0SC:       equ    0                                         ; Channel 0 State Control
+DBGSCR2_C1SC:       equ    2                                         ; Channel 1 State Control
+DBGSCR2_C3SC:       equ    6                                         ; Channel 3 State Control
+; bit position masks
+mDBGSCR2_C0SC:      equ    %00000011
+mDBGSCR2_C1SC:      equ    %00001100
+mDBGSCR2_C3SC:      equ    %11000000
+
+
+;*** DBGSCR3 - Debug State Control Register 3; 0x00000109 ***
+DBGSCR3:            equ    $00000109                                ;*** DBGSCR3 - Debug State Control Register 3; 0x00000109 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGSCR3_C0SC:       equ    0                                         ; Channel 0 State Control
+DBGSCR3_C1SC:       equ    2                                         ; Channel 1 State Control
+DBGSCR3_C3SC:       equ    6                                         ; Channel 3 State Control
+; bit position masks
+mDBGSCR3_C0SC:      equ    %00000011
+mDBGSCR3_C1SC:      equ    %00001100
+mDBGSCR3_C3SC:      equ    %11000000
+
+
+;*** DBGEFR - Debug Event Flag Register; 0x0000010A ***
+DBGEFR:             equ    $0000010A                                ;*** DBGEFR - Debug Event Flag Register; 0x0000010A ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGEFR_ME0:         equ    0                                         ; Match Event 0
+DBGEFR_ME1:         equ    1                                         ; Match Event 1
+DBGEFR_ME3:         equ    3                                         ; Match Event 3
+DBGEFR_EEVF:        equ    4                                         ; External Event Flag
+DBGEFR_TRIGF:       equ    6                                         ; TRIG Flag
+; bit position masks
+mDBGEFR_ME0:        equ    %00000001
+mDBGEFR_ME1:        equ    %00000010
+mDBGEFR_ME3:        equ    %00001000
+mDBGEFR_EEVF:       equ    %00010000
+mDBGEFR_TRIGF:      equ    %01000000
+
+
+;*** DBGSR - Debug Status Register; 0x0000010B ***
+DBGSR:              equ    $0000010B                                ;*** DBGSR - Debug Status Register; 0x0000010B ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGSR_SSF0:         equ    0                                         ; State Sequencer Flag Bits
+DBGSR_SSF1:         equ    1                                         ; State Sequencer Flag Bit 1
+DBGSR_SSF2:         equ    2                                         ; State Sequencer Flag Bit 2
+; bit position masks
+mDBGSR_SSF0:        equ    %00000001
+mDBGSR_SSF1:        equ    %00000010
+mDBGSR_SSF2:        equ    %00000100
+
+
+;*** DBGACTL - Debug Comparator A Control Register; 0x00000110 ***
+DBGACTL:            equ    $00000110                                ;*** DBGACTL - Debug Comparator A Control Register; 0x00000110 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGACTL_COMPE:      equ    0                                         ; Determines if comparator is enabled
+DBGACTL_RWE:        equ    2                                         ; Read/Write Enable Bit
+DBGACTL_RW:         equ    3                                         ; Read/Write Comparator Value Bit
+DBGACTL_INST:       equ    5                                         ; Instruction Select
+DBGACTL_NDB:        equ    6                                         ; Not Data Bus
+; bit position masks
+mDBGACTL_COMPE:     equ    %00000001
+mDBGACTL_RWE:       equ    %00000100
+mDBGACTL_RW:        equ    %00001000
+mDBGACTL_INST:      equ    %00100000
+mDBGACTL_NDB:       equ    %01000000
+
+
+;*** DBGAAH - Debug Comparator A Address Register High; 0x00000115 ***
+DBGAAH:             equ    $00000115                                ;*** DBGAAH - Debug Comparator A Address Register High; 0x00000115 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGAAH_DBGAA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGAAH_DBGAA:      equ    %11111111
+
+
+;*** DBGAAM - Debug Comparator A Address Register Middle; 0x00000116 ***
+DBGAAM:             equ    $00000116                                ;*** DBGAAM - Debug Comparator A Address Register Middle; 0x00000116 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGAAM_DBGAA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGAAM_DBGAA:      equ    %11111111
+
+
+;*** DBGAAL - Debug Comparator A Address Register Low; 0x00000117 ***
+DBGAAL:             equ    $00000117                                ;*** DBGAAL - Debug Comparator A Address Register Low; 0x00000117 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGAAL_DBGAA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGAAL_DBGAA:      equ    %11111111
+
+
+;*** DBGAD0 - Debug Comparator A Data Register 0; 0x00000118 ***
+DBGAD0:             equ    $00000118                                ;*** DBGAD0 - Debug Comparator A Data Register 0; 0x00000118 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGAD0_BIT24:       equ    0                                         ; Comparator Data Bit 24
+DBGAD0_BIT25:       equ    1                                         ; Comparator Data Bit 25
+DBGAD0_BIT26:       equ    2                                         ; Comparator Data Bit 26
+DBGAD0_BIT27:       equ    3                                         ; Comparator Data Bit 27
+DBGAD0_BIT28:       equ    4                                         ; Comparator Data Bit 28
+DBGAD0_BIT29:       equ    5                                         ; Comparator Data Bit 29
+DBGAD0_BIT30:       equ    6                                         ; Comparator Data Bit 30
+DBGAD0_BIT31:       equ    7                                         ; Comparator Data Bit 31
+; bit position masks
+mDBGAD0_BIT24:      equ    %00000001
+mDBGAD0_BIT25:      equ    %00000010
+mDBGAD0_BIT26:      equ    %00000100
+mDBGAD0_BIT27:      equ    %00001000
+mDBGAD0_BIT28:      equ    %00010000
+mDBGAD0_BIT29:      equ    %00100000
+mDBGAD0_BIT30:      equ    %01000000
+mDBGAD0_BIT31:      equ    %10000000
+
+
+;*** DBGAD1 - Debug Comparator A Data Register 1; 0x00000119 ***
+DBGAD1:             equ    $00000119                                ;*** DBGAD1 - Debug Comparator A Data Register 1; 0x00000119 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGAD1_BIT16:       equ    0                                         ; Comparator Data Bit 16
+DBGAD1_BIT17:       equ    1                                         ; Comparator Data Bit 17
+DBGAD1_BIT18:       equ    2                                         ; Comparator Data Bit 18
+DBGAD1_BIT19:       equ    3                                         ; Comparator Data Bit 19
+DBGAD1_BIT20:       equ    4                                         ; Comparator Data Bit 20
+DBGAD1_BIT21:       equ    5                                         ; Comparator Data Bit 21
+DBGAD1_BIT22:       equ    6                                         ; Comparator Data Bit 22
+DBGAD1_BIT23:       equ    7                                         ; Comparator Data Bit 23
+; bit position masks
+mDBGAD1_BIT16:      equ    %00000001
+mDBGAD1_BIT17:      equ    %00000010
+mDBGAD1_BIT18:      equ    %00000100
+mDBGAD1_BIT19:      equ    %00001000
+mDBGAD1_BIT20:      equ    %00010000
+mDBGAD1_BIT21:      equ    %00100000
+mDBGAD1_BIT22:      equ    %01000000
+mDBGAD1_BIT23:      equ    %10000000
+
+
+;*** DBGAD2 - Debug Comparator A Data Register 2; 0x0000011A ***
+DBGAD2:             equ    $0000011A                                ;*** DBGAD2 - Debug Comparator A Data Register 2; 0x0000011A ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGAD2_BIT8:        equ    0                                         ; Comparator Data Bit 8
+DBGAD2_BIT9:        equ    1                                         ; Comparator Data Bit 9
+DBGAD2_BIT10:       equ    2                                         ; Comparator Data Bit 10
+DBGAD2_BIT11:       equ    3                                         ; Comparator Data Bit 11
+DBGAD2_BIT12:       equ    4                                         ; Comparator Data Bit 12
+DBGAD2_BIT13:       equ    5                                         ; Comparator Data Bit 13
+DBGAD2_BIT14:       equ    6                                         ; Comparator Data Bit 14
+DBGAD2_BIT15:       equ    7                                         ; Comparator Data Bit 15
+; bit position masks
+mDBGAD2_BIT8:       equ    %00000001
+mDBGAD2_BIT9:       equ    %00000010
+mDBGAD2_BIT10:      equ    %00000100
+mDBGAD2_BIT11:      equ    %00001000
+mDBGAD2_BIT12:      equ    %00010000
+mDBGAD2_BIT13:      equ    %00100000
+mDBGAD2_BIT14:      equ    %01000000
+mDBGAD2_BIT15:      equ    %10000000
+
+
+;*** DBGAD3 - Debug Comparator A Data Register 3; 0x0000011B ***
+DBGAD3:             equ    $0000011B                                ;*** DBGAD3 - Debug Comparator A Data Register 3; 0x0000011B ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGAD3_BIT0:        equ    0                                         ; Comparator Data Bit 0
+DBGAD3_BIT1:        equ    1                                         ; Comparator Data Bit 1
+DBGAD3_BIT2:        equ    2                                         ; Comparator Data Bit 2
+DBGAD3_BIT3:        equ    3                                         ; Comparator Data Bit 3
+DBGAD3_BIT4:        equ    4                                         ; Comparator Data Bit 4
+DBGAD3_BIT5:        equ    5                                         ; Comparator Data Bit 5
+DBGAD3_BIT6:        equ    6                                         ; Comparator Data Bit 6
+DBGAD3_BIT7:        equ    7                                         ; Comparator Data Bit 7
+; bit position masks
+mDBGAD3_BIT0:       equ    %00000001
+mDBGAD3_BIT1:       equ    %00000010
+mDBGAD3_BIT2:       equ    %00000100
+mDBGAD3_BIT3:       equ    %00001000
+mDBGAD3_BIT4:       equ    %00010000
+mDBGAD3_BIT5:       equ    %00100000
+mDBGAD3_BIT6:       equ    %01000000
+mDBGAD3_BIT7:       equ    %10000000
+
+
+;*** DBGADM0 - Debug Comparator A Data Mask Register 0; 0x0000011C ***
+DBGADM0:            equ    $0000011C                                ;*** DBGADM0 - Debug Comparator A Data Mask Register 0; 0x0000011C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGADM0_BIT24:      equ    0                                         ; Comparator Data Mask Bit 24
+DBGADM0_BIT25:      equ    1                                         ; Comparator Data Mask Bit 25
+DBGADM0_BIT26:      equ    2                                         ; Comparator Data Mask Bit 26
+DBGADM0_BIT27:      equ    3                                         ; Comparator Data Mask Bit 27
+DBGADM0_BIT28:      equ    4                                         ; Comparator Data Mask Bit 28
+DBGADM0_BIT29:      equ    5                                         ; Comparator Data Mask Bit 29
+DBGADM0_BIT30:      equ    6                                         ; Comparator Data Mask Bit 30
+DBGADM0_BIT31:      equ    7                                         ; Comparator Data Mask Bit 31
+; bit position masks
+mDBGADM0_BIT24:     equ    %00000001
+mDBGADM0_BIT25:     equ    %00000010
+mDBGADM0_BIT26:     equ    %00000100
+mDBGADM0_BIT27:     equ    %00001000
+mDBGADM0_BIT28:     equ    %00010000
+mDBGADM0_BIT29:     equ    %00100000
+mDBGADM0_BIT30:     equ    %01000000
+mDBGADM0_BIT31:     equ    %10000000
+
+
+;*** DBGADM1 - Debug Comparator A Data Mask Register 1; 0x0000011D ***
+DBGADM1:            equ    $0000011D                                ;*** DBGADM1 - Debug Comparator A Data Mask Register 1; 0x0000011D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGADM1_BIT16:      equ    0                                         ; Comparator Data Mask Bit 16
+DBGADM1_BIT17:      equ    1                                         ; Comparator Data Mask Bit 17
+DBGADM1_BIT18:      equ    2                                         ; Comparator Data Mask Bit 18
+DBGADM1_BIT19:      equ    3                                         ; Comparator Data Mask Bit 19
+DBGADM1_BIT20:      equ    4                                         ; Comparator Data Mask Bit 20
+DBGADM1_BIT21:      equ    5                                         ; Comparator Data Mask Bit 21
+DBGADM1_BIT22:      equ    6                                         ; Comparator Data Mask Bit 22
+DBGADM1_BIT23:      equ    7                                         ; Comparator Data Mask Bit 23
+; bit position masks
+mDBGADM1_BIT16:     equ    %00000001
+mDBGADM1_BIT17:     equ    %00000010
+mDBGADM1_BIT18:     equ    %00000100
+mDBGADM1_BIT19:     equ    %00001000
+mDBGADM1_BIT20:     equ    %00010000
+mDBGADM1_BIT21:     equ    %00100000
+mDBGADM1_BIT22:     equ    %01000000
+mDBGADM1_BIT23:     equ    %10000000
+
+
+;*** DBGADM2 - Debug Comparator A Data Mask Register 2; 0x0000011E ***
+DBGADM2:            equ    $0000011E                                ;*** DBGADM2 - Debug Comparator A Data Mask Register 2; 0x0000011E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGADM2_BIT8:       equ    0                                         ; Comparator Data Mask Bit 8
+DBGADM2_BIT9:       equ    1                                         ; Comparator Data Mask Bit 9
+DBGADM2_BIT10:      equ    2                                         ; Comparator Data Mask Bit 10
+DBGADM2_BIT11:      equ    3                                         ; Comparator Data Mask Bit 11
+DBGADM2_BIT12:      equ    4                                         ; Comparator Data Mask Bit 12
+DBGADM2_BIT13:      equ    5                                         ; Comparator Data Mask Bit 13
+DBGADM2_BIT14:      equ    6                                         ; Comparator Data Mask Bit 14
+DBGADM2_BIT15:      equ    7                                         ; Comparator Data Mask Bit 15
+; bit position masks
+mDBGADM2_BIT8:      equ    %00000001
+mDBGADM2_BIT9:      equ    %00000010
+mDBGADM2_BIT10:     equ    %00000100
+mDBGADM2_BIT11:     equ    %00001000
+mDBGADM2_BIT12:     equ    %00010000
+mDBGADM2_BIT13:     equ    %00100000
+mDBGADM2_BIT14:     equ    %01000000
+mDBGADM2_BIT15:     equ    %10000000
+
+
+;*** DBGADM3 - Debug Comparator A Data Mask Register 3; 0x0000011F ***
+DBGADM3:            equ    $0000011F                                ;*** DBGADM3 - Debug Comparator A Data Mask Register 3; 0x0000011F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGADM3_BIT0:       equ    0                                         ; Comparator Data Mask Bit 0
+DBGADM3_BIT1:       equ    1                                         ; Comparator Data Mask Bit 1
+DBGADM3_BIT2:       equ    2                                         ; Comparator Data Mask Bit 2
+DBGADM3_BIT3:       equ    3                                         ; Comparator Data Mask Bit 3
+DBGADM3_BIT4:       equ    4                                         ; Comparator Data Mask Bit 4
+DBGADM3_BIT5:       equ    5                                         ; Comparator Data Mask Bit 5
+DBGADM3_BIT6:       equ    6                                         ; Comparator Data Mask Bit 6
+DBGADM3_BIT7:       equ    7                                         ; Comparator Data Mask Bit 7
+; bit position masks
+mDBGADM3_BIT0:      equ    %00000001
+mDBGADM3_BIT1:      equ    %00000010
+mDBGADM3_BIT2:      equ    %00000100
+mDBGADM3_BIT3:      equ    %00001000
+mDBGADM3_BIT4:      equ    %00010000
+mDBGADM3_BIT5:      equ    %00100000
+mDBGADM3_BIT6:      equ    %01000000
+mDBGADM3_BIT7:      equ    %10000000
+
+
+;*** DBGBCTL - Debug Comparator B Control Register; 0x00000120 ***
+DBGBCTL:            equ    $00000120                                ;*** DBGBCTL - Debug Comparator B Control Register; 0x00000120 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGBCTL_COMPE:      equ    0                                         ; Determines if comparator is enabled
+DBGBCTL_RWE:        equ    2                                         ; Read/Write Enable Bit
+DBGBCTL_RW:         equ    3                                         ; Read/Write Comparator Value Bit
+DBGBCTL_INST:       equ    5                                         ; Instruction Select
+; bit position masks
+mDBGBCTL_COMPE:     equ    %00000001
+mDBGBCTL_RWE:       equ    %00000100
+mDBGBCTL_RW:        equ    %00001000
+mDBGBCTL_INST:      equ    %00100000
+
+
+;*** DBGBAH - Debug Comparator B Address Register High; 0x00000125 ***
+DBGBAH:             equ    $00000125                                ;*** DBGBAH - Debug Comparator B Address Register High; 0x00000125 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGBAH_DBGBA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGBAH_DBGBA:      equ    %11111111
+
+
+;*** DBGBAM - Debug Comparator B Address Register Middle; 0x00000126 ***
+DBGBAM:             equ    $00000126                                ;*** DBGBAM - Debug Comparator B Address Register Middle; 0x00000126 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGBAM_DBGBA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGBAM_DBGBA:      equ    %11111111
+
+
+;*** DBGBAL - Debug Comparator B Address Register Low; 0x00000127 ***
+DBGBAL:             equ    $00000127                                ;*** DBGBAL - Debug Comparator B Address Register Low; 0x00000127 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGBAL_DBGBA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGBAL_DBGBA:      equ    %11111111
+
+
+;*** DBGDCTL - Debug Comparator D Control Register; 0x00000140 ***
+DBGDCTL:            equ    $00000140                                ;*** DBGDCTL - Debug Comparator D Control Register; 0x00000140 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGDCTL_COMPE:      equ    0                                         ; Determines if comparator is enabled
+DBGDCTL_RWE:        equ    2                                         ; Read/Write Enable Bit
+DBGDCTL_RW:         equ    3                                         ; Read/Write Comparator Value Bit
+DBGDCTL_INST:       equ    5                                         ; Instruction Select
+; bit position masks
+mDBGDCTL_COMPE:     equ    %00000001
+mDBGDCTL_RWE:       equ    %00000100
+mDBGDCTL_RW:        equ    %00001000
+mDBGDCTL_INST:      equ    %00100000
+
+
+;*** DBGDAH - Debug Comparator D Address Register High; 0x00000145 ***
+DBGDAH:             equ    $00000145                                ;*** DBGDAH - Debug Comparator D Address Register High; 0x00000145 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGDAH_DBGDA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGDAH_DBGDA:      equ    %11111111
+
+
+;*** DBGDAM - Debug Comparator D Address Register Middle; 0x00000146 ***
+DBGDAM:             equ    $00000146                                ;*** DBGDAM - Debug Comparator D Address Register Middle; 0x00000146 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGDAM_DBGDA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGDAM_DBGDA:      equ    %11111111
+
+
+;*** DBGDAL - Debug Comparator D Address Register Low; 0x00000147 ***
+DBGDAL:             equ    $00000147                                ;*** DBGDAL - Debug Comparator D Address Register Low; 0x00000147 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DBGDAL_DBGDA:       equ    0                                         ; Comparator Address Bits
+; bit position masks
+mDBGDAL_DBGDA:      equ    %11111111
+
+
+;*** MODRR0 - Module Routing Register 0; 0x00000200 ***
+MODRR0:             equ    $00000200                                ;*** MODRR0 - Module Routing Register 0; 0x00000200 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MODRR0_S0L0RR:      equ    0                                         ; SCI0-LINPHY routing
+MODRR0_SCI1RR:      equ    3                                         ; SCI1 routing
+MODRR0_IIC0RR:      equ    4                                         ; IIC0 routing
+; bit position masks
+mMODRR0_S0L0RR:     equ    %00000111
+mMODRR0_SCI1RR:     equ    %00001000
+mMODRR0_IIC0RR:     equ    %00010000
+
+
+;*** MODRR1 - Module Routing Register 1; 0x00000201 ***
+MODRR1:             equ    $00000201                                ;*** MODRR1 - Module Routing Register 1; 0x00000201 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MODRR1_PWM0RR:      equ    0                                         ; PWM0 routing
+MODRR1_PWM2RR:      equ    2                                         ; PWM2 routing
+MODRR1_PWM4RR:      equ    4                                         ; PWM4 routing
+MODRR1_PWM5RR:      equ    5                                         ; PWM5 routing
+MODRR1_PWM6RR:      equ    6                                         ; PWM6 routing
+MODRR1_PWM7RR:      equ    7                                         ; PWM7 routing
+; bit position masks
+mMODRR1_PWM0RR:     equ    %00000001
+mMODRR1_PWM2RR:     equ    %00000100
+mMODRR1_PWM4RR:     equ    %00010000
+mMODRR1_PWM5RR:     equ    %00100000
+mMODRR1_PWM6RR:     equ    %01000000
+mMODRR1_PWM7RR:     equ    %10000000
+
+
+;*** MODRR2 - Module Routing Register 2; 0x00000202 ***
+MODRR2:             equ    $00000202                                ;*** MODRR2 - Module Routing Register 2; 0x00000202 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MODRR2_T0C2RR:      equ    2                                         ; IOC0_2 routing
+MODRR2_T0C3RR:      equ    3                                         ; IOC0_3 routing
+MODRR2_T0C4RR:      equ    4                                         ; IOC0_4 routing
+MODRR2_T0C5RR:      equ    5                                         ; IOC0_5 routing
+MODRR2_T1C0RR:      equ    6                                         ; IOC1_0 routing
+MODRR2_T1C1RR:      equ    7                                         ; IOC1_1 routing
+; bit position masks
+mMODRR2_T0C2RR:     equ    %00000100
+mMODRR2_T0C3RR:     equ    %00001000
+mMODRR2_T0C4RR:     equ    %00010000
+mMODRR2_T0C5RR:     equ    %00100000
+mMODRR2_T1C0RR:     equ    %01000000
+mMODRR2_T1C1RR:     equ    %10000000
+
+
+;*** MODRR3 - Module Routing Register 3; 0x00000203 ***
+MODRR3:             equ    $00000203                                ;*** MODRR3 - Module Routing Register 3; 0x00000203 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MODRR3_TRIG0RR:     equ    0                                         ; ADC0 Trigger input routing
+MODRR3_TRIG0NEG:    equ    2                                         ; ADC0 Trigger input inverted polarity
+; bit position masks
+mMODRR3_TRIG0RR:    equ    %00000011
+mMODRR3_TRIG0NEG:   equ    %00000100
+
+
+;*** MODRR4 - Module Routing Register 4; 0x00000204 ***
+MODRR4:             equ    $00000204                                ;*** MODRR4 - Module Routing Register 4; 0x00000204 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+MODRR4_T0IC3RR:     equ    0                                         ; TIM0 IC3 routing
+; bit position masks
+mMODRR4_T0IC3RR:    equ    %00000011
+
+
+;*** ECLKCTL - ECLK Control Register; 0x00000208 ***
+ECLKCTL:            equ    $00000208                                ;*** ECLKCTL - ECLK Control Register; 0x00000208 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECLKCTL_NECLK:      equ    7                                         ; No ECLK
+; bit position masks
+mECLKCTL_NECLK:     equ    %10000000
+
+
+;*** IRQCR - Interrupt Control Register; 0x00000209 ***
+IRQCR:              equ    $00000209                                ;*** IRQCR - Interrupt Control Register; 0x00000209 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IRQCR_IRQEN:        equ    6                                         ; IRQ Enable
+IRQCR_IRQE:         equ    7                                         ; IRQ Select Edge Sensitive Only
+; bit position masks
+mIRQCR_IRQEN:       equ    %01000000
+mIRQCR_IRQE:        equ    %10000000
+
+
+;*** PTE - Port E Data Register; 0x00000260 ***
+PTE:                equ    $00000260                                ;*** PTE - Port E Data Register; 0x00000260 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTE_PTE0:           equ    0                                         ; Port E general purpose I/O data 0
+PTE_PTE1:           equ    1                                         ; Port E general purpose I/O data 1
+; bit position masks
+mPTE_PTE0:          equ    %00000001
+mPTE_PTE1:          equ    %00000010
+
+
+;*** PTIE - Port E Input Register; 0x00000262 ***
+PTIE:               equ    $00000262                                ;*** PTIE - Port E Input Register; 0x00000262 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIE_PTIE0:         equ    0                                         ; Port E data input 0
+PTIE_PTIE1:         equ    1                                         ; Port E data input 1
+; bit position masks
+mPTIE_PTIE0:        equ    %00000001
+mPTIE_PTIE1:        equ    %00000010
+
+
+;*** DDRE - Port E Data Direction Register; 0x00000264 ***
+DDRE:               equ    $00000264                                ;*** DDRE - Port E Data Direction Register; 0x00000264 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRE_DDRE0:         equ    0                                         ; Port E data direction select 0
+DDRE_DDRE1:         equ    1                                         ; Port E data direction select 1
+; bit position masks
+mDDRE_DDRE0:        equ    %00000001
+mDDRE_DDRE1:        equ    %00000010
+
+
+;*** PERE - Port E Pull Device Enable Register; 0x00000266 ***
+PERE:               equ    $00000266                                ;*** PERE - Port E Pull Device Enable Register; 0x00000266 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERE_PERE0:         equ    0                                         ; Port E pull device enable 0
+PERE_PERE1:         equ    1                                         ; Port E pull device enable 1
+; bit position masks
+mPERE_PERE0:        equ    %00000001
+mPERE_PERE1:        equ    %00000010
+
+
+;*** PPSE - Port E Polarity Select Register; 0x00000268 ***
+PPSE:               equ    $00000268                                ;*** PPSE - Port E Polarity Select Register; 0x00000268 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSE_PPSE0:         equ    0                                         ; Port E pull polarity select 0
+PPSE_PPSE1:         equ    1                                         ; Port E pull polarity select 1
+; bit position masks
+mPPSE_PPSE0:        equ    %00000001
+mPPSE_PPSE1:        equ    %00000010
+
+
+;*** PTAD - Port AD Data Register; 0x00000280 ***
+PTAD:               equ    $00000280                                ;*** PTAD - Port AD Data Register; 0x00000280 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTAD_PTADL0:        equ    0                                         ; Port AD general purpose I/O data 0
+PTAD_PTADL1:        equ    1                                         ; Port AD general purpose I/O data 1
+PTAD_PTADL2:        equ    2                                         ; Port AD general purpose I/O data 2
+PTAD_PTADL3:        equ    3                                         ; Port AD general purpose I/O data 3
+PTAD_PTADL4:        equ    4                                         ; Port AD general purpose I/O data 4
+PTAD_PTADL5:        equ    5                                         ; Port AD general purpose I/O data 5
+PTAD_PTADL6:        equ    6                                         ; Port AD general purpose I/O data 6
+PTAD_PTADL7:        equ    7                                         ; Port AD general purpose I/O data 7
+PTAD_PTADH0:        equ    8                                         ; Port AD general purpose I/O data 8
+PTAD_PTADH1:        equ    9                                         ; Port AD general purpose I/O data 9
+; bit position masks
+mPTAD_PTADL0:       equ    %00000001
+mPTAD_PTADL1:       equ    %00000010
+mPTAD_PTADL2:       equ    %00000100
+mPTAD_PTADL3:       equ    %00001000
+mPTAD_PTADL4:       equ    %00010000
+mPTAD_PTADL5:       equ    %00100000
+mPTAD_PTADL6:       equ    %01000000
+mPTAD_PTADL7:       equ    %10000000
+mPTAD_PTADH0:       equ    %100000000
+mPTAD_PTADH1:       equ    %1000000000
+
+
+;*** PTADH - Port ADH Data Register; 0x00000280 ***
+PTADH:              equ    $00000280                                ;*** PTADH - Port ADH Data Register; 0x00000280 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTADH_PTADH0:       equ    0                                         ; Port ADH general purpose I/O data 0
+PTADH_PTADH1:       equ    1                                         ; Port ADH general purpose I/O data 1
+; bit position masks
+mPTADH_PTADH0:      equ    %00000001
+mPTADH_PTADH1:      equ    %00000010
+
+
+;*** PTADL - Port ADL Data Register; 0x00000281 ***
+PTADL:              equ    $00000281                                ;*** PTADL - Port ADL Data Register; 0x00000281 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTADL_PTADL0:       equ    0                                         ; Port ADL general purpose I/O data 0
+PTADL_PTADL1:       equ    1                                         ; Port ADL general purpose I/O data 1
+PTADL_PTADL2:       equ    2                                         ; Port ADL general purpose I/O data 2
+PTADL_PTADL3:       equ    3                                         ; Port ADL general purpose I/O data 3
+PTADL_PTADL4:       equ    4                                         ; Port ADL general purpose I/O data 4
+PTADL_PTADL5:       equ    5                                         ; Port ADL general purpose I/O data 5
+PTADL_PTADL6:       equ    6                                         ; Port ADL general purpose I/O data 6
+PTADL_PTADL7:       equ    7                                         ; Port ADL general purpose I/O data 7
+; bit position masks
+mPTADL_PTADL0:      equ    %00000001
+mPTADL_PTADL1:      equ    %00000010
+mPTADL_PTADL2:      equ    %00000100
+mPTADL_PTADL3:      equ    %00001000
+mPTADL_PTADL4:      equ    %00010000
+mPTADL_PTADL5:      equ    %00100000
+mPTADL_PTADL6:      equ    %01000000
+mPTADL_PTADL7:      equ    %10000000
+
+
+;*** PTIAD - Port AD Input Register; 0x00000282 ***
+PTIAD:              equ    $00000282                                ;*** PTIAD - Port AD Input Register; 0x00000282 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIAD_PTIADL0:      equ    0                                         ; Port AD data input 0
+PTIAD_PTIADL1:      equ    1                                         ; Port AD data input 1
+PTIAD_PTIADL2:      equ    2                                         ; Port AD data input 2
+PTIAD_PTIADL3:      equ    3                                         ; Port AD data input 3
+PTIAD_PTIADL4:      equ    4                                         ; Port AD data input 4
+PTIAD_PTIADL5:      equ    5                                         ; Port AD data input 5
+PTIAD_PTIADL6:      equ    6                                         ; Port AD data input 6
+PTIAD_PTIADL7:      equ    7                                         ; Port AD data input 7
+PTIAD_PTIADH0:      equ    8                                         ; Port AD data input 0
+PTIAD_PTIADH1:      equ    9                                         ; Port AD data input 1
+; bit position masks
+mPTIAD_PTIADL0:     equ    %00000001
+mPTIAD_PTIADL1:     equ    %00000010
+mPTIAD_PTIADL2:     equ    %00000100
+mPTIAD_PTIADL3:     equ    %00001000
+mPTIAD_PTIADL4:     equ    %00010000
+mPTIAD_PTIADL5:     equ    %00100000
+mPTIAD_PTIADL6:     equ    %01000000
+mPTIAD_PTIADL7:     equ    %10000000
+mPTIAD_PTIADH0:     equ    %100000000
+mPTIAD_PTIADH1:     equ    %1000000000
+
+
+;*** PTIADH - Port ADH Input Register; 0x00000282 ***
+PTIADH:             equ    $00000282                                ;*** PTIADH - Port ADH Input Register; 0x00000282 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIADH_PTIADH0:     equ    0                                         ; Port ADH data input 0
+PTIADH_PTIADH1:     equ    1                                         ; Port ADH data input 1
+; bit position masks
+mPTIADH_PTIADH0:    equ    %00000001
+mPTIADH_PTIADH1:    equ    %00000010
+
+
+;*** PTIADL - Port ADL Input Register; 0x00000283 ***
+PTIADL:             equ    $00000283                                ;*** PTIADL - Port ADL Input Register; 0x00000283 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIADL_PTIADL0:     equ    0                                         ; Port ADL data input 0
+PTIADL_PTIADL1:     equ    1                                         ; Port ADL data input 1
+PTIADL_PTIADL2:     equ    2                                         ; Port ADL data input 2
+PTIADL_PTIADL3:     equ    3                                         ; Port ADL data input 3
+PTIADL_PTIADL4:     equ    4                                         ; Port ADL data input 4
+PTIADL_PTIADL5:     equ    5                                         ; Port ADL data input 5
+PTIADL_PTIADL6:     equ    6                                         ; Port ADL data input 6
+PTIADL_PTIADL7:     equ    7                                         ; Port ADL data input 7
+; bit position masks
+mPTIADL_PTIADL0:    equ    %00000001
+mPTIADL_PTIADL1:    equ    %00000010
+mPTIADL_PTIADL2:    equ    %00000100
+mPTIADL_PTIADL3:    equ    %00001000
+mPTIADL_PTIADL4:    equ    %00010000
+mPTIADL_PTIADL5:    equ    %00100000
+mPTIADL_PTIADL6:    equ    %01000000
+mPTIADL_PTIADL7:    equ    %10000000
+
+
+;*** DDRAD - Port AD Data Direction Register; 0x00000284 ***
+DDRAD:              equ    $00000284                                ;*** DDRAD - Port AD Data Direction Register; 0x00000284 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRAD_DDRADL0:      equ    0                                         ; Port AD data direction select 0
+DDRAD_DDRADL1:      equ    1                                         ; Port AD data direction select 1
+DDRAD_DDRADL2:      equ    2                                         ; Port AD data direction select 2
+DDRAD_DDRADL3:      equ    3                                         ; Port AD data direction select 3
+DDRAD_DDRADL4:      equ    4                                         ; Port AD data direction select 4
+DDRAD_DDRADL5:      equ    5                                         ; Port AD data direction select 5
+DDRAD_DDRADL6:      equ    6                                         ; Port AD data direction select 6
+DDRAD_DDRADL7:      equ    7                                         ; Port AD data direction select 7
+DDRAD_DDRADH0:      equ    8                                         ; Port AD data direction select 8
+DDRAD_DDRADH1:      equ    9                                         ; Port AD data direction select 9
+; bit position masks
+mDDRAD_DDRADL0:     equ    %00000001
+mDDRAD_DDRADL1:     equ    %00000010
+mDDRAD_DDRADL2:     equ    %00000100
+mDDRAD_DDRADL3:     equ    %00001000
+mDDRAD_DDRADL4:     equ    %00010000
+mDDRAD_DDRADL5:     equ    %00100000
+mDDRAD_DDRADL6:     equ    %01000000
+mDDRAD_DDRADL7:     equ    %10000000
+mDDRAD_DDRADH0:     equ    %100000000
+mDDRAD_DDRADH1:     equ    %1000000000
+
+
+;*** DDRADH - Port ADH Data Direction Register; 0x00000284 ***
+DDRADH:             equ    $00000284                                ;*** DDRADH - Port ADH Data Direction Register; 0x00000284 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRADH_DDRADH0:     equ    0                                         ; Port ADH data direction select 0
+DDRADH_DDRADH1:     equ    1                                         ; Port ADH data direction select 1
+; bit position masks
+mDDRADH_DDRADH0:    equ    %00000001
+mDDRADH_DDRADH1:    equ    %00000010
+
+
+;*** DDRADL - Port ADL Data Direction Register; 0x00000285 ***
+DDRADL:             equ    $00000285                                ;*** DDRADL - Port ADL Data Direction Register; 0x00000285 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRADL_DDRADL0:     equ    0                                         ; Port ADL data direction select 0
+DDRADL_DDRADL1:     equ    1                                         ; Port ADL data direction select 1
+DDRADL_DDRADL2:     equ    2                                         ; Port ADL data direction select 2
+DDRADL_DDRADL3:     equ    3                                         ; Port ADL data direction select 3
+DDRADL_DDRADL4:     equ    4                                         ; Port ADL data direction select 4
+DDRADL_DDRADL5:     equ    5                                         ; Port ADL data direction select 5
+DDRADL_DDRADL6:     equ    6                                         ; Port ADL data direction select 6
+DDRADL_DDRADL7:     equ    7                                         ; Port ADL data direction select 7
+; bit position masks
+mDDRADL_DDRADL0:    equ    %00000001
+mDDRADL_DDRADL1:    equ    %00000010
+mDDRADL_DDRADL2:    equ    %00000100
+mDDRADL_DDRADL3:    equ    %00001000
+mDDRADL_DDRADL4:    equ    %00010000
+mDDRADL_DDRADL5:    equ    %00100000
+mDDRADL_DDRADL6:    equ    %01000000
+mDDRADL_DDRADL7:    equ    %10000000
+
+
+;*** PERAD - Port AD Pull Device Enable Register; 0x00000286 ***
+PERAD:              equ    $00000286                                ;*** PERAD - Port AD Pull Device Enable Register; 0x00000286 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERAD_PERADL0:      equ    0                                         ; Port AD pull device enable 0
+PERAD_PERADL1:      equ    1                                         ; Port AD pull device enable 1
+PERAD_PERADL2:      equ    2                                         ; Port AD pull device enable 2
+PERAD_PERADL3:      equ    3                                         ; Port AD pull device enable 3
+PERAD_PERADL4:      equ    4                                         ; Port AD pull device enable 4
+PERAD_PERADL5:      equ    5                                         ; Port AD pull device enable 5
+PERAD_PERADL6:      equ    6                                         ; Port AD pull device enable 6
+PERAD_PERADL7:      equ    7                                         ; Port AD pull device enable 7
+PERAD_PERADH0:      equ    8                                         ; Port AD pull device enable 8
+PERAD_PERADH1:      equ    9                                         ; Port AD pull device enable 9
+; bit position masks
+mPERAD_PERADL0:     equ    %00000001
+mPERAD_PERADL1:     equ    %00000010
+mPERAD_PERADL2:     equ    %00000100
+mPERAD_PERADL3:     equ    %00001000
+mPERAD_PERADL4:     equ    %00010000
+mPERAD_PERADL5:     equ    %00100000
+mPERAD_PERADL6:     equ    %01000000
+mPERAD_PERADL7:     equ    %10000000
+mPERAD_PERADH0:     equ    %100000000
+mPERAD_PERADH1:     equ    %1000000000
+
+
+;*** PERADH - Port ADH Pull Device Enable Register; 0x00000286 ***
+PERADH:             equ    $00000286                                ;*** PERADH - Port ADH Pull Device Enable Register; 0x00000286 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERADH_PERADH0:     equ    0                                         ; Port ADH pull device enable 0
+PERADH_PERADH1:     equ    1                                         ; Port ADH pull device enable 1
+; bit position masks
+mPERADH_PERADH0:    equ    %00000001
+mPERADH_PERADH1:    equ    %00000010
+
+
+;*** PERADL - Port ADL Pull Device Enable Register; 0x00000287 ***
+PERADL:             equ    $00000287                                ;*** PERADL - Port ADL Pull Device Enable Register; 0x00000287 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERADL_PERADL0:     equ    0                                         ; Port ADL pull device enable 0
+PERADL_PERADL1:     equ    1                                         ; Port ADL pull device enable 1
+PERADL_PERADL2:     equ    2                                         ; Port ADL pull device enable 2
+PERADL_PERADL3:     equ    3                                         ; Port ADL pull device enable 3
+PERADL_PERADL4:     equ    4                                         ; Port ADL pull device enable 4
+PERADL_PERADL5:     equ    5                                         ; Port ADL pull device enable 5
+PERADL_PERADL6:     equ    6                                         ; Port ADL pull device enable 6
+PERADL_PERADL7:     equ    7                                         ; Port ADL pull device enable 7
+; bit position masks
+mPERADL_PERADL0:    equ    %00000001
+mPERADL_PERADL1:    equ    %00000010
+mPERADL_PERADL2:    equ    %00000100
+mPERADL_PERADL3:    equ    %00001000
+mPERADL_PERADL4:    equ    %00010000
+mPERADL_PERADL5:    equ    %00100000
+mPERADL_PERADL6:    equ    %01000000
+mPERADL_PERADL7:    equ    %10000000
+
+
+;*** PPSAD - Port AD Polarity Select Register; 0x00000288 ***
+PPSAD:              equ    $00000288                                ;*** PPSAD - Port AD Polarity Select Register; 0x00000288 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSAD_PPSADL0:      equ    0                                         ; Port AD pull polarity select 0
+PPSAD_PPSADL1:      equ    1                                         ; Port AD pull polarity select 1
+PPSAD_PPSADL2:      equ    2                                         ; Port AD pull polarity select 2
+PPSAD_PPSADL3:      equ    3                                         ; Port AD pull polarity select 3
+PPSAD_PPSADL4:      equ    4                                         ; Port AD pull polarity select 4
+PPSAD_PPSADL5:      equ    5                                         ; Port AD pull polarity select 5
+PPSAD_PPSADL6:      equ    6                                         ; Port AD pull polarity select 6
+PPSAD_PPSADL7:      equ    7                                         ; Port AD pull polarity select 7
+PPSAD_PPSADH0:      equ    8                                         ; Port AD pull polarity select 8
+PPSAD_PPSADH1:      equ    9                                         ; Port AD pull polarity select 9
+; bit position masks
+mPPSAD_PPSADL0:     equ    %00000001
+mPPSAD_PPSADL1:     equ    %00000010
+mPPSAD_PPSADL2:     equ    %00000100
+mPPSAD_PPSADL3:     equ    %00001000
+mPPSAD_PPSADL4:     equ    %00010000
+mPPSAD_PPSADL5:     equ    %00100000
+mPPSAD_PPSADL6:     equ    %01000000
+mPPSAD_PPSADL7:     equ    %10000000
+mPPSAD_PPSADH0:     equ    %100000000
+mPPSAD_PPSADH1:     equ    %1000000000
+
+
+;*** PPSADH - Port ADH Polarity Select Register; 0x00000288 ***
+PPSADH:             equ    $00000288                                ;*** PPSADH - Port ADH Polarity Select Register; 0x00000288 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSADH_PPSADH0:     equ    0                                         ; Port ADH pull polarity select 0
+PPSADH_PPSADH1:     equ    1                                         ; Port ADH pull polarity select 1
+; bit position masks
+mPPSADH_PPSADH0:    equ    %00000001
+mPPSADH_PPSADH1:    equ    %00000010
+
+
+;*** PPSADL - Port ADL Polarity Select Register; 0x00000289 ***
+PPSADL:             equ    $00000289                                ;*** PPSADL - Port ADL Polarity Select Register; 0x00000289 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSADL_PPSADL0:     equ    0                                         ; Port ADL pull polarity select 0
+PPSADL_PPSADL1:     equ    1                                         ; Port ADL pull polarity select 1
+PPSADL_PPSADL2:     equ    2                                         ; Port ADL pull polarity select 2
+PPSADL_PPSADL3:     equ    3                                         ; Port ADL pull polarity select 3
+PPSADL_PPSADL4:     equ    4                                         ; Port ADL pull polarity select 4
+PPSADL_PPSADL5:     equ    5                                         ; Port ADL pull polarity select 5
+PPSADL_PPSADL6:     equ    6                                         ; Port ADL pull polarity select 6
+PPSADL_PPSADL7:     equ    7                                         ; Port ADL pull polarity select 7
+; bit position masks
+mPPSADL_PPSADL0:    equ    %00000001
+mPPSADL_PPSADL1:    equ    %00000010
+mPPSADL_PPSADL2:    equ    %00000100
+mPPSADL_PPSADL3:    equ    %00001000
+mPPSADL_PPSADL4:    equ    %00010000
+mPPSADL_PPSADL5:    equ    %00100000
+mPPSADL_PPSADL6:    equ    %01000000
+mPPSADL_PPSADL7:    equ    %10000000
+
+
+;*** PIEAD - Port AD Interrupt Enable Register; 0x0000028C ***
+PIEAD:              equ    $0000028C                                ;*** PIEAD - Port AD Interrupt Enable Register; 0x0000028C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIEAD_PIEADL0:      equ    0                                         ; Port AD interrupt enable 0
+PIEAD_PIEADL1:      equ    1                                         ; Port AD interrupt enable 1
+PIEAD_PIEADL2:      equ    2                                         ; Port AD interrupt enable 2
+PIEAD_PIEADL3:      equ    3                                         ; Port AD interrupt enable 3
+PIEAD_PIEADL4:      equ    4                                         ; Port AD interrupt enable 4
+PIEAD_PIEADL5:      equ    5                                         ; Port AD interrupt enable 5
+PIEAD_PIEADL6:      equ    6                                         ; Port AD interrupt enable 6
+PIEAD_PIEADL7:      equ    7                                         ; Port AD interrupt enable 7
+PIEAD_PIEADH0:      equ    8                                         ; Port AD interrupt enable 0
+PIEAD_PIEADH1:      equ    9                                         ; Port AD interrupt enable 1
+; bit position masks
+mPIEAD_PIEADL0:     equ    %00000001
+mPIEAD_PIEADL1:     equ    %00000010
+mPIEAD_PIEADL2:     equ    %00000100
+mPIEAD_PIEADL3:     equ    %00001000
+mPIEAD_PIEADL4:     equ    %00010000
+mPIEAD_PIEADL5:     equ    %00100000
+mPIEAD_PIEADL6:     equ    %01000000
+mPIEAD_PIEADL7:     equ    %10000000
+mPIEAD_PIEADH0:     equ    %100000000
+mPIEAD_PIEADH1:     equ    %1000000000
+
+
+;*** PIEADH - Port ADH Interrupt Enable Register; 0x0000028C ***
+PIEADH:             equ    $0000028C                                ;*** PIEADH - Port ADH Interrupt Enable Register; 0x0000028C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIEADH_PIEADH0:     equ    0                                         ; Port ADH interrupt enable 0
+PIEADH_PIEADH1:     equ    1                                         ; Port ADH interrupt enable 1
+; bit position masks
+mPIEADH_PIEADH0:    equ    %00000001
+mPIEADH_PIEADH1:    equ    %00000010
+
+
+;*** PIEADL - Port ADL Interrupt Enable Register; 0x0000028D ***
+PIEADL:             equ    $0000028D                                ;*** PIEADL - Port ADL Interrupt Enable Register; 0x0000028D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIEADL_PIEADL0:     equ    0                                         ; Port ADL interrupt enable 0
+PIEADL_PIEADL1:     equ    1                                         ; Port ADL interrupt enable 1
+PIEADL_PIEADL2:     equ    2                                         ; Port ADL interrupt enable 2
+PIEADL_PIEADL3:     equ    3                                         ; Port ADL interrupt enable 3
+PIEADL_PIEADL4:     equ    4                                         ; Port ADL interrupt enable 4
+PIEADL_PIEADL5:     equ    5                                         ; Port ADL interrupt enable 5
+PIEADL_PIEADL6:     equ    6                                         ; Port ADL interrupt enable 6
+PIEADL_PIEADL7:     equ    7                                         ; Port ADL interrupt enable 7
+; bit position masks
+mPIEADL_PIEADL0:    equ    %00000001
+mPIEADL_PIEADL1:    equ    %00000010
+mPIEADL_PIEADL2:    equ    %00000100
+mPIEADL_PIEADL3:    equ    %00001000
+mPIEADL_PIEADL4:    equ    %00010000
+mPIEADL_PIEADL5:    equ    %00100000
+mPIEADL_PIEADL6:    equ    %01000000
+mPIEADL_PIEADL7:    equ    %10000000
+
+
+;*** PIFAD - Port AD Interrupt Flag Register; 0x0000028E ***
+PIFAD:              equ    $0000028E                                ;*** PIFAD - Port AD Interrupt Flag Register; 0x0000028E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIFAD_PIFADL0:      equ    0                                         ; Port AD interrupt flag 0
+PIFAD_PIFADL1:      equ    1                                         ; Port AD interrupt flag 1
+PIFAD_PIFADL2:      equ    2                                         ; Port AD interrupt flag 2
+PIFAD_PIFADL3:      equ    3                                         ; Port AD interrupt flag 3
+PIFAD_PIFADL4:      equ    4                                         ; Port AD interrupt flag 4
+PIFAD_PIFADL5:      equ    5                                         ; Port AD interrupt flag 5
+PIFAD_PIFADL6:      equ    6                                         ; Port AD interrupt flag 6
+PIFAD_PIFADL7:      equ    7                                         ; Port AD interrupt flag 7
+PIFAD_PIFADH0:      equ    8                                         ; Port AD interrupt flag 8
+PIFAD_PIFADH1:      equ    9                                         ; Port AD interrupt flag 9
+; bit position masks
+mPIFAD_PIFADL0:     equ    %00000001
+mPIFAD_PIFADL1:     equ    %00000010
+mPIFAD_PIFADL2:     equ    %00000100
+mPIFAD_PIFADL3:     equ    %00001000
+mPIFAD_PIFADL4:     equ    %00010000
+mPIFAD_PIFADL5:     equ    %00100000
+mPIFAD_PIFADL6:     equ    %01000000
+mPIFAD_PIFADL7:     equ    %10000000
+mPIFAD_PIFADH0:     equ    %100000000
+mPIFAD_PIFADH1:     equ    %1000000000
+
+
+;*** PIFADH - Port ADH Interrupt Flag Register; 0x0000028E ***
+PIFADH:             equ    $0000028E                                ;*** PIFADH - Port ADH Interrupt Flag Register; 0x0000028E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIFADH_PIFADH0:     equ    0                                         ; Port ADH interrupt flag 0
+PIFADH_PIFADH1:     equ    1                                         ; Port ADH interrupt flag 1
+; bit position masks
+mPIFADH_PIFADH0:    equ    %00000001
+mPIFADH_PIFADH1:    equ    %00000010
+
+
+;*** PIFADL - Port ADL Interrupt Flag Register; 0x0000028F ***
+PIFADL:             equ    $0000028F                                ;*** PIFADL - Port ADL Interrupt Flag Register; 0x0000028F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIFADL_PIFADL0:     equ    0                                         ; Port ADL interrupt flag 0
+PIFADL_PIFADL1:     equ    1                                         ; Port ADL interrupt flag 1
+PIFADL_PIFADL2:     equ    2                                         ; Port ADL interrupt flag 2
+PIFADL_PIFADL3:     equ    3                                         ; Port ADL interrupt flag 3
+PIFADL_PIFADL4:     equ    4                                         ; Port ADL interrupt flag 4
+PIFADL_PIFADL5:     equ    5                                         ; Port ADL interrupt flag 5
+PIFADL_PIFADL6:     equ    6                                         ; Port ADL interrupt flag 6
+PIFADL_PIFADL7:     equ    7                                         ; Port ADL interrupt flag 7
+; bit position masks
+mPIFADL_PIFADL0:    equ    %00000001
+mPIFADL_PIFADL1:    equ    %00000010
+mPIFADL_PIFADL2:    equ    %00000100
+mPIFADL_PIFADL3:    equ    %00001000
+mPIFADL_PIFADL4:    equ    %00010000
+mPIFADL_PIFADL5:    equ    %00100000
+mPIFADL_PIFADL6:    equ    %01000000
+mPIFADL_PIFADL7:    equ    %10000000
+
+
+;*** DIENAD - Digital Input Enable Register; 0x00000298 ***
+DIENAD:             equ    $00000298                                ;*** DIENAD - Digital Input Enable Register; 0x00000298 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DIENAD_DIENADL0:    equ    0                                         ; Digital input enable 0
+DIENAD_DIENADL1:    equ    1                                         ; Digital input enable 1
+DIENAD_DIENADL2:    equ    2                                         ; Digital input enable 2
+DIENAD_DIENADL3:    equ    3                                         ; Digital input enable 3
+DIENAD_DIENADL4:    equ    4                                         ; Digital input enable 4
+DIENAD_DIENADL5:    equ    5                                         ; Digital input enable 5
+DIENAD_DIENADL6:    equ    6                                         ; Digital input enable 6
+DIENAD_DIENADL7:    equ    7                                         ; Digital input enable 7
+DIENAD_DIENADH0:    equ    8                                         ; Digital input enable 8
+DIENAD_DIENADH1:    equ    9                                         ; Digital input enable 9
+; bit position masks
+mDIENAD_DIENADL0:   equ    %00000001
+mDIENAD_DIENADL1:   equ    %00000010
+mDIENAD_DIENADL2:   equ    %00000100
+mDIENAD_DIENADL3:   equ    %00001000
+mDIENAD_DIENADL4:   equ    %00010000
+mDIENAD_DIENADL5:   equ    %00100000
+mDIENAD_DIENADL6:   equ    %01000000
+mDIENAD_DIENADL7:   equ    %10000000
+mDIENAD_DIENADH0:   equ    %100000000
+mDIENAD_DIENADH1:   equ    %1000000000
+
+
+;*** DIENADH - Digital Input Enable Register; 0x00000298 ***
+DIENADH:            equ    $00000298                                ;*** DIENADH - Digital Input Enable Register; 0x00000298 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DIENADH_DIENADH0:   equ    0                                         ; Digital input enable 0
+DIENADH_DIENADH1:   equ    1                                         ; Digital input enable 1
+; bit position masks
+mDIENADH_DIENADH0:  equ    %00000001
+mDIENADH_DIENADH1:  equ    %00000010
+
+
+;*** DIENADL - Digital Input Enable Register; 0x00000299 ***
+DIENADL:            equ    $00000299                                ;*** DIENADL - Digital Input Enable Register; 0x00000299 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DIENADL_DIENADL0:   equ    0                                         ; Digital input enable 0
+DIENADL_DIENADL1:   equ    1                                         ; Digital input enable 1
+DIENADL_DIENADL2:   equ    2                                         ; Digital input enable 2
+DIENADL_DIENADL3:   equ    3                                         ; Digital input enable 3
+DIENADL_DIENADL4:   equ    4                                         ; Digital input enable 4
+DIENADL_DIENADL5:   equ    5                                         ; Digital input enable 5
+DIENADL_DIENADL6:   equ    6                                         ; Digital input enable 6
+DIENADL_DIENADL7:   equ    7                                         ; Digital input enable 7
+; bit position masks
+mDIENADL_DIENADL0:  equ    %00000001
+mDIENADL_DIENADL1:  equ    %00000010
+mDIENADL_DIENADL2:  equ    %00000100
+mDIENADL_DIENADL3:  equ    %00001000
+mDIENADL_DIENADL4:  equ    %00010000
+mDIENADL_DIENADL5:  equ    %00100000
+mDIENADL_DIENADL6:  equ    %01000000
+mDIENADL_DIENADL7:  equ    %10000000
+
+
+;*** PTT - Port T Data Register; 0x000002C0 ***
+PTT:                equ    $000002C0                                ;*** PTT - Port T Data Register; 0x000002C0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTT_PTT0:           equ    0                                         ; Port T general purpose I/O data 0
+PTT_PTT1:           equ    1                                         ; Port T general purpose I/O data 1
+PTT_PTT2:           equ    2                                         ; Port T general purpose I/O data 2
+PTT_PTT3:           equ    3                                         ; Port T general purpose I/O data 3
+PTT_PTT4:           equ    4                                         ; Port T general purpose I/O data 4
+PTT_PTT5:           equ    5                                         ; Port T general purpose I/O data 5
+PTT_PTT6:           equ    6                                         ; Port T general purpose I/O data 6
+PTT_PTT7:           equ    7                                         ; Port T general purpose I/O data 7
+; bit position masks
+mPTT_PTT0:          equ    %00000001
+mPTT_PTT1:          equ    %00000010
+mPTT_PTT2:          equ    %00000100
+mPTT_PTT3:          equ    %00001000
+mPTT_PTT4:          equ    %00010000
+mPTT_PTT5:          equ    %00100000
+mPTT_PTT6:          equ    %01000000
+mPTT_PTT7:          equ    %10000000
+
+
+;*** PTIT - Port T Input Register; 0x000002C1 ***
+PTIT:               equ    $000002C1                                ;*** PTIT - Port T Input Register; 0x000002C1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIT_PTIT0:         equ    0                                         ; Port T data input 0
+PTIT_PTIT1:         equ    1                                         ; Port T data input 1
+PTIT_PTIT2:         equ    2                                         ; Port T data input 2
+PTIT_PTIT3:         equ    3                                         ; Port T data input 3
+PTIT_PTIT4:         equ    4                                         ; Port T data input 4
+PTIT_PTIT5:         equ    5                                         ; Port T data input 5
+PTIT_PTIT6:         equ    6                                         ; Port T data input 6
+PTIT_PTIT7:         equ    7                                         ; Port T data input 7
+; bit position masks
+mPTIT_PTIT0:        equ    %00000001
+mPTIT_PTIT1:        equ    %00000010
+mPTIT_PTIT2:        equ    %00000100
+mPTIT_PTIT3:        equ    %00001000
+mPTIT_PTIT4:        equ    %00010000
+mPTIT_PTIT5:        equ    %00100000
+mPTIT_PTIT6:        equ    %01000000
+mPTIT_PTIT7:        equ    %10000000
+
+
+;*** DDRT - Port T Data Direction Register; 0x000002C2 ***
+DDRT:               equ    $000002C2                                ;*** DDRT - Port T Data Direction Register; 0x000002C2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRT_DDRT0:         equ    0                                         ; Port T data direction select 0
+DDRT_DDRT1:         equ    1                                         ; Port T data direction select 1
+DDRT_DDRT2:         equ    2                                         ; Port T data direction select 2
+DDRT_DDRT3:         equ    3                                         ; Port T data direction select 3
+DDRT_DDRT4:         equ    4                                         ; Port T data direction select 4
+DDRT_DDRT5:         equ    5                                         ; Port T data direction select 5
+DDRT_DDRT6:         equ    6                                         ; Port T data direction select 6
+DDRT_DDRT7:         equ    7                                         ; Port T data direction select 7
+; bit position masks
+mDDRT_DDRT0:        equ    %00000001
+mDDRT_DDRT1:        equ    %00000010
+mDDRT_DDRT2:        equ    %00000100
+mDDRT_DDRT3:        equ    %00001000
+mDDRT_DDRT4:        equ    %00010000
+mDDRT_DDRT5:        equ    %00100000
+mDDRT_DDRT6:        equ    %01000000
+mDDRT_DDRT7:        equ    %10000000
+
+
+;*** PERT - Port T Pull Device Enable Register; 0x000002C3 ***
+PERT:               equ    $000002C3                                ;*** PERT - Port T Pull Device Enable Register; 0x000002C3 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERT_PERT0:         equ    0                                         ; Port T pull device enable 0
+PERT_PERT1:         equ    1                                         ; Port T pull device enable 1
+PERT_PERT2:         equ    2                                         ; Port T pull device enable 2
+PERT_PERT3:         equ    3                                         ; Port T pull device enable 3
+PERT_PERT4:         equ    4                                         ; Port T pull device enable 4
+PERT_PERT5:         equ    5                                         ; Port T pull device enable 5
+PERT_PERT6:         equ    6                                         ; Port T pull device enable 6
+PERT_PERT7:         equ    7                                         ; Port T pull device enable 7
+; bit position masks
+mPERT_PERT0:        equ    %00000001
+mPERT_PERT1:        equ    %00000010
+mPERT_PERT2:        equ    %00000100
+mPERT_PERT3:        equ    %00001000
+mPERT_PERT4:        equ    %00010000
+mPERT_PERT5:        equ    %00100000
+mPERT_PERT6:        equ    %01000000
+mPERT_PERT7:        equ    %10000000
+
+
+;*** PPST - Port T Polarity Select Register; 0x000002C4 ***
+PPST:               equ    $000002C4                                ;*** PPST - Port T Polarity Select Register; 0x000002C4 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPST_PPST0:         equ    0                                         ; Port T pull polarity select 0
+PPST_PPST1:         equ    1                                         ; Port T pull polarity select 1
+PPST_PPST2:         equ    2                                         ; Port T pull polarity select 2
+PPST_PPST3:         equ    3                                         ; Port T pull polarity select 3
+PPST_PPST4:         equ    4                                         ; Port T pull polarity select 4
+PPST_PPST5:         equ    5                                         ; Port T pull polarity select 5
+PPST_PPST6:         equ    6                                         ; Port T pull polarity select 6
+PPST_PPST7:         equ    7                                         ; Port T pull polarity select 7
+; bit position masks
+mPPST_PPST0:        equ    %00000001
+mPPST_PPST1:        equ    %00000010
+mPPST_PPST2:        equ    %00000100
+mPPST_PPST3:        equ    %00001000
+mPPST_PPST4:        equ    %00010000
+mPPST_PPST5:        equ    %00100000
+mPPST_PPST6:        equ    %01000000
+mPPST_PPST7:        equ    %10000000
+
+
+;*** PTS - Port S Data Register; 0x000002D0 ***
+PTS:                equ    $000002D0                                ;*** PTS - Port S Data Register; 0x000002D0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTS_PTS0:           equ    0                                         ; Port S general purpose I/O data 0
+PTS_PTS1:           equ    1                                         ; Port S general purpose I/O data 1
+PTS_PTS2:           equ    2                                         ; Port S general purpose I/O data 2
+PTS_PTS3:           equ    3                                         ; Port S general purpose I/O data 3
+; bit position masks
+mPTS_PTS0:          equ    %00000001
+mPTS_PTS1:          equ    %00000010
+mPTS_PTS2:          equ    %00000100
+mPTS_PTS3:          equ    %00001000
+
+
+;*** PTIS - Port S Input Register; 0x000002D1 ***
+PTIS:               equ    $000002D1                                ;*** PTIS - Port S Input Register; 0x000002D1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIS_PTIS0:         equ    0                                         ; Port S data input 0
+PTIS_PTIS1:         equ    1                                         ; Port S data input 1
+PTIS_PTIS2:         equ    2                                         ; Port S data input 2
+PTIS_PTIS3:         equ    3                                         ; Port S data input 3
+; bit position masks
+mPTIS_PTIS0:        equ    %00000001
+mPTIS_PTIS1:        equ    %00000010
+mPTIS_PTIS2:        equ    %00000100
+mPTIS_PTIS3:        equ    %00001000
+
+
+;*** DDRS - Port S Data Direction Register; 0x000002D2 ***
+DDRS:               equ    $000002D2                                ;*** DDRS - Port S Data Direction Register; 0x000002D2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRS_DDRS0:         equ    0                                         ; Port S data direction select 0
+DDRS_DDRS1:         equ    1                                         ; Port S data direction select 1
+DDRS_DDRS2:         equ    2                                         ; Port S data direction select 2
+DDRS_DDRS3:         equ    3                                         ; Port S data direction select 3
+; bit position masks
+mDDRS_DDRS0:        equ    %00000001
+mDDRS_DDRS1:        equ    %00000010
+mDDRS_DDRS2:        equ    %00000100
+mDDRS_DDRS3:        equ    %00001000
+
+
+;*** PERS - Port S Pull Device Enable Register; 0x000002D3 ***
+PERS:               equ    $000002D3                                ;*** PERS - Port S Pull Device Enable Register; 0x000002D3 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERS_PERS0:         equ    0                                         ; Port S pull device enable 0
+PERS_PERS1:         equ    1                                         ; Port S pull device enable 1
+PERS_PERS2:         equ    2                                         ; Port S pull device enable 2
+PERS_PERS3:         equ    3                                         ; Port S pull device enable 3
+; bit position masks
+mPERS_PERS0:        equ    %00000001
+mPERS_PERS1:        equ    %00000010
+mPERS_PERS2:        equ    %00000100
+mPERS_PERS3:        equ    %00001000
+
+
+;*** PPSS - Port S Polarity Select Register; 0x000002D4 ***
+PPSS:               equ    $000002D4                                ;*** PPSS - Port S Polarity Select Register; 0x000002D4 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSS_PPSS0:         equ    0                                         ; Port S pull polarity select 0
+PPSS_PPSS1:         equ    1                                         ; Port S pull polarity select 1
+PPSS_PPSS2:         equ    2                                         ; Port S pull polarity select 2
+PPSS_PPSS3:         equ    3                                         ; Port S pull polarity select 3
+; bit position masks
+mPPSS_PPSS0:        equ    %00000001
+mPPSS_PPSS1:        equ    %00000010
+mPPSS_PPSS2:        equ    %00000100
+mPPSS_PPSS3:        equ    %00001000
+
+
+;*** PIES - Port S Interrupt Enable Register; 0x000002D6 ***
+PIES:               equ    $000002D6                                ;*** PIES - Port S Interrupt Enable Register; 0x000002D6 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIES_PIES0:         equ    0                                         ; Port S interrupt enable 0
+PIES_PIES1:         equ    1                                         ; Port S interrupt enable 1
+PIES_PIES2:         equ    2                                         ; Port S interrupt enable 2
+PIES_PIES3:         equ    3                                         ; Port S interrupt enable 3
+; bit position masks
+mPIES_PIES0:        equ    %00000001
+mPIES_PIES1:        equ    %00000010
+mPIES_PIES2:        equ    %00000100
+mPIES_PIES3:        equ    %00001000
+
+
+;*** PIFS - Port S Interrupt Flag Register; 0x000002D7 ***
+PIFS:               equ    $000002D7                                ;*** PIFS - Port S Interrupt Flag Register; 0x000002D7 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIFS_PIFS0:         equ    0                                         ; Port S interrupt flag 0
+PIFS_PIFS1:         equ    1                                         ; Port S interrupt flag 1
+PIFS_PIFS2:         equ    2                                         ; Port S interrupt flag 2
+PIFS_PIFS3:         equ    3                                         ; Port S interrupt flag 3
+; bit position masks
+mPIFS_PIFS0:        equ    %00000001
+mPIFS_PIFS1:        equ    %00000010
+mPIFS_PIFS2:        equ    %00000100
+mPIFS_PIFS3:        equ    %00001000
+
+
+;*** WOMS - Port S Wired-Or Mode Register; 0x000002DF ***
+WOMS:               equ    $000002DF                                ;*** WOMS - Port S Wired-Or Mode Register; 0x000002DF ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+WOMS_WOMS0:         equ    0                                         ; Port S wired-or mode 0
+WOMS_WOMS1:         equ    1                                         ; Port S wired-or mode 1
+WOMS_WOMS2:         equ    2                                         ; Port S wired-or mode 2
+WOMS_WOMS3:         equ    3                                         ; Port S wired-or mode 3
+; bit position masks
+mWOMS_WOMS0:        equ    %00000001
+mWOMS_WOMS1:        equ    %00000010
+mWOMS_WOMS2:        equ    %00000100
+mWOMS_WOMS3:        equ    %00001000
+
+
+;*** PTP - Port P Data Register; 0x000002F0 ***
+PTP:                equ    $000002F0                                ;*** PTP - Port P Data Register; 0x000002F0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTP_PTP0:           equ    0                                         ; Port P general purpose I/O data 0
+PTP_PTP1:           equ    1                                         ; Port P general purpose I/O data 1
+PTP_PTP2:           equ    2                                         ; Port P general purpose I/O data 2
+PTP_PTP3:           equ    3                                         ; Port P general purpose I/O data 3
+PTP_PTP4:           equ    4                                         ; Port P general purpose I/O data 4
+PTP_PTP5:           equ    5                                         ; Port P general purpose I/O data 5
+PTP_PTP6:           equ    6                                         ; Port P general purpose I/O data 6
+PTP_PTP7:           equ    7                                         ; Port P general purpose I/O data 7
+; bit position masks
+mPTP_PTP0:          equ    %00000001
+mPTP_PTP1:          equ    %00000010
+mPTP_PTP2:          equ    %00000100
+mPTP_PTP3:          equ    %00001000
+mPTP_PTP4:          equ    %00010000
+mPTP_PTP5:          equ    %00100000
+mPTP_PTP6:          equ    %01000000
+mPTP_PTP7:          equ    %10000000
+
+
+;*** PTIP - Port P Input Register; 0x000002F1 ***
+PTIP:               equ    $000002F1                                ;*** PTIP - Port P Input Register; 0x000002F1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIP_PTIP0:         equ    0                                         ; Port P data input 0
+PTIP_PTIP1:         equ    1                                         ; Port P data input 1
+PTIP_PTIP2:         equ    2                                         ; Port P data input 2
+PTIP_PTIP3:         equ    3                                         ; Port P data input 3
+PTIP_PTIP4:         equ    4                                         ; Port P data input 4
+PTIP_PTIP5:         equ    5                                         ; Port P data input 5
+PTIP_PTIP6:         equ    6                                         ; Port P data input 6
+PTIP_PTIP7:         equ    7                                         ; Port P data input 7
+; bit position masks
+mPTIP_PTIP0:        equ    %00000001
+mPTIP_PTIP1:        equ    %00000010
+mPTIP_PTIP2:        equ    %00000100
+mPTIP_PTIP3:        equ    %00001000
+mPTIP_PTIP4:        equ    %00010000
+mPTIP_PTIP5:        equ    %00100000
+mPTIP_PTIP6:        equ    %01000000
+mPTIP_PTIP7:        equ    %10000000
+
+
+;*** DDRP - Port P Data Direction Register; 0x000002F2 ***
+DDRP:               equ    $000002F2                                ;*** DDRP - Port P Data Direction Register; 0x000002F2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRP_DDRP0:         equ    0                                         ; Port P data direction select 0
+DDRP_DDRP1:         equ    1                                         ; Port P data direction select 1
+DDRP_DDRP2:         equ    2                                         ; Port P data direction select 2
+DDRP_DDRP3:         equ    3                                         ; Port P data direction select 3
+DDRP_DDRP4:         equ    4                                         ; Port P data direction select 4
+DDRP_DDRP5:         equ    5                                         ; Port P data direction select 5
+DDRP_DDRP6:         equ    6                                         ; Port P data direction select 6
+DDRP_DDRP7:         equ    7                                         ; Port P data direction select 7
+; bit position masks
+mDDRP_DDRP0:        equ    %00000001
+mDDRP_DDRP1:        equ    %00000010
+mDDRP_DDRP2:        equ    %00000100
+mDDRP_DDRP3:        equ    %00001000
+mDDRP_DDRP4:        equ    %00010000
+mDDRP_DDRP5:        equ    %00100000
+mDDRP_DDRP6:        equ    %01000000
+mDDRP_DDRP7:        equ    %10000000
+
+
+;*** PERP - Port P Pull Device Enable Register; 0x000002F3 ***
+PERP:               equ    $000002F3                                ;*** PERP - Port P Pull Device Enable Register; 0x000002F3 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERP_PERP0:         equ    0                                         ; Port P pull device enable 0
+PERP_PERP1:         equ    1                                         ; Port P pull device enable 1
+PERP_PERP2:         equ    2                                         ; Port P pull device enable 2
+PERP_PERP3:         equ    3                                         ; Port P pull device enable 3
+PERP_PERP4:         equ    4                                         ; Port P pull device enable 4
+PERP_PERP5:         equ    5                                         ; Port P pull device enable 5
+PERP_PERP6:         equ    6                                         ; Port P pull device enable 6
+PERP_PERP7:         equ    7                                         ; Port P pull device enable 7
+; bit position masks
+mPERP_PERP0:        equ    %00000001
+mPERP_PERP1:        equ    %00000010
+mPERP_PERP2:        equ    %00000100
+mPERP_PERP3:        equ    %00001000
+mPERP_PERP4:        equ    %00010000
+mPERP_PERP5:        equ    %00100000
+mPERP_PERP6:        equ    %01000000
+mPERP_PERP7:        equ    %10000000
+
+
+;*** PPSP - Port P Polarity Select Register; 0x000002F4 ***
+PPSP:               equ    $000002F4                                ;*** PPSP - Port P Polarity Select Register; 0x000002F4 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSP_PPSP0:         equ    0                                         ; Port P pull polarity select 0
+PPSP_PPSP1:         equ    1                                         ; Port P pull polarity select 1
+PPSP_PPSP2:         equ    2                                         ; Port P pull polarity select 2
+PPSP_PPSP3:         equ    3                                         ; Port P pull polarity select 3
+PPSP_PPSP4:         equ    4                                         ; Port P pull polarity select 4
+PPSP_PPSP5:         equ    5                                         ; Port P pull polarity select 5
+PPSP_PPSP6:         equ    6                                         ; Port P pull polarity select 6
+PPSP_PPSP7:         equ    7                                         ; Port P pull polarity select 7
+; bit position masks
+mPPSP_PPSP0:        equ    %00000001
+mPPSP_PPSP1:        equ    %00000010
+mPPSP_PPSP2:        equ    %00000100
+mPPSP_PPSP3:        equ    %00001000
+mPPSP_PPSP4:        equ    %00010000
+mPPSP_PPSP5:        equ    %00100000
+mPPSP_PPSP6:        equ    %01000000
+mPPSP_PPSP7:        equ    %10000000
+
+
+;*** PIEP - Port P Interrupt Enable Register; 0x000002F6 ***
+PIEP:               equ    $000002F6                                ;*** PIEP - Port P Interrupt Enable Register; 0x000002F6 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIEP_PIEP0:         equ    0                                         ; Port P interrupt enable 0
+PIEP_PIEP1:         equ    1                                         ; Port P interrupt enable 1
+PIEP_PIEP2:         equ    2                                         ; Port P interrupt enable 2
+PIEP_PIEP3:         equ    3                                         ; Port P interrupt enable 3
+PIEP_PIEP4:         equ    4                                         ; Port P interrupt enable 4
+PIEP_PIEP5:         equ    5                                         ; Port P interrupt enable 5
+PIEP_PIEP6:         equ    6                                         ; Port P interrupt enable 6
+PIEP_PIEP7:         equ    7                                         ; Port P interrupt enable 7
+; bit position masks
+mPIEP_PIEP0:        equ    %00000001
+mPIEP_PIEP1:        equ    %00000010
+mPIEP_PIEP2:        equ    %00000100
+mPIEP_PIEP3:        equ    %00001000
+mPIEP_PIEP4:        equ    %00010000
+mPIEP_PIEP5:        equ    %00100000
+mPIEP_PIEP6:        equ    %01000000
+mPIEP_PIEP7:        equ    %10000000
+
+
+;*** PIFP - Port P Interrupt Flag Register; 0x000002F7 ***
+PIFP:               equ    $000002F7                                ;*** PIFP - Port P Interrupt Flag Register; 0x000002F7 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIFP_PIFP0:         equ    0                                         ; Port P interrupt flag 0
+PIFP_PIFP1:         equ    1                                         ; Port P interrupt flag 1
+PIFP_PIFP2:         equ    2                                         ; Port P interrupt flag 2
+PIFP_PIFP3:         equ    3                                         ; Port P interrupt flag 3
+PIFP_PIFP4:         equ    4                                         ; Port P interrupt flag 4
+PIFP_PIFP5:         equ    5                                         ; Port P interrupt flag 5
+PIFP_PIFP6:         equ    6                                         ; Port P interrupt flag 6
+PIFP_PIFP7:         equ    7                                         ; Port P interrupt flag 7
+; bit position masks
+mPIFP_PIFP0:        equ    %00000001
+mPIFP_PIFP1:        equ    %00000010
+mPIFP_PIFP2:        equ    %00000100
+mPIFP_PIFP3:        equ    %00001000
+mPIFP_PIFP4:        equ    %00010000
+mPIFP_PIFP5:        equ    %00100000
+mPIFP_PIFP6:        equ    %01000000
+mPIFP_PIFP7:        equ    %10000000
+
+
+;*** OCPEP - Port P Over-Current Protection Enable Register; 0x000002F9 ***
+OCPEP:              equ    $000002F9                                ;*** OCPEP - Port P Over-Current Protection Enable Register; 0x000002F9 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+OCPEP_OCPEP1:       equ    1                                         ; Over-Current Protection Enable on PP1
+OCPEP_OCPEP3:       equ    3                                         ; Over-Current Protection Enable on PP3
+OCPEP_OCPEP5:       equ    5                                         ; Over-Current Protection Enable on PP5
+OCPEP_OCPEP7:       equ    7                                         ; Over-Current Protection Enable on EVDD1
+; bit position masks
+mOCPEP_OCPEP1:      equ    %00000010
+mOCPEP_OCPEP3:      equ    %00001000
+mOCPEP_OCPEP5:      equ    %00100000
+mOCPEP_OCPEP7:      equ    %10000000
+
+
+;*** OCIEP - Port P Over-Current Interrupt Enable Register; 0x000002FA ***
+OCIEP:              equ    $000002FA                                ;*** OCIEP - Port P Over-Current Interrupt Enable Register; 0x000002FA ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+OCIEP_OCIEP1:       equ    1                                         ; Over-Current Interrupt Enable on PP1
+OCIEP_OCIEP3:       equ    3                                         ; Over-Current Interrupt Enable on PP3
+OCIEP_OCIEP5:       equ    5                                         ; Over-Current Interrupt Enable on PP5
+OCIEP_OCIEP7:       equ    7                                         ; Over-Current Interrupt Enable on EVDD1
+; bit position masks
+mOCIEP_OCIEP1:      equ    %00000010
+mOCIEP_OCIEP3:      equ    %00001000
+mOCIEP_OCIEP5:      equ    %00100000
+mOCIEP_OCIEP7:      equ    %10000000
+
+
+;*** OCIFP - Port P Over-Current Interrupt Flag Register; 0x000002FB ***
+OCIFP:              equ    $000002FB                                ;*** OCIFP - Port P Over-Current Interrupt Flag Register; 0x000002FB ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+OCIFP_OCIFP1:       equ    1                                         ; Over-Current Interrupt Flag on PP1
+OCIFP_OCIFP3:       equ    3                                         ; Over-Current Interrupt Flag on PP3
+OCIFP_OCIFP5:       equ    5                                         ; Over-Current Interrupt Flag on PP5
+OCIFP_OCIFP7:       equ    7                                         ; Over-Current Interrupt Flag on EVDD1
+; bit position masks
+mOCIFP_OCIFP1:      equ    %00000010
+mOCIFP_OCIFP3:      equ    %00001000
+mOCIFP_OCIFP5:      equ    %00100000
+mOCIFP_OCIFP7:      equ    %10000000
+
+
+;*** RDRP - Port P Reduced Drive Register; 0x000002FD ***
+RDRP:               equ    $000002FD                                ;*** RDRP - Port P Reduced Drive Register; 0x000002FD ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+RDRP_RDRP1:         equ    1                                         ; Port P reduced drive select 1
+RDRP_RDRP3:         equ    3                                         ; Port P reduced drive select 3
+RDRP_RDRP5:         equ    5                                         ; Port P reduced drive select 5
+RDRP_RDRP7:         equ    7                                         ; Port P reduced drive select 7
+; bit position masks
+mRDRP_RDRP1:        equ    %00000010
+mRDRP_RDRP3:        equ    %00001000
+mRDRP_RDRP5:        equ    %00100000
+mRDRP_RDRP7:        equ    %10000000
+
+
+;*** PTJ - Port J Data Register; 0x00000310 ***
+PTJ:                equ    $00000310                                ;*** PTJ - Port J Data Register; 0x00000310 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTJ_PTJ0:           equ    0                                         ; Port J general purpose I/O data 0
+PTJ_PTJ1:           equ    1                                         ; Port J general purpose I/O data 1
+; bit position masks
+mPTJ_PTJ0:          equ    %00000001
+mPTJ_PTJ1:          equ    %00000010
+
+
+;*** PTIJ - Port J Input Register; 0x00000311 ***
+PTIJ:               equ    $00000311                                ;*** PTIJ - Port J Input Register; 0x00000311 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIJ_PTIJ0:         equ    0                                         ; Port J data input 0
+PTIJ_PTIJ1:         equ    1                                         ; Port J data input 1
+; bit position masks
+mPTIJ_PTIJ0:        equ    %00000001
+mPTIJ_PTIJ1:        equ    %00000010
+
+
+;*** DDRJ - Port J Data Direction Register; 0x00000312 ***
+DDRJ:               equ    $00000312                                ;*** DDRJ - Port J Data Direction Register; 0x00000312 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DDRJ_DDRJ0:         equ    0                                         ; Port J data direction select 0
+DDRJ_DDRJ1:         equ    1                                         ; Port J data direction select 1
+; bit position masks
+mDDRJ_DDRJ0:        equ    %00000001
+mDDRJ_DDRJ1:        equ    %00000010
+
+
+;*** PERJ - Port J Pull Device Enable Register; 0x00000313 ***
+PERJ:               equ    $00000313                                ;*** PERJ - Port J Pull Device Enable Register; 0x00000313 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PERJ_PERJ0:         equ    0                                         ; Port J pull device enable 0
+PERJ_PERJ1:         equ    1                                         ; Port J pull device enable 1
+; bit position masks
+mPERJ_PERJ0:        equ    %00000001
+mPERJ_PERJ1:        equ    %00000010
+
+
+;*** PPSJ - Port J Polarity Select Register; 0x00000314 ***
+PPSJ:               equ    $00000314                                ;*** PPSJ - Port J Polarity Select Register; 0x00000314 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSJ_PPSJ0:         equ    0                                         ; Port J pull polarity select 0
+PPSJ_PPSJ1:         equ    1                                         ; Port J pull polarity select 1
+; bit position masks
+mPPSJ_PPSJ0:        equ    %00000001
+mPPSJ_PPSJ1:        equ    %00000010
+
+
+;*** WOMJ - Port J Wired-Or Mode Register; 0x0000031F ***
+WOMJ:               equ    $0000031F                                ;*** WOMJ - Port J Wired-Or Mode Register; 0x0000031F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+WOMJ_WOMJ0:         equ    0                                         ; Port J wired-or mode 0
+WOMJ_WOMJ1:         equ    1                                         ; Port J wired-or mode 1
+; bit position masks
+mWOMJ_WOMJ0:        equ    %00000001
+mWOMJ_WOMJ1:        equ    %00000010
+
+
+;*** PTIL - Port L Input Register; 0x00000331 ***
+PTIL:               equ    $00000331                                ;*** PTIL - Port L Input Register; 0x00000331 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTIL_PTIL0:         equ    0                                         ; Port L data input 0
+; bit position masks
+mPTIL_PTIL0:        equ    %00000001
+
+
+;*** PPSL - Port L Polarity Select Register; 0x00000334 ***
+PPSL:               equ    $00000334                                ;*** PPSL - Port L Polarity Select Register; 0x00000334 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PPSL_PPSL0:         equ    0                                         ; Port L pull polarity select 0
+; bit position masks
+mPPSL_PPSL0:        equ    %00000001
+
+
+;*** PIEL - Port L Interrupt Enable Register; 0x00000336 ***
+PIEL:               equ    $00000336                                ;*** PIEL - Port L Interrupt Enable Register; 0x00000336 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIEL_PIEL0:         equ    0                                         ; Port L interrupt enable 0
+; bit position masks
+mPIEL_PIEL0:        equ    %00000001
+
+
+;*** PIFL - Port L Interrupt Flag Register; 0x00000337 ***
+PIFL:               equ    $00000337                                ;*** PIFL - Port L Interrupt Flag Register; 0x00000337 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIFL_PIFL0:         equ    0                                         ; Port L interrupt flag 0
+; bit position masks
+mPIFL_PIFL0:        equ    %00000001
+
+
+;*** DIENL - Port LDigital Input Enable Register; 0x0000033C ***
+DIENL:              equ    $0000033C                                ;*** DIENL - Port LDigital Input Enable Register; 0x0000033C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DIENL_DIENL0:       equ    0                                         ; Digital input enable 0
+; bit position masks
+mDIENL_DIENL0:      equ    %00000001
+
+
+;*** PTAL - Port L Analog Access Register; 0x0000033D ***
+PTAL:               equ    $0000033D                                ;*** PTAL - Port L Analog Access Register; 0x0000033D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PTAL_PTAENL:        equ    3                                         ; Port L ADC connection Enable
+PTAL_PTADIRL:       equ    4                                         ; Port L ADC Direct connection
+PTAL_PTABYPL:       equ    5                                         ; Port L ADC connection Bypass
+PTAL_PTPSL:         equ    6                                         ; Port L Pull Select
+PTAL_PTTEL:         equ    7                                         ; Port L Test Enable
+; bit position masks
+mPTAL_PTAENL:       equ    %00001000
+mPTAL_PTADIRL:      equ    %00010000
+mPTAL_PTABYPL:      equ    %00100000
+mPTAL_PTPSL:        equ    %01000000
+mPTAL_PTTEL:        equ    %10000000
+
+
+;*** PIRL - Port L Input Divider Ratio Selection Register; 0x0000033E ***
+PIRL:               equ    $0000033E                                ;*** PIRL - Port L Input Divider Ratio Selection Register; 0x0000033E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PIRL_PIRL0:         equ    0             
+; bit position masks
+mPIRL_PIRL0:        equ    %00000011
+
+
+;*** FCLKDIV - Flash Clock Divider Register; 0x00000380 ***
+FCLKDIV:            equ    $00000380                                ;*** FCLKDIV - Flash Clock Divider Register; 0x00000380 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCLKDIV_FDIV0:      equ    0                                         ; Clock Divider Bit 0
+FCLKDIV_FDIV1:      equ    1                                         ; Clock Divider Bit 1
+FCLKDIV_FDIV2:      equ    2                                         ; Clock Divider Bit 2
+FCLKDIV_FDIV3:      equ    3                                         ; Clock Divider Bit 3
+FCLKDIV_FDIV4:      equ    4                                         ; Clock Divider Bit 4
+FCLKDIV_FDIV5:      equ    5                                         ; Clock Divider Bit 5
+FCLKDIV_FDIVLCK:    equ    6                                         ; Clock divider locked
+FCLKDIV_FDIVLD:     equ    7                                         ; Clock Divider Loaded
+; bit position masks
+mFCLKDIV_FDIV0:     equ    %00000001
+mFCLKDIV_FDIV1:     equ    %00000010
+mFCLKDIV_FDIV2:     equ    %00000100
+mFCLKDIV_FDIV3:     equ    %00001000
+mFCLKDIV_FDIV4:     equ    %00010000
+mFCLKDIV_FDIV5:     equ    %00100000
+mFCLKDIV_FDIVLCK:   equ    %01000000
+mFCLKDIV_FDIVLD:    equ    %10000000
+
+
+;*** FSEC - Flash Security Register; 0x00000381 ***
+FSEC:               equ    $00000381                                ;*** FSEC - Flash Security Register; 0x00000381 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FSEC_SEC0:          equ    0                                         ; Flash Security Bit 0
+FSEC_SEC1:          equ    1                                         ; Flash Security Bit 1
+FSEC_RNV2:          equ    2                                         ; Reserved Nonvolatile Bit 2
+FSEC_RNV3:          equ    3                                         ; Reserved Nonvolatile Bit 3
+FSEC_RNV4:          equ    4                                         ; Reserved Nonvolatile Bit 4
+FSEC_RNV5:          equ    5                                         ; Reserved Nonvolatile Bit 5
+FSEC_KEYEN0:        equ    6                                         ; Backdoor Key Security Enable Bit 0
+FSEC_KEYEN1:        equ    7                                         ; Backdoor Key Security Enable Bit 1
+; bit position masks
+mFSEC_SEC0:         equ    %00000001
+mFSEC_SEC1:         equ    %00000010
+mFSEC_RNV2:         equ    %00000100
+mFSEC_RNV3:         equ    %00001000
+mFSEC_RNV4:         equ    %00010000
+mFSEC_RNV5:         equ    %00100000
+mFSEC_KEYEN0:       equ    %01000000
+mFSEC_KEYEN1:       equ    %10000000
+
+
+;*** FCCOBIX - Flash CCOB Index Register; 0x00000382 ***
+FCCOBIX:            equ    $00000382                                ;*** FCCOBIX - Flash CCOB Index Register; 0x00000382 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOBIX_CCOBIX0:    equ    0                                         ; Common Command Register Index Bit 0
+FCCOBIX_CCOBIX1:    equ    1                                         ; Common Command Register Index Bit 1
+FCCOBIX_CCOBIX2:    equ    2                                         ; Common Command Register Index Bit 2
+; bit position masks
+mFCCOBIX_CCOBIX0:   equ    %00000001
+mFCCOBIX_CCOBIX1:   equ    %00000010
+mFCCOBIX_CCOBIX2:   equ    %00000100
+
+
+;*** FPSTAT - Flash Protection Status Register; 0x00000383 ***
+FPSTAT:             equ    $00000383                                ;*** FPSTAT - Flash Protection Status Register; 0x00000383 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FPSTAT_WSTATACK:    equ    0                                         ; Wait-State Switch Acknowledge
+FPSTAT_FPOVRD:      equ    7                                         ; Flash Protection Override Status
+; bit position masks
+mFPSTAT_WSTATACK:   equ    %00000001
+mFPSTAT_FPOVRD:     equ    %10000000
+
+
+;*** FCNFG - Flash Configuration Register; 0x00000384 ***
+FCNFG:              equ    $00000384                                ;*** FCNFG - Flash Configuration Register; 0x00000384 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCNFG_FSFD:         equ    0                                         ; Force Single Bit Fault Detect
+FCNFG_FDFD:         equ    1                                         ; Force Double Bit Fault Detect
+FCNFG_WSTAT:        equ    2                                         ; Wait State control bits
+FCNFG_IGNSF:        equ    4                                         ; Ignore Single Bit Fault
+FCNFG_ERSAREQ:      equ    5                                         ; Erase All Request
+FCNFG_CCIE:         equ    7                                         ; Command Complete Interrupt Enable
+; bit position masks
+mFCNFG_FSFD:        equ    %00000001
+mFCNFG_FDFD:        equ    %00000010
+mFCNFG_WSTAT:       equ    %00001100
+mFCNFG_IGNSF:       equ    %00010000
+mFCNFG_ERSAREQ:     equ    %00100000
+mFCNFG_CCIE:        equ    %10000000
+
+
+;*** FERCNFG - Flash Error Configuration Register; 0x00000385 ***
+FERCNFG:            equ    $00000385                                ;*** FERCNFG - Flash Error Configuration Register; 0x00000385 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FERCNFG_SFDIE:      equ    0                                         ; Single Bit Fault Detect Interrupt Enable
+; bit position masks
+mFERCNFG_SFDIE:     equ    %00000001
+
+
+;*** FSTAT - Flash Status Register; 0x00000386 ***
+FSTAT:              equ    $00000386                                ;*** FSTAT - Flash Status Register; 0x00000386 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FSTAT_MGSTAT0:      equ    0                                         ; Memory Controller Command Completion Status Flag 0
+FSTAT_MGSTAT1:      equ    1                                         ; Memory Controller Command Completion Status Flag 1
+FSTAT_MGBUSY:       equ    3                                         ; Memory Controller Busy Flag
+FSTAT_FPVIOL:       equ    4                                         ; Flash Protection Violation Flag
+FSTAT_ACCERR:       equ    5                                         ; Flash Access Error Flag
+FSTAT_CCIF:         equ    7                                         ; Command Complete Interrupt Flag
+; bit position masks
+mFSTAT_MGSTAT0:     equ    %00000001
+mFSTAT_MGSTAT1:     equ    %00000010
+mFSTAT_MGBUSY:      equ    %00001000
+mFSTAT_FPVIOL:      equ    %00010000
+mFSTAT_ACCERR:      equ    %00100000
+mFSTAT_CCIF:        equ    %10000000
+
+
+;*** FERSTAT - Flash Error Status Register; 0x00000387 ***
+FERSTAT:            equ    $00000387                                ;*** FERSTAT - Flash Error Status Register; 0x00000387 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FERSTAT_SFDIF:      equ    0                                         ; Single Bit Fault Detect Interrupt Flag
+FERSTAT_DFDF:       equ    1                                         ; Double Bit Fault Detect Flag
+; bit position masks
+mFERSTAT_SFDIF:     equ    %00000001
+mFERSTAT_DFDF:      equ    %00000010
+
+
+;*** FPROT - P-Flash Protection Register; 0x00000388 ***
+FPROT:              equ    $00000388                                ;*** FPROT - P-Flash Protection Register; 0x00000388 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FPROT_FPLS0:        equ    0                                         ; Flash Protection Lower Address Size Bit 0. Note: bitfield is unavailable on 8K and 16K Flash memory variants
+FPROT_FPLS1:        equ    1                                         ; Flash Protection Lower Address Size Bit 1. Note: bitfield is unavailable on 8K and 16K Flash memory variants
+FPROT_FPLDIS:       equ    2                                         ; Flash Protection Lower Address Range Disable. Note: bitfield is unavailable on 8K and 16K Flash memory variants
+FPROT_FPHS0:        equ    3                                         ; Flash Protection Higher Address Size Bit 0
+FPROT_FPHS1:        equ    4                                         ; Flash Protection Higher Address Size Bit 1
+FPROT_FPHDIS:       equ    5                                         ; Flash Protection Higher Address Range Disable
+FPROT_RNV6:         equ    6                                         ; Reserved Nonvolatile Bit
+FPROT_FPOPEN:       equ    7                                         ; Flash Protection Operation Enable
+; bit position masks
+mFPROT_FPLS0:       equ    %00000001
+mFPROT_FPLS1:       equ    %00000010
+mFPROT_FPLDIS:      equ    %00000100
+mFPROT_FPHS0:       equ    %00001000
+mFPROT_FPHS1:       equ    %00010000
+mFPROT_FPHDIS:      equ    %00100000
+mFPROT_RNV6:        equ    %01000000
+mFPROT_FPOPEN:      equ    %10000000
+
+
+;*** DFPROT - EEPROM Protection Register; 0x00000389 ***
+DFPROT:             equ    $00000389                                ;*** DFPROT - EEPROM Protection Register; 0x00000389 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+DFPROT_DPS0:        equ    0                                         ; EEPROM Protection Size Bit 0
+DFPROT_DPS1:        equ    1                                         ; EEPROM Protection Size Bit 1
+DFPROT_DPOPEN:      equ    7                                         ; EEPROM Protection Control
+; bit position masks
+mDFPROT_DPS0:       equ    %00000001
+mDFPROT_DPS1:       equ    %00000010
+mDFPROT_DPOPEN:     equ    %10000000
+
+
+;*** FOPT - Flash Option Register; 0x0000038A ***
+FOPT:               equ    $0000038A                                ;*** FOPT - Flash Option Register; 0x0000038A ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FOPT_NV0:           equ    0                                         ; Nonvolatile Bit 0
+FOPT_NV1:           equ    1                                         ; Nonvolatile Bit 1
+FOPT_NV2:           equ    2                                         ; Nonvolatile Bit 2
+FOPT_NV3:           equ    3                                         ; Nonvolatile Bit 3
+FOPT_NV4:           equ    4                                         ; Nonvolatile Bit 4
+FOPT_NV5:           equ    5                                         ; Nonvolatile Bit 5
+FOPT_NV6:           equ    6                                         ; Nonvolatile Bit 6
+FOPT_NV7:           equ    7                                         ; Nonvolatile Bit 7
+; bit position masks
+mFOPT_NV0:          equ    %00000001
+mFOPT_NV1:          equ    %00000010
+mFOPT_NV2:          equ    %00000100
+mFOPT_NV3:          equ    %00001000
+mFOPT_NV4:          equ    %00010000
+mFOPT_NV5:          equ    %00100000
+mFOPT_NV6:          equ    %01000000
+mFOPT_NV7:          equ    %10000000
+
+
+;*** FCCOB0 - Flash Common Command Object Register; 0x0000038C ***
+FCCOB0:             equ    $0000038C                                ;*** FCCOB0 - Flash Common Command Object Register; 0x0000038C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB0_CCOB0:       equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB0_CCOB1:       equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB0_CCOB2:       equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB0_CCOB3:       equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB0_CCOB4:       equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB0_CCOB5:       equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB0_CCOB6:       equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB0_CCOB7:       equ    7                                         ; Flash Common Command Object Bit 7
+FCCOB0_CCOB8:       equ    8                                         ; Flash Common Command Object Bit 8
+FCCOB0_CCOB9:       equ    9                                         ; Flash Common Command Object Bit 9
+FCCOB0_CCOB10:      equ    10                                        ; Flash Common Command Object Bit 10
+FCCOB0_CCOB11:      equ    11                                        ; Flash Common Command Object Bit 11
+FCCOB0_CCOB12:      equ    12                                        ; Flash Common Command Object Bit 12
+FCCOB0_CCOB13:      equ    13                                        ; Flash Common Command Object Bit 13
+FCCOB0_CCOB14:      equ    14                                        ; Flash Common Command Object Bit 14
+FCCOB0_CCOB15:      equ    15                                        ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB0_CCOB0:      equ    %00000001
+mFCCOB0_CCOB1:      equ    %00000010
+mFCCOB0_CCOB2:      equ    %00000100
+mFCCOB0_CCOB3:      equ    %00001000
+mFCCOB0_CCOB4:      equ    %00010000
+mFCCOB0_CCOB5:      equ    %00100000
+mFCCOB0_CCOB6:      equ    %01000000
+mFCCOB0_CCOB7:      equ    %10000000
+mFCCOB0_CCOB8:      equ    %100000000
+mFCCOB0_CCOB9:      equ    %1000000000
+mFCCOB0_CCOB10:     equ    %10000000000
+mFCCOB0_CCOB11:     equ    %100000000000
+mFCCOB0_CCOB12:     equ    %1000000000000
+mFCCOB0_CCOB13:     equ    %10000000000000
+mFCCOB0_CCOB14:     equ    %100000000000000
+mFCCOB0_CCOB15:     equ    %1000000000000000
+
+
+;*** FCCOB0HI - Flash Common Command Object Register High; 0x0000038C ***
+FCCOB0HI:           equ    $0000038C                                ;*** FCCOB0HI - Flash Common Command Object Register High; 0x0000038C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB0HI_CCOB8:     equ    0                                         ; Flash Common Command Object Bit 8
+FCCOB0HI_CCOB9:     equ    1                                         ; Flash Common Command Object Bit 9
+FCCOB0HI_CCOB10:    equ    2                                         ; Flash Common Command Object Bit 10
+FCCOB0HI_CCOB11:    equ    3                                         ; Flash Common Command Object Bit 11
+FCCOB0HI_CCOB12:    equ    4                                         ; Flash Common Command Object Bit 12
+FCCOB0HI_CCOB13:    equ    5                                         ; Flash Common Command Object Bit 13
+FCCOB0HI_CCOB14:    equ    6                                         ; Flash Common Command Object Bit 14
+FCCOB0HI_CCOB15:    equ    7                                         ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB0HI_CCOB8:    equ    %00000001
+mFCCOB0HI_CCOB9:    equ    %00000010
+mFCCOB0HI_CCOB10:   equ    %00000100
+mFCCOB0HI_CCOB11:   equ    %00001000
+mFCCOB0HI_CCOB12:   equ    %00010000
+mFCCOB0HI_CCOB13:   equ    %00100000
+mFCCOB0HI_CCOB14:   equ    %01000000
+mFCCOB0HI_CCOB15:   equ    %10000000
+
+
+;*** FCCOB0LO - Flash Common Command Object Register Low; 0x0000038D ***
+FCCOB0LO:           equ    $0000038D                                ;*** FCCOB0LO - Flash Common Command Object Register Low; 0x0000038D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB0LO_CCOB0:     equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB0LO_CCOB1:     equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB0LO_CCOB2:     equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB0LO_CCOB3:     equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB0LO_CCOB4:     equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB0LO_CCOB5:     equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB0LO_CCOB6:     equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB0LO_CCOB7:     equ    7                                         ; Flash Common Command Object Bit 7
+; bit position masks
+mFCCOB0LO_CCOB0:    equ    %00000001
+mFCCOB0LO_CCOB1:    equ    %00000010
+mFCCOB0LO_CCOB2:    equ    %00000100
+mFCCOB0LO_CCOB3:    equ    %00001000
+mFCCOB0LO_CCOB4:    equ    %00010000
+mFCCOB0LO_CCOB5:    equ    %00100000
+mFCCOB0LO_CCOB6:    equ    %01000000
+mFCCOB0LO_CCOB7:    equ    %10000000
+
+
+;*** FCCOB1 - Flash Common Command Object Register; 0x0000038E ***
+FCCOB1:             equ    $0000038E                                ;*** FCCOB1 - Flash Common Command Object Register; 0x0000038E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB1_CCOB0:       equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB1_CCOB1:       equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB1_CCOB2:       equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB1_CCOB3:       equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB1_CCOB4:       equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB1_CCOB5:       equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB1_CCOB6:       equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB1_CCOB7:       equ    7                                         ; Flash Common Command Object Bit 7
+FCCOB1_CCOB8:       equ    8                                         ; Flash Common Command Object Bit 8
+FCCOB1_CCOB9:       equ    9                                         ; Flash Common Command Object Bit 9
+FCCOB1_CCOB10:      equ    10                                        ; Flash Common Command Object Bit 10
+FCCOB1_CCOB11:      equ    11                                        ; Flash Common Command Object Bit 11
+FCCOB1_CCOB12:      equ    12                                        ; Flash Common Command Object Bit 12
+FCCOB1_CCOB13:      equ    13                                        ; Flash Common Command Object Bit 13
+FCCOB1_CCOB14:      equ    14                                        ; Flash Common Command Object Bit 14
+FCCOB1_CCOB15:      equ    15                                        ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB1_CCOB0:      equ    %00000001
+mFCCOB1_CCOB1:      equ    %00000010
+mFCCOB1_CCOB2:      equ    %00000100
+mFCCOB1_CCOB3:      equ    %00001000
+mFCCOB1_CCOB4:      equ    %00010000
+mFCCOB1_CCOB5:      equ    %00100000
+mFCCOB1_CCOB6:      equ    %01000000
+mFCCOB1_CCOB7:      equ    %10000000
+mFCCOB1_CCOB8:      equ    %100000000
+mFCCOB1_CCOB9:      equ    %1000000000
+mFCCOB1_CCOB10:     equ    %10000000000
+mFCCOB1_CCOB11:     equ    %100000000000
+mFCCOB1_CCOB12:     equ    %1000000000000
+mFCCOB1_CCOB13:     equ    %10000000000000
+mFCCOB1_CCOB14:     equ    %100000000000000
+mFCCOB1_CCOB15:     equ    %1000000000000000
+
+
+;*** FCCOB1HI - Flash Common Command Object Register High; 0x0000038E ***
+FCCOB1HI:           equ    $0000038E                                ;*** FCCOB1HI - Flash Common Command Object Register High; 0x0000038E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB1HI_CCOB8:     equ    0                                         ; Flash Common Command Object Bit 8
+FCCOB1HI_CCOB9:     equ    1                                         ; Flash Common Command Object Bit 9
+FCCOB1HI_CCOB10:    equ    2                                         ; Flash Common Command Object Bit 10
+FCCOB1HI_CCOB11:    equ    3                                         ; Flash Common Command Object Bit 11
+FCCOB1HI_CCOB12:    equ    4                                         ; Flash Common Command Object Bit 12
+FCCOB1HI_CCOB13:    equ    5                                         ; Flash Common Command Object Bit 13
+FCCOB1HI_CCOB14:    equ    6                                         ; Flash Common Command Object Bit 14
+FCCOB1HI_CCOB15:    equ    7                                         ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB1HI_CCOB8:    equ    %00000001
+mFCCOB1HI_CCOB9:    equ    %00000010
+mFCCOB1HI_CCOB10:   equ    %00000100
+mFCCOB1HI_CCOB11:   equ    %00001000
+mFCCOB1HI_CCOB12:   equ    %00010000
+mFCCOB1HI_CCOB13:   equ    %00100000
+mFCCOB1HI_CCOB14:   equ    %01000000
+mFCCOB1HI_CCOB15:   equ    %10000000
+
+
+;*** FCCOB1LO - Flash Common Command Object Register Low; 0x0000038F ***
+FCCOB1LO:           equ    $0000038F                                ;*** FCCOB1LO - Flash Common Command Object Register Low; 0x0000038F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB1LO_CCOB0:     equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB1LO_CCOB1:     equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB1LO_CCOB2:     equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB1LO_CCOB3:     equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB1LO_CCOB4:     equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB1LO_CCOB5:     equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB1LO_CCOB6:     equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB1LO_CCOB7:     equ    7                                         ; Flash Common Command Object Bit 7
+; bit position masks
+mFCCOB1LO_CCOB0:    equ    %00000001
+mFCCOB1LO_CCOB1:    equ    %00000010
+mFCCOB1LO_CCOB2:    equ    %00000100
+mFCCOB1LO_CCOB3:    equ    %00001000
+mFCCOB1LO_CCOB4:    equ    %00010000
+mFCCOB1LO_CCOB5:    equ    %00100000
+mFCCOB1LO_CCOB6:    equ    %01000000
+mFCCOB1LO_CCOB7:    equ    %10000000
+
+
+;*** FCCOB2 - Flash Common Command Object Register; 0x00000390 ***
+FCCOB2:             equ    $00000390                                ;*** FCCOB2 - Flash Common Command Object Register; 0x00000390 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB2_CCOB0:       equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB2_CCOB1:       equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB2_CCOB2:       equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB2_CCOB3:       equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB2_CCOB4:       equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB2_CCOB5:       equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB2_CCOB6:       equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB2_CCOB7:       equ    7                                         ; Flash Common Command Object Bit 7
+FCCOB2_CCOB8:       equ    8                                         ; Flash Common Command Object Bit 8
+FCCOB2_CCOB9:       equ    9                                         ; Flash Common Command Object Bit 9
+FCCOB2_CCOB10:      equ    10                                        ; Flash Common Command Object Bit 10
+FCCOB2_CCOB11:      equ    11                                        ; Flash Common Command Object Bit 11
+FCCOB2_CCOB12:      equ    12                                        ; Flash Common Command Object Bit 12
+FCCOB2_CCOB13:      equ    13                                        ; Flash Common Command Object Bit 13
+FCCOB2_CCOB14:      equ    14                                        ; Flash Common Command Object Bit 14
+FCCOB2_CCOB15:      equ    15                                        ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB2_CCOB0:      equ    %00000001
+mFCCOB2_CCOB1:      equ    %00000010
+mFCCOB2_CCOB2:      equ    %00000100
+mFCCOB2_CCOB3:      equ    %00001000
+mFCCOB2_CCOB4:      equ    %00010000
+mFCCOB2_CCOB5:      equ    %00100000
+mFCCOB2_CCOB6:      equ    %01000000
+mFCCOB2_CCOB7:      equ    %10000000
+mFCCOB2_CCOB8:      equ    %100000000
+mFCCOB2_CCOB9:      equ    %1000000000
+mFCCOB2_CCOB10:     equ    %10000000000
+mFCCOB2_CCOB11:     equ    %100000000000
+mFCCOB2_CCOB12:     equ    %1000000000000
+mFCCOB2_CCOB13:     equ    %10000000000000
+mFCCOB2_CCOB14:     equ    %100000000000000
+mFCCOB2_CCOB15:     equ    %1000000000000000
+
+
+;*** FCCOB2HI - Flash Common Command Object Register High; 0x00000390 ***
+FCCOB2HI:           equ    $00000390                                ;*** FCCOB2HI - Flash Common Command Object Register High; 0x00000390 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB2HI_CCOB8:     equ    0                                         ; Flash Common Command Object Bit 8
+FCCOB2HI_CCOB9:     equ    1                                         ; Flash Common Command Object Bit 9
+FCCOB2HI_CCOB10:    equ    2                                         ; Flash Common Command Object Bit 10
+FCCOB2HI_CCOB11:    equ    3                                         ; Flash Common Command Object Bit 11
+FCCOB2HI_CCOB12:    equ    4                                         ; Flash Common Command Object Bit 12
+FCCOB2HI_CCOB13:    equ    5                                         ; Flash Common Command Object Bit 13
+FCCOB2HI_CCOB14:    equ    6                                         ; Flash Common Command Object Bit 14
+FCCOB2HI_CCOB15:    equ    7                                         ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB2HI_CCOB8:    equ    %00000001
+mFCCOB2HI_CCOB9:    equ    %00000010
+mFCCOB2HI_CCOB10:   equ    %00000100
+mFCCOB2HI_CCOB11:   equ    %00001000
+mFCCOB2HI_CCOB12:   equ    %00010000
+mFCCOB2HI_CCOB13:   equ    %00100000
+mFCCOB2HI_CCOB14:   equ    %01000000
+mFCCOB2HI_CCOB15:   equ    %10000000
+
+
+;*** FCCOB2LO - Flash Common Command Object Register Low; 0x00000391 ***
+FCCOB2LO:           equ    $00000391                                ;*** FCCOB2LO - Flash Common Command Object Register Low; 0x00000391 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB2LO_CCOB0:     equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB2LO_CCOB1:     equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB2LO_CCOB2:     equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB2LO_CCOB3:     equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB2LO_CCOB4:     equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB2LO_CCOB5:     equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB2LO_CCOB6:     equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB2LO_CCOB7:     equ    7                                         ; Flash Common Command Object Bit 7
+; bit position masks
+mFCCOB2LO_CCOB0:    equ    %00000001
+mFCCOB2LO_CCOB1:    equ    %00000010
+mFCCOB2LO_CCOB2:    equ    %00000100
+mFCCOB2LO_CCOB3:    equ    %00001000
+mFCCOB2LO_CCOB4:    equ    %00010000
+mFCCOB2LO_CCOB5:    equ    %00100000
+mFCCOB2LO_CCOB6:    equ    %01000000
+mFCCOB2LO_CCOB7:    equ    %10000000
+
+
+;*** FCCOB3 - Flash Common Command Object Register; 0x00000392 ***
+FCCOB3:             equ    $00000392                                ;*** FCCOB3 - Flash Common Command Object Register; 0x00000392 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB3_CCOB0:       equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB3_CCOB1:       equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB3_CCOB2:       equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB3_CCOB3:       equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB3_CCOB4:       equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB3_CCOB5:       equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB3_CCOB6:       equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB3_CCOB7:       equ    7                                         ; Flash Common Command Object Bit 7
+FCCOB3_CCOB8:       equ    8                                         ; Flash Common Command Object Bit 8
+FCCOB3_CCOB9:       equ    9                                         ; Flash Common Command Object Bit 9
+FCCOB3_CCOB10:      equ    10                                        ; Flash Common Command Object Bit 10
+FCCOB3_CCOB11:      equ    11                                        ; Flash Common Command Object Bit 11
+FCCOB3_CCOB12:      equ    12                                        ; Flash Common Command Object Bit 12
+FCCOB3_CCOB13:      equ    13                                        ; Flash Common Command Object Bit 13
+FCCOB3_CCOB14:      equ    14                                        ; Flash Common Command Object Bit 14
+FCCOB3_CCOB15:      equ    15                                        ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB3_CCOB0:      equ    %00000001
+mFCCOB3_CCOB1:      equ    %00000010
+mFCCOB3_CCOB2:      equ    %00000100
+mFCCOB3_CCOB3:      equ    %00001000
+mFCCOB3_CCOB4:      equ    %00010000
+mFCCOB3_CCOB5:      equ    %00100000
+mFCCOB3_CCOB6:      equ    %01000000
+mFCCOB3_CCOB7:      equ    %10000000
+mFCCOB3_CCOB8:      equ    %100000000
+mFCCOB3_CCOB9:      equ    %1000000000
+mFCCOB3_CCOB10:     equ    %10000000000
+mFCCOB3_CCOB11:     equ    %100000000000
+mFCCOB3_CCOB12:     equ    %1000000000000
+mFCCOB3_CCOB13:     equ    %10000000000000
+mFCCOB3_CCOB14:     equ    %100000000000000
+mFCCOB3_CCOB15:     equ    %1000000000000000
+
+
+;*** FCCOB3HI - Flash Common Command Object Register High; 0x00000392 ***
+FCCOB3HI:           equ    $00000392                                ;*** FCCOB3HI - Flash Common Command Object Register High; 0x00000392 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB3HI_CCOB8:     equ    0                                         ; Flash Common Command Object Bit 8
+FCCOB3HI_CCOB9:     equ    1                                         ; Flash Common Command Object Bit 9
+FCCOB3HI_CCOB10:    equ    2                                         ; Flash Common Command Object Bit 10
+FCCOB3HI_CCOB11:    equ    3                                         ; Flash Common Command Object Bit 11
+FCCOB3HI_CCOB12:    equ    4                                         ; Flash Common Command Object Bit 12
+FCCOB3HI_CCOB13:    equ    5                                         ; Flash Common Command Object Bit 13
+FCCOB3HI_CCOB14:    equ    6                                         ; Flash Common Command Object Bit 14
+FCCOB3HI_CCOB15:    equ    7                                         ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB3HI_CCOB8:    equ    %00000001
+mFCCOB3HI_CCOB9:    equ    %00000010
+mFCCOB3HI_CCOB10:   equ    %00000100
+mFCCOB3HI_CCOB11:   equ    %00001000
+mFCCOB3HI_CCOB12:   equ    %00010000
+mFCCOB3HI_CCOB13:   equ    %00100000
+mFCCOB3HI_CCOB14:   equ    %01000000
+mFCCOB3HI_CCOB15:   equ    %10000000
+
+
+;*** FCCOB3LO - Flash Common Command Object Register Low; 0x00000393 ***
+FCCOB3LO:           equ    $00000393                                ;*** FCCOB3LO - Flash Common Command Object Register Low; 0x00000393 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB3LO_CCOB0:     equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB3LO_CCOB1:     equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB3LO_CCOB2:     equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB3LO_CCOB3:     equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB3LO_CCOB4:     equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB3LO_CCOB5:     equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB3LO_CCOB6:     equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB3LO_CCOB7:     equ    7                                         ; Flash Common Command Object Bit 7
+; bit position masks
+mFCCOB3LO_CCOB0:    equ    %00000001
+mFCCOB3LO_CCOB1:    equ    %00000010
+mFCCOB3LO_CCOB2:    equ    %00000100
+mFCCOB3LO_CCOB3:    equ    %00001000
+mFCCOB3LO_CCOB4:    equ    %00010000
+mFCCOB3LO_CCOB5:    equ    %00100000
+mFCCOB3LO_CCOB6:    equ    %01000000
+mFCCOB3LO_CCOB7:    equ    %10000000
+
+
+;*** FCCOB4 - Flash Common Command Object Register; 0x00000394 ***
+FCCOB4:             equ    $00000394                                ;*** FCCOB4 - Flash Common Command Object Register; 0x00000394 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB4_CCOB0:       equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB4_CCOB1:       equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB4_CCOB2:       equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB4_CCOB3:       equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB4_CCOB4:       equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB4_CCOB5:       equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB4_CCOB6:       equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB4_CCOB7:       equ    7                                         ; Flash Common Command Object Bit 7
+FCCOB4_CCOB8:       equ    8                                         ; Flash Common Command Object Bit 8
+FCCOB4_CCOB9:       equ    9                                         ; Flash Common Command Object Bit 9
+FCCOB4_CCOB10:      equ    10                                        ; Flash Common Command Object Bit 10
+FCCOB4_CCOB11:      equ    11                                        ; Flash Common Command Object Bit 11
+FCCOB4_CCOB12:      equ    12                                        ; Flash Common Command Object Bit 12
+FCCOB4_CCOB13:      equ    13                                        ; Flash Common Command Object Bit 13
+FCCOB4_CCOB14:      equ    14                                        ; Flash Common Command Object Bit 14
+FCCOB4_CCOB15:      equ    15                                        ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB4_CCOB0:      equ    %00000001
+mFCCOB4_CCOB1:      equ    %00000010
+mFCCOB4_CCOB2:      equ    %00000100
+mFCCOB4_CCOB3:      equ    %00001000
+mFCCOB4_CCOB4:      equ    %00010000
+mFCCOB4_CCOB5:      equ    %00100000
+mFCCOB4_CCOB6:      equ    %01000000
+mFCCOB4_CCOB7:      equ    %10000000
+mFCCOB4_CCOB8:      equ    %100000000
+mFCCOB4_CCOB9:      equ    %1000000000
+mFCCOB4_CCOB10:     equ    %10000000000
+mFCCOB4_CCOB11:     equ    %100000000000
+mFCCOB4_CCOB12:     equ    %1000000000000
+mFCCOB4_CCOB13:     equ    %10000000000000
+mFCCOB4_CCOB14:     equ    %100000000000000
+mFCCOB4_CCOB15:     equ    %1000000000000000
+
+
+;*** FCCOB4HI - Flash Common Command Object Register High; 0x00000394 ***
+FCCOB4HI:           equ    $00000394                                ;*** FCCOB4HI - Flash Common Command Object Register High; 0x00000394 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB4HI_CCOB8:     equ    0                                         ; Flash Common Command Object Bit 8
+FCCOB4HI_CCOB9:     equ    1                                         ; Flash Common Command Object Bit 9
+FCCOB4HI_CCOB10:    equ    2                                         ; Flash Common Command Object Bit 10
+FCCOB4HI_CCOB11:    equ    3                                         ; Flash Common Command Object Bit 11
+FCCOB4HI_CCOB12:    equ    4                                         ; Flash Common Command Object Bit 12
+FCCOB4HI_CCOB13:    equ    5                                         ; Flash Common Command Object Bit 13
+FCCOB4HI_CCOB14:    equ    6                                         ; Flash Common Command Object Bit 14
+FCCOB4HI_CCOB15:    equ    7                                         ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB4HI_CCOB8:    equ    %00000001
+mFCCOB4HI_CCOB9:    equ    %00000010
+mFCCOB4HI_CCOB10:   equ    %00000100
+mFCCOB4HI_CCOB11:   equ    %00001000
+mFCCOB4HI_CCOB12:   equ    %00010000
+mFCCOB4HI_CCOB13:   equ    %00100000
+mFCCOB4HI_CCOB14:   equ    %01000000
+mFCCOB4HI_CCOB15:   equ    %10000000
+
+
+;*** FCCOB4LO - Flash Common Command Object Register Low; 0x00000395 ***
+FCCOB4LO:           equ    $00000395                                ;*** FCCOB4LO - Flash Common Command Object Register Low; 0x00000395 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB4LO_CCOB0:     equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB4LO_CCOB1:     equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB4LO_CCOB2:     equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB4LO_CCOB3:     equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB4LO_CCOB4:     equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB4LO_CCOB5:     equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB4LO_CCOB6:     equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB4LO_CCOB7:     equ    7                                         ; Flash Common Command Object Bit 7
+; bit position masks
+mFCCOB4LO_CCOB0:    equ    %00000001
+mFCCOB4LO_CCOB1:    equ    %00000010
+mFCCOB4LO_CCOB2:    equ    %00000100
+mFCCOB4LO_CCOB3:    equ    %00001000
+mFCCOB4LO_CCOB4:    equ    %00010000
+mFCCOB4LO_CCOB5:    equ    %00100000
+mFCCOB4LO_CCOB6:    equ    %01000000
+mFCCOB4LO_CCOB7:    equ    %10000000
+
+
+;*** FCCOB5 - Flash Common Command Object Register; 0x00000396 ***
+FCCOB5:             equ    $00000396                                ;*** FCCOB5 - Flash Common Command Object Register; 0x00000396 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB5_CCOB0:       equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB5_CCOB1:       equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB5_CCOB2:       equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB5_CCOB3:       equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB5_CCOB4:       equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB5_CCOB5:       equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB5_CCOB6:       equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB5_CCOB7:       equ    7                                         ; Flash Common Command Object Bit 7
+FCCOB5_CCOB8:       equ    8                                         ; Flash Common Command Object Bit 8
+FCCOB5_CCOB9:       equ    9                                         ; Flash Common Command Object Bit 9
+FCCOB5_CCOB10:      equ    10                                        ; Flash Common Command Object Bit 10
+FCCOB5_CCOB11:      equ    11                                        ; Flash Common Command Object Bit 11
+FCCOB5_CCOB12:      equ    12                                        ; Flash Common Command Object Bit 12
+FCCOB5_CCOB13:      equ    13                                        ; Flash Common Command Object Bit 13
+FCCOB5_CCOB14:      equ    14                                        ; Flash Common Command Object Bit 14
+FCCOB5_CCOB15:      equ    15                                        ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB5_CCOB0:      equ    %00000001
+mFCCOB5_CCOB1:      equ    %00000010
+mFCCOB5_CCOB2:      equ    %00000100
+mFCCOB5_CCOB3:      equ    %00001000
+mFCCOB5_CCOB4:      equ    %00010000
+mFCCOB5_CCOB5:      equ    %00100000
+mFCCOB5_CCOB6:      equ    %01000000
+mFCCOB5_CCOB7:      equ    %10000000
+mFCCOB5_CCOB8:      equ    %100000000
+mFCCOB5_CCOB9:      equ    %1000000000
+mFCCOB5_CCOB10:     equ    %10000000000
+mFCCOB5_CCOB11:     equ    %100000000000
+mFCCOB5_CCOB12:     equ    %1000000000000
+mFCCOB5_CCOB13:     equ    %10000000000000
+mFCCOB5_CCOB14:     equ    %100000000000000
+mFCCOB5_CCOB15:     equ    %1000000000000000
+
+
+;*** FCCOB5HI - Flash Common Command Object Register High; 0x00000396 ***
+FCCOB5HI:           equ    $00000396                                ;*** FCCOB5HI - Flash Common Command Object Register High; 0x00000396 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB5HI_CCOB8:     equ    0                                         ; Flash Common Command Object Bit 8
+FCCOB5HI_CCOB9:     equ    1                                         ; Flash Common Command Object Bit 9
+FCCOB5HI_CCOB10:    equ    2                                         ; Flash Common Command Object Bit 10
+FCCOB5HI_CCOB11:    equ    3                                         ; Flash Common Command Object Bit 11
+FCCOB5HI_CCOB12:    equ    4                                         ; Flash Common Command Object Bit 12
+FCCOB5HI_CCOB13:    equ    5                                         ; Flash Common Command Object Bit 13
+FCCOB5HI_CCOB14:    equ    6                                         ; Flash Common Command Object Bit 14
+FCCOB5HI_CCOB15:    equ    7                                         ; Flash Common Command Object Bit 15
+; bit position masks
+mFCCOB5HI_CCOB8:    equ    %00000001
+mFCCOB5HI_CCOB9:    equ    %00000010
+mFCCOB5HI_CCOB10:   equ    %00000100
+mFCCOB5HI_CCOB11:   equ    %00001000
+mFCCOB5HI_CCOB12:   equ    %00010000
+mFCCOB5HI_CCOB13:   equ    %00100000
+mFCCOB5HI_CCOB14:   equ    %01000000
+mFCCOB5HI_CCOB15:   equ    %10000000
+
+
+;*** FCCOB5LO - Flash Common Command Object Register Low; 0x00000397 ***
+FCCOB5LO:           equ    $00000397                                ;*** FCCOB5LO - Flash Common Command Object Register Low; 0x00000397 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+FCCOB5LO_CCOB0:     equ    0                                         ; Flash Common Command Object Bit 0
+FCCOB5LO_CCOB1:     equ    1                                         ; Flash Common Command Object Bit 1
+FCCOB5LO_CCOB2:     equ    2                                         ; Flash Common Command Object Bit 2
+FCCOB5LO_CCOB3:     equ    3                                         ; Flash Common Command Object Bit 3
+FCCOB5LO_CCOB4:     equ    4                                         ; Flash Common Command Object Bit 4
+FCCOB5LO_CCOB5:     equ    5                                         ; Flash Common Command Object Bit 5
+FCCOB5LO_CCOB6:     equ    6                                         ; Flash Common Command Object Bit 6
+FCCOB5LO_CCOB7:     equ    7                                         ; Flash Common Command Object Bit 7
+; bit position masks
+mFCCOB5LO_CCOB0:    equ    %00000001
+mFCCOB5LO_CCOB1:    equ    %00000010
+mFCCOB5LO_CCOB2:    equ    %00000100
+mFCCOB5LO_CCOB3:    equ    %00001000
+mFCCOB5LO_CCOB4:    equ    %00010000
+mFCCOB5LO_CCOB5:    equ    %00100000
+mFCCOB5LO_CCOB6:    equ    %01000000
+mFCCOB5LO_CCOB7:    equ    %10000000
+
+
+;*** ECCSTAT - ECC Status Register; 0x000003C0 ***
+ECCSTAT:            equ    $000003C0                                ;*** ECCSTAT - ECC Status Register; 0x000003C0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCSTAT_RDY:        equ    0                                         ; ECC Ready
+; bit position masks
+mECCSTAT_RDY:       equ    %00000001
+
+
+;*** ECCIE - ECC Interrupt Enable Register; 0x000003C1 ***
+ECCIE:              equ    $000003C1                                ;*** ECCIE - ECC Interrupt Enable Register; 0x000003C1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCIE_SBEEIE:       equ    0                                         ; Single Bit ECC Error Interrupt Enable
+; bit position masks
+mECCIE_SBEEIE:      equ    %00000001
+
+
+;*** ECCIF - ECC Interrupt Flag Register; 0x000003C2 ***
+ECCIF:              equ    $000003C2                                ;*** ECCIF - ECC Interrupt Flag Register; 0x000003C2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCIF_SBEEIF:       equ    0                                         ; Single bit ECC Error Interrupt Flag
+; bit position masks
+mECCIF_SBEEIF:      equ    %00000001
+
+
+;*** ECCDPTRH - ECC Debug Pointer Register High; 0x000003C7 ***
+ECCDPTRH:           equ    $000003C7                                ;*** ECCDPTRH - ECC Debug Pointer Register High; 0x000003C7 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDPTRH_DPTR:      equ    0                                         ; ECC Debug Pointer
+; bit position masks
+mECCDPTRH_DPTR:     equ    %11111111
+
+
+;*** ECCDPTRM - ECC Debug Pointer Register Middle; 0x000003C8 ***
+ECCDPTRM:           equ    $000003C8                                ;*** ECCDPTRM - ECC Debug Pointer Register Middle; 0x000003C8 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDPTRM_DPTR:      equ    0                                         ; ECC Debug Pointer
+; bit position masks
+mECCDPTRM_DPTR:     equ    %11111111
+
+
+;*** ECCDPTRL - ECC Debug Pointer Register Low; 0x000003C9 ***
+ECCDPTRL:           equ    $000003C9                                ;*** ECCDPTRL - ECC Debug Pointer Register Low; 0x000003C9 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDPTRL_DPTR:      equ    1                                         ; ECC Debug Pointer
+; bit position masks
+mECCDPTRL_DPTR:     equ    %11111110
+
+
+;*** ECCDD - ECC Debug Data; 0x000003CC ***
+ECCDD:              equ    $000003CC                                ;*** ECCDD - ECC Debug Data; 0x000003CC ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDD_DDATA:        equ    0                                         ; ECC Debug Data
+; bit position masks
+mECCDD_DDATA:       equ    %1111111111111111
+
+
+;*** ECCDDH - ECC Debug Data High; 0x000003CC ***
+ECCDDH:             equ    $000003CC                                ;*** ECCDDH - ECC Debug Data High; 0x000003CC ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDDH_DDATA:       equ    0                                         ; ECC Debug Data
+; bit position masks
+mECCDDH_DDATA:      equ    %11111111
+
+
+;*** ECCDDL - ECC Debug Data Low; 0x000003CD ***
+ECCDDL:             equ    $000003CD                                ;*** ECCDDL - ECC Debug Data Low; 0x000003CD ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDDL_DDATA:       equ    0                                         ; ECC Debug Data
+; bit position masks
+mECCDDL_DDATA:      equ    %11111111
+
+
+;*** ECCDE - ECC Debug ECC; 0x000003CE ***
+ECCDE:              equ    $000003CE                                ;*** ECCDE - ECC Debug ECC; 0x000003CE ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDE_DECC:         equ    0                                         ; ECC Debug ECC
+; bit position masks
+mECCDE_DECC:        equ    %00111111
+
+
+;*** ECCDCMD - ECC Debug Comamnd; 0x000003CF ***
+ECCDCMD:            equ    $000003CF                                ;*** ECCDCMD - ECC Debug Comamnd; 0x000003CF ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ECCDCMD_ECCDR:      equ    0                                         ; ECC Debug Read Command
+ECCDCMD_ECCDW:      equ    1                                         ; ECC Debug Write Command
+ECCDCMD_ECCDRR:     equ    7                                         ; ECC Disable Read Repair Function
+; bit position masks
+mECCDCMD_ECCDR:     equ    %00000001
+mECCDCMD_ECCDW:     equ    %00000010
+mECCDCMD_ECCDRR:    equ    %10000000
+
+
+;*** TIM1TIOS - Timer Input Capture/Output Compare Select; 0x00000400 ***
+TIM1TIOS:           equ    $00000400                                ;*** TIM1TIOS - Timer Input Capture/Output Compare Select; 0x00000400 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TIOS_IOS0:      equ    0                                         ; Input Capture or Output Compare Channel Configuration Bit 0
+TIM1TIOS_IOS1:      equ    1                                         ; Input Capture or Output Compare Channel Configuration Bit 1
+; bit position masks
+mTIM1TIOS_IOS0:     equ    %00000001
+mTIM1TIOS_IOS1:     equ    %00000010
+
+
+;*** TIM1CFORC - Timer Compare Force Register; 0x00000401 ***
+TIM1CFORC:          equ    $00000401                                ;*** TIM1CFORC - Timer Compare Force Register; 0x00000401 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1CFORC_FOC0:     equ    0                                         ; Force Output Compare Action for Channel 0
+TIM1CFORC_FOC1:     equ    1                                         ; Force Output Compare Action for Channel 1
+; bit position masks
+mTIM1CFORC_FOC0:    equ    %00000001
+mTIM1CFORC_FOC1:    equ    %00000010
+
+
+;*** TIM1TCNT - Timer Count Register; 0x00000404 ***
+TIM1TCNT:           equ    $00000404                                ;*** TIM1TCNT - Timer Count Register; 0x00000404 ***
+
+
+;*** TIM1TCNTHi - Timer Count Register High (OBSOLETE - defined for backward compatibility); 0x00000404 ***
+TIM1TCNTHi:         equ    $00000404                                ;*** TIM1TCNTHi - Timer Count Register High (OBSOLETE - defined for backward compatibility); 0x00000404 ***
+
+
+;*** TIM1TCNTH - Timer Count Register High; 0x00000404 ***
+TIM1TCNTH:          equ    $00000404                                ;*** TIM1TCNTH - Timer Count Register High; 0x00000404 ***
+
+
+;*** TIM1TCNTLo - Timer Count Register Low (OBSOLETE - defined for backward compatibility); 0x00000405 ***
+TIM1TCNTLo:         equ    $00000405                                ;*** TIM1TCNTLo - Timer Count Register Low (OBSOLETE - defined for backward compatibility); 0x00000405 ***
+
+
+;*** TIM1TCNTL - Timer Count Register Low; 0x00000405 ***
+TIM1TCNTL:          equ    $00000405                                ;*** TIM1TCNTL - Timer Count Register Low; 0x00000405 ***
+
+
+;*** TIM1TSCR1 - Timer System Control Register1; 0x00000406 ***
+TIM1TSCR1:          equ    $00000406                                ;*** TIM1TSCR1 - Timer System Control Register1; 0x00000406 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TSCR1_PRNT:     equ    3                                         ; Precision Timer
+TIM1TSCR1_TFFCA:    equ    4                                         ; Timer Fast Flag Clear All
+TIM1TSCR1_TSFRZ:    equ    5                                         ; Timer and Modulus Counter Stop While in Freeze Mode
+TIM1TSCR1_TSWAI:    equ    6                                         ; Timer Module Stops While in Wait
+TIM1TSCR1_TEN:      equ    7                                         ; Timer Enable
+; bit position masks
+mTIM1TSCR1_PRNT:    equ    %00001000
+mTIM1TSCR1_TFFCA:   equ    %00010000
+mTIM1TSCR1_TSFRZ:   equ    %00100000
+mTIM1TSCR1_TSWAI:   equ    %01000000
+mTIM1TSCR1_TEN:     equ    %10000000
+
+
+;*** TIM1TTOV - Timer Toggle On Overflow Register; 0x00000407 ***
+TIM1TTOV:           equ    $00000407                                ;*** TIM1TTOV - Timer Toggle On Overflow Register; 0x00000407 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TTOV_TOV0:      equ    0                                         ; Toggle On Overflow Bit 0
+TIM1TTOV_TOV1:      equ    1                                         ; Toggle On Overflow Bit 1
+; bit position masks
+mTIM1TTOV_TOV0:     equ    %00000001
+mTIM1TTOV_TOV1:     equ    %00000010
+
+
+;*** TIM1TCTL2 - Timer Control Register 2; 0x00000409 ***
+TIM1TCTL2:          equ    $00000409                                ;*** TIM1TCTL2 - Timer Control Register 2; 0x00000409 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TCTL2_OL0:      equ    0                                         ; Output Level Bit 0
+TIM1TCTL2_OM0:      equ    1                                         ; Output Mode Bit 0
+TIM1TCTL2_OL1:      equ    2                                         ; Output Level Bit 1
+TIM1TCTL2_OM1:      equ    3                                         ; Output Mode Bit 1
+; bit position masks
+mTIM1TCTL2_OL0:     equ    %00000001
+mTIM1TCTL2_OM0:     equ    %00000010
+mTIM1TCTL2_OL1:     equ    %00000100
+mTIM1TCTL2_OM1:     equ    %00001000
+
+
+;*** TIM1TCTL4 - Timer Control Register 4; 0x0000040B ***
+TIM1TCTL4:          equ    $0000040B                                ;*** TIM1TCTL4 - Timer Control Register 4; 0x0000040B ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TCTL4_EDG0A:    equ    0                                         ; Input Capture Edge Control 0A
+TIM1TCTL4_EDG0B:    equ    1                                         ; Input Capture Edge Control 0B
+TIM1TCTL4_EDG1A:    equ    2                                         ; Input Capture Edge Control 1A
+TIM1TCTL4_EDG1B:    equ    3                                         ; Input Capture Edge Control 1B
+; bit position masks
+mTIM1TCTL4_EDG0A:   equ    %00000001
+mTIM1TCTL4_EDG0B:   equ    %00000010
+mTIM1TCTL4_EDG1A:   equ    %00000100
+mTIM1TCTL4_EDG1B:   equ    %00001000
+
+
+;*** TIM1TIE - Timer Interrupt Enable Register; 0x0000040C ***
+TIM1TIE:            equ    $0000040C                                ;*** TIM1TIE - Timer Interrupt Enable Register; 0x0000040C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TIE_C0I:        equ    0                                         ; Input Capture/Output Compare Interrupt Enable Bit 0
+TIM1TIE_C1I:        equ    1                                         ; Input Capture/Output Compare Interrupt Enable Bit 1
+; bit position masks
+mTIM1TIE_C0I:       equ    %00000001
+mTIM1TIE_C1I:       equ    %00000010
+
+
+;*** TIM1TSCR2 - Timer System Control Register 2; 0x0000040D ***
+TIM1TSCR2:          equ    $0000040D                                ;*** TIM1TSCR2 - Timer System Control Register 2; 0x0000040D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TSCR2_PR0:      equ    0                                         ; Timer Prescaler Select Bit 0
+TIM1TSCR2_PR1:      equ    1                                         ; Timer Prescaler Select Bit 1
+TIM1TSCR2_PR2:      equ    2                                         ; Timer Prescaler Select Bit 2
+TIM1TSCR2_TOI:      equ    7                                         ; Timer Overflow Interrupt Enable
+; bit position masks
+mTIM1TSCR2_PR0:     equ    %00000001
+mTIM1TSCR2_PR1:     equ    %00000010
+mTIM1TSCR2_PR2:     equ    %00000100
+mTIM1TSCR2_TOI:     equ    %10000000
+
+
+;*** TIM1TFLG1 - Main Timer Interrupt Flag 1; 0x0000040E ***
+TIM1TFLG1:          equ    $0000040E                                ;*** TIM1TFLG1 - Main Timer Interrupt Flag 1; 0x0000040E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TFLG1_C0F:      equ    0                                         ; Input Capture/Output Compare Channel interrupt flag 0
+TIM1TFLG1_C1F:      equ    1                                         ; Input Capture/Output Compare Channel interrupt flag 1
+; bit position masks
+mTIM1TFLG1_C0F:     equ    %00000001
+mTIM1TFLG1_C1F:     equ    %00000010
+
+
+;*** TIM1TFLG2 - Main Timer Interrupt Flag 2; 0x0000040F ***
+TIM1TFLG2:          equ    $0000040F                                ;*** TIM1TFLG2 - Main Timer Interrupt Flag 2; 0x0000040F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1TFLG2_TOF:      equ    7                                         ; Timer Overflow interrupt flag
+; bit position masks
+mTIM1TFLG2_TOF:     equ    %10000000
+
+
+;*** TIM1TC0 - Timer Input Capture/Output Compare Register 0; 0x00000410 ***
+TIM1TC0:            equ    $00000410                                ;*** TIM1TC0 - Timer Input Capture/Output Compare Register 0; 0x00000410 ***
+
+
+;*** TIM1TC0Hi - Timer Input Capture/Output Compare Register 0 High (OBSOLETE - defined for backward compatibility); 0x00000410 ***
+TIM1TC0Hi:          equ    $00000410                                ;*** TIM1TC0Hi - Timer Input Capture/Output Compare Register 0 High (OBSOLETE - defined for backward compatibility); 0x00000410 ***
+
+
+;*** TIM1TC0H - Timer Input Capture/Output Compare Register 0 High; 0x00000410 ***
+TIM1TC0H:           equ    $00000410                                ;*** TIM1TC0H - Timer Input Capture/Output Compare Register 0 High; 0x00000410 ***
+
+
+;*** TIM1TC0Lo - Timer Input Capture/Output Compare Register 0 Low (OBSOLETE - defined for backward compatibility); 0x00000411 ***
+TIM1TC0Lo:          equ    $00000411                                ;*** TIM1TC0Lo - Timer Input Capture/Output Compare Register 0 Low (OBSOLETE - defined for backward compatibility); 0x00000411 ***
+
+
+;*** TIM1TC0L - Timer Input Capture/Output Compare Register 0 Low; 0x00000411 ***
+TIM1TC0L:           equ    $00000411                                ;*** TIM1TC0L - Timer Input Capture/Output Compare Register 0 Low; 0x00000411 ***
+
+
+;*** TIM1TC1 - Timer Input Capture/Output Compare Register 1; 0x00000412 ***
+TIM1TC1:            equ    $00000412                                ;*** TIM1TC1 - Timer Input Capture/Output Compare Register 1; 0x00000412 ***
+
+
+;*** TIM1TC1Hi - Timer Input Capture/Output Compare Register 1 High (OBSOLETE - defined for backward compatibility); 0x00000412 ***
+TIM1TC1Hi:          equ    $00000412                                ;*** TIM1TC1Hi - Timer Input Capture/Output Compare Register 1 High (OBSOLETE - defined for backward compatibility); 0x00000412 ***
+
+
+;*** TIM1TC1H - Timer Input Capture/Output Compare Register 1 High; 0x00000412 ***
+TIM1TC1H:           equ    $00000412                                ;*** TIM1TC1H - Timer Input Capture/Output Compare Register 1 High; 0x00000412 ***
+
+
+;*** TIM1TC1Lo - Timer Input Capture/Output Compare Register 1 Low (OBSOLETE - defined for backward compatibility); 0x00000413 ***
+TIM1TC1Lo:          equ    $00000413                                ;*** TIM1TC1Lo - Timer Input Capture/Output Compare Register 1 Low (OBSOLETE - defined for backward compatibility); 0x00000413 ***
+
+
+;*** TIM1TC1L - Timer Input Capture/Output Compare Register 1 Low; 0x00000413 ***
+TIM1TC1L:           equ    $00000413                                ;*** TIM1TC1L - Timer Input Capture/Output Compare Register 1 Low; 0x00000413 ***
+
+
+;*** TIM1OCPD - Output Compare Pin Disconnect Register; 0x0000042C ***
+TIM1OCPD:           equ    $0000042C                                ;*** TIM1OCPD - Output Compare Pin Disconnect Register; 0x0000042C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1OCPD_OCPD0:     equ    0                                         ; Output Compare Pin Disconnect Bit 0
+TIM1OCPD_OCPD1:     equ    1                                         ; Output Compare Pin Disconnect Bit 1
+; bit position masks
+mTIM1OCPD_OCPD0:    equ    %00000001
+mTIM1OCPD_OCPD1:    equ    %00000010
+
+
+;*** TIM1PTPSR - Precision Timer Prescaler Select Register; 0x0000042E ***
+TIM1PTPSR:          equ    $0000042E                                ;*** TIM1PTPSR - Precision Timer Prescaler Select Register; 0x0000042E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM1PTPSR_PTPS0:    equ    0                                         ; Precision Timer Prescaler Select Bit 0
+TIM1PTPSR_PTPS1:    equ    1                                         ; Precision Timer Prescaler Select Bit 1
+TIM1PTPSR_PTPS2:    equ    2                                         ; Precision Timer Prescaler Select Bit 2
+TIM1PTPSR_PTPS3:    equ    3                                         ; Precision Timer Prescaler Select Bit 3
+TIM1PTPSR_PTPS4:    equ    4                                         ; Precision Timer Prescaler Select Bit 4
+TIM1PTPSR_PTPS5:    equ    5                                         ; Precision Timer Prescaler Select Bit 5
+TIM1PTPSR_PTPS6:    equ    6                                         ; Precision Timer Prescaler Select Bit 6
+TIM1PTPSR_PTPS7:    equ    7                                         ; Precision Timer Prescaler Select Bit 7
+; bit position masks
+mTIM1PTPSR_PTPS0:   equ    %00000001
+mTIM1PTPSR_PTPS1:   equ    %00000010
+mTIM1PTPSR_PTPS2:   equ    %00000100
+mTIM1PTPSR_PTPS3:   equ    %00001000
+mTIM1PTPSR_PTPS4:   equ    %00010000
+mTIM1PTPSR_PTPS5:   equ    %00100000
+mTIM1PTPSR_PTPS6:   equ    %01000000
+mTIM1PTPSR_PTPS7:   equ    %10000000
+
+
+;*** PWM0E - PWM0 Enable Register; 0x00000480 ***
+PWM0E:              equ    $00000480                                ;*** PWM0E - PWM0 Enable Register; 0x00000480 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0E_PWME0:        equ    0                                         ; Pulse Width Channel 0 Enable
+PWM0E_PWME1:        equ    1                                         ; Pulse Width Channel 1 Enable
+PWM0E_PWME2:        equ    2                                         ; Pulse Width Channel 2 Enable
+PWM0E_PWME3:        equ    3                                         ; Pulse Width Channel 3 Enable
+PWM0E_PWME4:        equ    4                                         ; Pulse Width Channel 4 Enable
+PWM0E_PWME5:        equ    5                                         ; Pulse Width Channel 5 Enable
+PWM0E_PWME6:        equ    6                                         ; Pulse Width Channel 6 Enable
+PWM0E_PWME7:        equ    7                                         ; Pulse Width Channel 7 Enable
+; bit position masks
+mPWM0E_PWME0:       equ    %00000001
+mPWM0E_PWME1:       equ    %00000010
+mPWM0E_PWME2:       equ    %00000100
+mPWM0E_PWME3:       equ    %00001000
+mPWM0E_PWME4:       equ    %00010000
+mPWM0E_PWME5:       equ    %00100000
+mPWM0E_PWME6:       equ    %01000000
+mPWM0E_PWME7:       equ    %10000000
+
+
+;*** PWM0POL - PWM0 Polarity Register; 0x00000481 ***
+PWM0POL:            equ    $00000481                                ;*** PWM0POL - PWM0 Polarity Register; 0x00000481 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0POL_PPOL0:      equ    0                                         ; Pulse Width Channel 0 Polarity
+PWM0POL_PPOL1:      equ    1                                         ; Pulse Width Channel 1 Polarity
+PWM0POL_PPOL2:      equ    2                                         ; Pulse Width Channel 2 Polarity
+PWM0POL_PPOL3:      equ    3                                         ; Pulse Width Channel 3 Polarity
+PWM0POL_PPOL4:      equ    4                                         ; Pulse Width Channel 4 Polarity
+PWM0POL_PPOL5:      equ    5                                         ; Pulse Width Channel 5 Polarity
+PWM0POL_PPOL6:      equ    6                                         ; Pulse Width Channel 6 Polarity
+PWM0POL_PPOL7:      equ    7                                         ; Pulse Width Channel 7 Polarity
+; bit position masks
+mPWM0POL_PPOL0:     equ    %00000001
+mPWM0POL_PPOL1:     equ    %00000010
+mPWM0POL_PPOL2:     equ    %00000100
+mPWM0POL_PPOL3:     equ    %00001000
+mPWM0POL_PPOL4:     equ    %00010000
+mPWM0POL_PPOL5:     equ    %00100000
+mPWM0POL_PPOL6:     equ    %01000000
+mPWM0POL_PPOL7:     equ    %10000000
+
+
+;*** PWM0CLK - PWM0 Clock Select Register; 0x00000482 ***
+PWM0CLK:            equ    $00000482                                ;*** PWM0CLK - PWM0 Clock Select Register; 0x00000482 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0CLK_PCLK0:      equ    0                                         ; Pulse Width Channel 0 Clock Select
+PWM0CLK_PCLK1:      equ    1                                         ; Pulse Width Channel 1 Clock Select
+PWM0CLK_PCLK2:      equ    2                                         ; Pulse Width Channel 2 Clock Select
+PWM0CLK_PCLK3:      equ    3                                         ; Pulse Width Channel 3 Clock Select
+PWM0CLK_PCLK4:      equ    4                                         ; Pulse Width Channel 4 Clock Select
+PWM0CLK_PCLK5:      equ    5                                         ; Pulse Width Channel 5 Clock Select
+PWM0CLK_PCLK6:      equ    6                                         ; Pulse Width Channel 6 Clock Select
+PWM0CLK_PCLK7:      equ    7                                         ; Pulse Width Channel 7 Clock Select
+; bit position masks
+mPWM0CLK_PCLK0:     equ    %00000001
+mPWM0CLK_PCLK1:     equ    %00000010
+mPWM0CLK_PCLK2:     equ    %00000100
+mPWM0CLK_PCLK3:     equ    %00001000
+mPWM0CLK_PCLK4:     equ    %00010000
+mPWM0CLK_PCLK5:     equ    %00100000
+mPWM0CLK_PCLK6:     equ    %01000000
+mPWM0CLK_PCLK7:     equ    %10000000
+
+
+;*** PWM0PRCLK - PWM0 Prescale Clock Select Register; 0x00000483 ***
+PWM0PRCLK:          equ    $00000483                                ;*** PWM0PRCLK - PWM0 Prescale Clock Select Register; 0x00000483 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0PRCLK_PCKA0:    equ    0                                         ; Prescaler Select for Clock A 0
+PWM0PRCLK_PCKA1:    equ    1                                         ; Prescaler Select for Clock A 1
+PWM0PRCLK_PCKA2:    equ    2                                         ; Prescaler Select for Clock A 2
+PWM0PRCLK_PCKB0:    equ    4                                         ; Prescaler Select for Clock B 0
+PWM0PRCLK_PCKB1:    equ    5                                         ; Prescaler Select for Clock B 1
+PWM0PRCLK_PCKB2:    equ    6                                         ; Prescaler Select for Clock B 2
+; bit position masks
+mPWM0PRCLK_PCKA0:   equ    %00000001
+mPWM0PRCLK_PCKA1:   equ    %00000010
+mPWM0PRCLK_PCKA2:   equ    %00000100
+mPWM0PRCLK_PCKB0:   equ    %00010000
+mPWM0PRCLK_PCKB1:   equ    %00100000
+mPWM0PRCLK_PCKB2:   equ    %01000000
+
+
+;*** PWM0CAE - PWM0 Center Align Enable Register; 0x00000484 ***
+PWM0CAE:            equ    $00000484                                ;*** PWM0CAE - PWM0 Center Align Enable Register; 0x00000484 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0CAE_CAE0:       equ    0                                         ; Center Aligned Output Mode on channel 0
+PWM0CAE_CAE1:       equ    1                                         ; Center Aligned Output Mode on channel 1
+PWM0CAE_CAE2:       equ    2                                         ; Center Aligned Output Mode on channel 2
+PWM0CAE_CAE3:       equ    3                                         ; Center Aligned Output Mode on channel 3
+PWM0CAE_CAE4:       equ    4                                         ; Center Aligned Output Mode on channel 4
+PWM0CAE_CAE5:       equ    5                                         ; Center Aligned Output Mode on channel 5
+PWM0CAE_CAE6:       equ    6                                         ; Center Aligned Output Mode on channel 6
+PWM0CAE_CAE7:       equ    7                                         ; Center Aligned Output Mode on channel 7
+; bit position masks
+mPWM0CAE_CAE0:      equ    %00000001
+mPWM0CAE_CAE1:      equ    %00000010
+mPWM0CAE_CAE2:      equ    %00000100
+mPWM0CAE_CAE3:      equ    %00001000
+mPWM0CAE_CAE4:      equ    %00010000
+mPWM0CAE_CAE5:      equ    %00100000
+mPWM0CAE_CAE6:      equ    %01000000
+mPWM0CAE_CAE7:      equ    %10000000
+
+
+;*** PWM0CTL - PWM0 Control Register; 0x00000485 ***
+PWM0CTL:            equ    $00000485                                ;*** PWM0CTL - PWM0 Control Register; 0x00000485 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0CTL_PFRZ:       equ    2                                         ; PWM0 Counters Stop in Freeze Mode
+PWM0CTL_PSWAI:      equ    3                                         ; PWM0 Stops in Wait Mode
+PWM0CTL_CON01:      equ    4                                         ; Concatenate channels 0 and 1
+PWM0CTL_CON23:      equ    5                                         ; Concatenate channels 2 and 3
+PWM0CTL_CON45:      equ    6                                         ; Concatenate channels 4 and 5
+PWM0CTL_CON67:      equ    7                                         ; Concatenate channels 6 and 7
+; bit position masks
+mPWM0CTL_PFRZ:      equ    %00000100
+mPWM0CTL_PSWAI:     equ    %00001000
+mPWM0CTL_CON01:     equ    %00010000
+mPWM0CTL_CON23:     equ    %00100000
+mPWM0CTL_CON45:     equ    %01000000
+mPWM0CTL_CON67:     equ    %10000000
+
+
+;*** PWM0CLKAB - PWM0 Clock A/B Select Register; 0x00000486 ***
+PWM0CLKAB:          equ    $00000486                                ;*** PWM0CLKAB - PWM0 Clock A/B Select Register; 0x00000486 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0CLKAB_PCLKAB0:  equ    0                                         ; Pulse Width Channel 0 Clock A/B Select
+PWM0CLKAB_PCLKAB1:  equ    1                                         ; Pulse Width Channel 1 Clock A/B Select
+PWM0CLKAB_PCLKAB2:  equ    2                                         ; Pulse Width Channel 2 Clock A/B Select
+PWM0CLKAB_PCLKAB3:  equ    3                                         ; Pulse Width Channel 3 Clock A/B Select
+PWM0CLKAB_PCLKAB4:  equ    4                                         ; Pulse Width Channel 4 Clock A/B Select
+PWM0CLKAB_PCLKAB5:  equ    5                                         ; Pulse Width Channel 5 Clock A/B Select
+PWM0CLKAB_PCLKAB6:  equ    6                                         ; Pulse Width Channel 6 Clock A/B Select
+PWM0CLKAB_PCLKAB7:  equ    7                                         ; Pulse Width Channel 7 Clock A/B Select
+; bit position masks
+mPWM0CLKAB_PCLKAB0: equ    %00000001
+mPWM0CLKAB_PCLKAB1: equ    %00000010
+mPWM0CLKAB_PCLKAB2: equ    %00000100
+mPWM0CLKAB_PCLKAB3: equ    %00001000
+mPWM0CLKAB_PCLKAB4: equ    %00010000
+mPWM0CLKAB_PCLKAB5: equ    %00100000
+mPWM0CLKAB_PCLKAB6: equ    %01000000
+mPWM0CLKAB_PCLKAB7: equ    %10000000
+
+
+;*** PWM0SCLA - PWM0 Scale A Register; 0x00000488 ***
+PWM0SCLA:           equ    $00000488                                ;*** PWM0SCLA - PWM0 Scale A Register; 0x00000488 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0SCLA_BIT0:      equ    0                                         ; PWM0 Scale A Bit 0
+PWM0SCLA_BIT1:      equ    1                                         ; PWM0 Scale A Bit 1
+PWM0SCLA_BIT2:      equ    2                                         ; PWM0 Scale A Bit 2
+PWM0SCLA_BIT3:      equ    3                                         ; PWM0 Scale A Bit 3
+PWM0SCLA_BIT4:      equ    4                                         ; PWM0 Scale A Bit 4
+PWM0SCLA_BIT5:      equ    5                                         ; PWM0 Scale A Bit 5
+PWM0SCLA_BIT6:      equ    6                                         ; PWM0 Scale A Bit 6
+PWM0SCLA_BIT7:      equ    7                                         ; PWM0 Scale A Bit 7
+; bit position masks
+mPWM0SCLA_BIT0:     equ    %00000001
+mPWM0SCLA_BIT1:     equ    %00000010
+mPWM0SCLA_BIT2:     equ    %00000100
+mPWM0SCLA_BIT3:     equ    %00001000
+mPWM0SCLA_BIT4:     equ    %00010000
+mPWM0SCLA_BIT5:     equ    %00100000
+mPWM0SCLA_BIT6:     equ    %01000000
+mPWM0SCLA_BIT7:     equ    %10000000
+
+
+;*** PWM0SCLB - PWM0 Scale B Register; 0x00000489 ***
+PWM0SCLB:           equ    $00000489                                ;*** PWM0SCLB - PWM0 Scale B Register; 0x00000489 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PWM0SCLB_BIT0:      equ    0                                         ; PWM0 Scale B Bit 0
+PWM0SCLB_BIT1:      equ    1                                         ; PWM0 Scale B Bit 1
+PWM0SCLB_BIT2:      equ    2                                         ; PWM0 Scale B Bit 2
+PWM0SCLB_BIT3:      equ    3                                         ; PWM0 Scale B Bit 3
+PWM0SCLB_BIT4:      equ    4                                         ; PWM0 Scale B Bit 4
+PWM0SCLB_BIT5:      equ    5                                         ; PWM0 Scale B Bit 5
+PWM0SCLB_BIT6:      equ    6                                         ; PWM0 Scale B Bit 6
+PWM0SCLB_BIT7:      equ    7                                         ; PWM0 Scale B Bit 7
+; bit position masks
+mPWM0SCLB_BIT0:     equ    %00000001
+mPWM0SCLB_BIT1:     equ    %00000010
+mPWM0SCLB_BIT2:     equ    %00000100
+mPWM0SCLB_BIT3:     equ    %00001000
+mPWM0SCLB_BIT4:     equ    %00010000
+mPWM0SCLB_BIT5:     equ    %00100000
+mPWM0SCLB_BIT6:     equ    %01000000
+mPWM0SCLB_BIT7:     equ    %10000000
+
+
+;*** PWM0CNT01 - PWM0 Channel Counter 01 Register; 0x0000048C ***
+PWM0CNT01:          equ    $0000048C                                ;*** PWM0CNT01 - PWM0 Channel Counter 01 Register; 0x0000048C ***
+
+
+;*** PWM0CNT0 - PWM0 Channel Counter 0 Register; 0x0000048C ***
+PWM0CNT0:           equ    $0000048C                                ;*** PWM0CNT0 - PWM0 Channel Counter 0 Register; 0x0000048C ***
+
+
+;*** PWM0CNT1 - PWM0 Channel Counter 1 Register; 0x0000048D ***
+PWM0CNT1:           equ    $0000048D                                ;*** PWM0CNT1 - PWM0 Channel Counter 1 Register; 0x0000048D ***
+
+
+;*** PWM0CNT23 - PWM0 Channel Counter 23 Register; 0x0000048E ***
+PWM0CNT23:          equ    $0000048E                                ;*** PWM0CNT23 - PWM0 Channel Counter 23 Register; 0x0000048E ***
+
+
+;*** PWM0CNT2 - PWM0 Channel Counter 2 Register; 0x0000048E ***
+PWM0CNT2:           equ    $0000048E                                ;*** PWM0CNT2 - PWM0 Channel Counter 2 Register; 0x0000048E ***
+
+
+;*** PWM0CNT3 - PWM0 Channel Counter 3 Register; 0x0000048F ***
+PWM0CNT3:           equ    $0000048F                                ;*** PWM0CNT3 - PWM0 Channel Counter 3 Register; 0x0000048F ***
+
+
+;*** PWM0CNT45 - PWM0 Channel Counter 45 Register; 0x00000490 ***
+PWM0CNT45:          equ    $00000490                                ;*** PWM0CNT45 - PWM0 Channel Counter 45 Register; 0x00000490 ***
+
+
+;*** PWM0CNT4 - PWM0 Channel Counter 4 Register; 0x00000490 ***
+PWM0CNT4:           equ    $00000490                                ;*** PWM0CNT4 - PWM0 Channel Counter 4 Register; 0x00000490 ***
+
+
+;*** PWM0CNT5 - PWM0 Channel Counter 5 Register; 0x00000491 ***
+PWM0CNT5:           equ    $00000491                                ;*** PWM0CNT5 - PWM0 Channel Counter 5 Register; 0x00000491 ***
+
+
+;*** PWM0CNT67 - PWM0 Channel Counter 67 Register; 0x00000492 ***
+PWM0CNT67:          equ    $00000492                                ;*** PWM0CNT67 - PWM0 Channel Counter 67 Register; 0x00000492 ***
+
+
+;*** PWM0CNT6 - PWM0 Channel Counter 6 Register; 0x00000492 ***
+PWM0CNT6:           equ    $00000492                                ;*** PWM0CNT6 - PWM0 Channel Counter 6 Register; 0x00000492 ***
+
+
+;*** PWM0CNT7 - PWM0 Channel Counter 7 Register; 0x00000493 ***
+PWM0CNT7:           equ    $00000493                                ;*** PWM0CNT7 - PWM0 Channel Counter 7 Register; 0x00000493 ***
+
+
+;*** PWM0PER01 - PWM0 Channel Period 01 Register; 0x00000494 ***
+PWM0PER01:          equ    $00000494                                ;*** PWM0PER01 - PWM0 Channel Period 01 Register; 0x00000494 ***
+
+
+;*** PWM0PER0 - PWM0 Channel Period 0 Register; 0x00000494 ***
+PWM0PER0:           equ    $00000494                                ;*** PWM0PER0 - PWM0 Channel Period 0 Register; 0x00000494 ***
+
+
+;*** PWM0PER1 - PWM0 Channel Period 1 Register; 0x00000495 ***
+PWM0PER1:           equ    $00000495                                ;*** PWM0PER1 - PWM0 Channel Period 1 Register; 0x00000495 ***
+
+
+;*** PWM0PER23 - PWM0 Channel Period 23 Register; 0x00000496 ***
+PWM0PER23:          equ    $00000496                                ;*** PWM0PER23 - PWM0 Channel Period 23 Register; 0x00000496 ***
+
+
+;*** PWM0PER2 - PWM0 Channel Period 2 Register; 0x00000496 ***
+PWM0PER2:           equ    $00000496                                ;*** PWM0PER2 - PWM0 Channel Period 2 Register; 0x00000496 ***
+
+
+;*** PWM0PER3 - PWM0 Channel Period 3 Register; 0x00000497 ***
+PWM0PER3:           equ    $00000497                                ;*** PWM0PER3 - PWM0 Channel Period 3 Register; 0x00000497 ***
+
+
+;*** PWM0PER45 - PWM0 Channel Period 45 Register; 0x00000498 ***
+PWM0PER45:          equ    $00000498                                ;*** PWM0PER45 - PWM0 Channel Period 45 Register; 0x00000498 ***
+
+
+;*** PWM0PER4 - PWM0 Channel Period 4 Register; 0x00000498 ***
+PWM0PER4:           equ    $00000498                                ;*** PWM0PER4 - PWM0 Channel Period 4 Register; 0x00000498 ***
+
+
+;*** PWM0PER5 - PWM0 Channel Period 5 Register; 0x00000499 ***
+PWM0PER5:           equ    $00000499                                ;*** PWM0PER5 - PWM0 Channel Period 5 Register; 0x00000499 ***
+
+
+;*** PWM0PER67 - PWM0 Channel Period 67 Register; 0x0000049A ***
+PWM0PER67:          equ    $0000049A                                ;*** PWM0PER67 - PWM0 Channel Period 67 Register; 0x0000049A ***
+
+
+;*** PWM0PER6 - PWM0 Channel Period 6 Register; 0x0000049A ***
+PWM0PER6:           equ    $0000049A                                ;*** PWM0PER6 - PWM0 Channel Period 6 Register; 0x0000049A ***
+
+
+;*** PWM0PER7 - PWM0 Channel Period 7 Register; 0x0000049B ***
+PWM0PER7:           equ    $0000049B                                ;*** PWM0PER7 - PWM0 Channel Period 7 Register; 0x0000049B ***
+
+
+;*** PWM0DTY01 - PWM0 Channel Duty 01 Register; 0x0000049C ***
+PWM0DTY01:          equ    $0000049C                                ;*** PWM0DTY01 - PWM0 Channel Duty 01 Register; 0x0000049C ***
+
+
+;*** PWM0DTY0 - PWM0 Channel Duty 0 Register; 0x0000049C ***
+PWM0DTY0:           equ    $0000049C                                ;*** PWM0DTY0 - PWM0 Channel Duty 0 Register; 0x0000049C ***
+
+
+;*** PWM0DTY1 - PWM0 Channel Duty 1 Register; 0x0000049D ***
+PWM0DTY1:           equ    $0000049D                                ;*** PWM0DTY1 - PWM0 Channel Duty 1 Register; 0x0000049D ***
+
+
+;*** PWM0DTY23 - PWM0 Channel Duty 23 Register; 0x0000049E ***
+PWM0DTY23:          equ    $0000049E                                ;*** PWM0DTY23 - PWM0 Channel Duty 23 Register; 0x0000049E ***
+
+
+;*** PWM0DTY2 - PWM0 Channel Duty 2 Register; 0x0000049E ***
+PWM0DTY2:           equ    $0000049E                                ;*** PWM0DTY2 - PWM0 Channel Duty 2 Register; 0x0000049E ***
+
+
+;*** PWM0DTY3 - PWM0 Channel Duty 3 Register; 0x0000049F ***
+PWM0DTY3:           equ    $0000049F                                ;*** PWM0DTY3 - PWM0 Channel Duty 3 Register; 0x0000049F ***
+
+
+;*** PWM0DTY45 - PWM0 Channel Duty 45 Register; 0x000004A0 ***
+PWM0DTY45:          equ    $000004A0                                ;*** PWM0DTY45 - PWM0 Channel Duty 45 Register; 0x000004A0 ***
+
+
+;*** PWM0DTY4 - PWM0 Channel Duty 4 Register; 0x000004A0 ***
+PWM0DTY4:           equ    $000004A0                                ;*** PWM0DTY4 - PWM0 Channel Duty 4 Register; 0x000004A0 ***
+
+
+;*** PWM0DTY5 - PWM0 Channel Duty 5 Register; 0x000004A1 ***
+PWM0DTY5:           equ    $000004A1                                ;*** PWM0DTY5 - PWM0 Channel Duty 5 Register; 0x000004A1 ***
+
+
+;*** PWM0DTY67 - PWM0 Channel Duty 67 Register; 0x000004A2 ***
+PWM0DTY67:          equ    $000004A2                                ;*** PWM0DTY67 - PWM0 Channel Duty 67 Register; 0x000004A2 ***
+
+
+;*** PWM0DTY6 - PWM0 Channel Duty 6 Register; 0x000004A2 ***
+PWM0DTY6:           equ    $000004A2                                ;*** PWM0DTY6 - PWM0 Channel Duty 6 Register; 0x000004A2 ***
+
+
+;*** PWM0DTY7 - PWM0 Channel Duty 7 Register; 0x000004A3 ***
+PWM0DTY7:           equ    $000004A3                                ;*** PWM0DTY7 - PWM0 Channel Duty 7 Register; 0x000004A3 ***
+
+
+;*** TIM0TIOS - Timer Input Capture/Output Compare Select; 0x000005C0 ***
+TIM0TIOS:           equ    $000005C0                                ;*** TIM0TIOS - Timer Input Capture/Output Compare Select; 0x000005C0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TIOS_IOS0:      equ    0                                         ; Input Capture or Output Compare Channel Configuration Bit 0
+TIM0TIOS_IOS1:      equ    1                                         ; Input Capture or Output Compare Channel Configuration Bit 1
+TIM0TIOS_IOS2:      equ    2                                         ; Input Capture or Output Compare Channel Configuration Bit 2
+TIM0TIOS_IOS3:      equ    3                                         ; Input Capture or Output Compare Channel Configuration Bit 3
+TIM0TIOS_IOS4:      equ    4                                         ; Input Capture or Output Compare Channel Configuration Bit 4
+TIM0TIOS_IOS5:      equ    5                                         ; Input Capture or Output Compare Channel Configuration Bit 5
+; bit position masks
+mTIM0TIOS_IOS0:     equ    %00000001
+mTIM0TIOS_IOS1:     equ    %00000010
+mTIM0TIOS_IOS2:     equ    %00000100
+mTIM0TIOS_IOS3:     equ    %00001000
+mTIM0TIOS_IOS4:     equ    %00010000
+mTIM0TIOS_IOS5:     equ    %00100000
+
+
+;*** TIM0CFORC - Timer Compare Force Register; 0x000005C1 ***
+TIM0CFORC:          equ    $000005C1                                ;*** TIM0CFORC - Timer Compare Force Register; 0x000005C1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0CFORC_FOC0:     equ    0                                         ; Force Output Compare Action for Channel 0
+TIM0CFORC_FOC1:     equ    1                                         ; Force Output Compare Action for Channel 1
+TIM0CFORC_FOC2:     equ    2                                         ; Force Output Compare Action for Channel 2
+TIM0CFORC_FOC3:     equ    3                                         ; Force Output Compare Action for Channel 3
+TIM0CFORC_FOC4:     equ    4                                         ; Force Output Compare Action for Channel 4
+TIM0CFORC_FOC5:     equ    5                                         ; Force Output Compare Action for Channel 5
+; bit position masks
+mTIM0CFORC_FOC0:    equ    %00000001
+mTIM0CFORC_FOC1:    equ    %00000010
+mTIM0CFORC_FOC2:    equ    %00000100
+mTIM0CFORC_FOC3:    equ    %00001000
+mTIM0CFORC_FOC4:    equ    %00010000
+mTIM0CFORC_FOC5:    equ    %00100000
+
+
+;*** TIM0TCNT - Timer Count Register; 0x000005C4 ***
+TIM0TCNT:           equ    $000005C4                                ;*** TIM0TCNT - Timer Count Register; 0x000005C4 ***
+
+
+;*** TIM0TCNTHi - Timer Count Register High (OBSOLETE - defined for backward compatibility); 0x000005C4 ***
+TIM0TCNTHi:         equ    $000005C4                                ;*** TIM0TCNTHi - Timer Count Register High (OBSOLETE - defined for backward compatibility); 0x000005C4 ***
+
+
+;*** TIM0TCNTH - Timer Count Register High; 0x000005C4 ***
+TIM0TCNTH:          equ    $000005C4                                ;*** TIM0TCNTH - Timer Count Register High; 0x000005C4 ***
+
+
+;*** TIM0TCNTLo - Timer Count Register Low (OBSOLETE - defined for backward compatibility); 0x000005C5 ***
+TIM0TCNTLo:         equ    $000005C5                                ;*** TIM0TCNTLo - Timer Count Register Low (OBSOLETE - defined for backward compatibility); 0x000005C5 ***
+
+
+;*** TIM0TCNTL - Timer Count Register Low; 0x000005C5 ***
+TIM0TCNTL:          equ    $000005C5                                ;*** TIM0TCNTL - Timer Count Register Low; 0x000005C5 ***
+
+
+;*** TIM0TSCR1 - Timer System Control Register1; 0x000005C6 ***
+TIM0TSCR1:          equ    $000005C6                                ;*** TIM0TSCR1 - Timer System Control Register1; 0x000005C6 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TSCR1_PRNT:     equ    3                                         ; Precision Timer
+TIM0TSCR1_TFFCA:    equ    4                                         ; Timer Fast Flag Clear All
+TIM0TSCR1_TSFRZ:    equ    5                                         ; Timer and Modulus Counter Stop While in Freeze Mode
+TIM0TSCR1_TSWAI:    equ    6                                         ; Timer Module Stops While in Wait
+TIM0TSCR1_TEN:      equ    7                                         ; Timer Enable
+; bit position masks
+mTIM0TSCR1_PRNT:    equ    %00001000
+mTIM0TSCR1_TFFCA:   equ    %00010000
+mTIM0TSCR1_TSFRZ:   equ    %00100000
+mTIM0TSCR1_TSWAI:   equ    %01000000
+mTIM0TSCR1_TEN:     equ    %10000000
+
+
+;*** TIM0TTOV - Timer Toggle On Overflow Register; 0x000005C7 ***
+TIM0TTOV:           equ    $000005C7                                ;*** TIM0TTOV - Timer Toggle On Overflow Register; 0x000005C7 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TTOV_TOV0:      equ    0                                         ; Toggle On Overflow Bit 0
+TIM0TTOV_TOV1:      equ    1                                         ; Toggle On Overflow Bit 1
+TIM0TTOV_TOV2:      equ    2                                         ; Toggle On Overflow Bit 2
+TIM0TTOV_TOV3:      equ    3                                         ; Toggle On Overflow Bit 3
+TIM0TTOV_TOV4:      equ    4                                         ; Toggle On Overflow Bit 4
+TIM0TTOV_TOV5:      equ    5                                         ; Toggle On Overflow Bit 5
+; bit position masks
+mTIM0TTOV_TOV0:     equ    %00000001
+mTIM0TTOV_TOV1:     equ    %00000010
+mTIM0TTOV_TOV2:     equ    %00000100
+mTIM0TTOV_TOV3:     equ    %00001000
+mTIM0TTOV_TOV4:     equ    %00010000
+mTIM0TTOV_TOV5:     equ    %00100000
+
+
+;*** TIM0TCTL1 - Timer Control Register 1; 0x000005C8 ***
+TIM0TCTL1:          equ    $000005C8                                ;*** TIM0TCTL1 - Timer Control Register 1; 0x000005C8 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TCTL1_OL4:      equ    0                                         ; Output Level Bit 4
+TIM0TCTL1_OM4:      equ    1                                         ; Output Mode Bit 4
+TIM0TCTL1_OL5:      equ    2                                         ; Output Level Bit 5
+TIM0TCTL1_OM5:      equ    3                                         ; Output Mode Bit 5
+; bit position masks
+mTIM0TCTL1_OL4:     equ    %00000001
+mTIM0TCTL1_OM4:     equ    %00000010
+mTIM0TCTL1_OL5:     equ    %00000100
+mTIM0TCTL1_OM5:     equ    %00001000
+
+
+;*** TIM0TCTL2 - Timer Control Register 2; 0x000005C9 ***
+TIM0TCTL2:          equ    $000005C9                                ;*** TIM0TCTL2 - Timer Control Register 2; 0x000005C9 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TCTL2_OL0:      equ    0                                         ; Output Level Bit 0
+TIM0TCTL2_OM0:      equ    1                                         ; Output Mode Bit 0
+TIM0TCTL2_OL1:      equ    2                                         ; Output Level Bit 1
+TIM0TCTL2_OM1:      equ    3                                         ; Output Mode Bit 1
+TIM0TCTL2_OL2:      equ    4                                         ; Output Level Bit 2
+TIM0TCTL2_OM2:      equ    5                                         ; Output Mode Bit 2
+TIM0TCTL2_OL3:      equ    6                                         ; Output Level Bit 3
+TIM0TCTL2_OM3:      equ    7                                         ; Output Mode Bit 3
+; bit position masks
+mTIM0TCTL2_OL0:     equ    %00000001
+mTIM0TCTL2_OM0:     equ    %00000010
+mTIM0TCTL2_OL1:     equ    %00000100
+mTIM0TCTL2_OM1:     equ    %00001000
+mTIM0TCTL2_OL2:     equ    %00010000
+mTIM0TCTL2_OM2:     equ    %00100000
+mTIM0TCTL2_OL3:     equ    %01000000
+mTIM0TCTL2_OM3:     equ    %10000000
+
+
+;*** TIM0TCTL3 - Timer Control Register 3; 0x000005CA ***
+TIM0TCTL3:          equ    $000005CA                                ;*** TIM0TCTL3 - Timer Control Register 3; 0x000005CA ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TCTL3_EDG4A:    equ    0                                         ; Input Capture Edge Control 4A
+TIM0TCTL3_EDG4B:    equ    1                                         ; Input Capture Edge Control 4B
+TIM0TCTL3_EDG5A:    equ    2                                         ; Input Capture Edge Control 5A
+TIM0TCTL3_EDG5B:    equ    3                                         ; Input Capture Edge Control 5B
+; bit position masks
+mTIM0TCTL3_EDG4A:   equ    %00000001
+mTIM0TCTL3_EDG4B:   equ    %00000010
+mTIM0TCTL3_EDG5A:   equ    %00000100
+mTIM0TCTL3_EDG5B:   equ    %00001000
+
+
+;*** TIM0TCTL4 - Timer Control Register 4; 0x000005CB ***
+TIM0TCTL4:          equ    $000005CB                                ;*** TIM0TCTL4 - Timer Control Register 4; 0x000005CB ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TCTL4_EDG0A:    equ    0                                         ; Input Capture Edge Control 0A
+TIM0TCTL4_EDG0B:    equ    1                                         ; Input Capture Edge Control 0B
+TIM0TCTL4_EDG1A:    equ    2                                         ; Input Capture Edge Control 1A
+TIM0TCTL4_EDG1B:    equ    3                                         ; Input Capture Edge Control 1B
+TIM0TCTL4_EDG2A:    equ    4                                         ; Input Capture Edge Control 2A
+TIM0TCTL4_EDG2B:    equ    5                                         ; Input Capture Edge Control 2B
+TIM0TCTL4_EDG3A:    equ    6                                         ; Input Capture Edge Control 3A
+TIM0TCTL4_EDG3B:    equ    7                                         ; Input Capture Edge Control 3B
+; bit position masks
+mTIM0TCTL4_EDG0A:   equ    %00000001
+mTIM0TCTL4_EDG0B:   equ    %00000010
+mTIM0TCTL4_EDG1A:   equ    %00000100
+mTIM0TCTL4_EDG1B:   equ    %00001000
+mTIM0TCTL4_EDG2A:   equ    %00010000
+mTIM0TCTL4_EDG2B:   equ    %00100000
+mTIM0TCTL4_EDG3A:   equ    %01000000
+mTIM0TCTL4_EDG3B:   equ    %10000000
+
+
+;*** TIM0TIE - Timer Interrupt Enable Register; 0x000005CC ***
+TIM0TIE:            equ    $000005CC                                ;*** TIM0TIE - Timer Interrupt Enable Register; 0x000005CC ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TIE_C0I:        equ    0                                         ; Input Capture/Output Compare Interrupt Enable Bit 0
+TIM0TIE_C1I:        equ    1                                         ; Input Capture/Output Compare Interrupt Enable Bit 1
+TIM0TIE_C2I:        equ    2                                         ; Input Capture/Output Compare Interrupt Enable Bit 2
+TIM0TIE_C3I:        equ    3                                         ; Input Capture/Output Compare Interrupt Enable Bit 3
+TIM0TIE_C4I:        equ    4                                         ; Input Capture/Output Compare Interrupt Enable Bit 4
+TIM0TIE_C5I:        equ    5                                         ; Input Capture/Output Compare Interrupt Enable Bit 5
+; bit position masks
+mTIM0TIE_C0I:       equ    %00000001
+mTIM0TIE_C1I:       equ    %00000010
+mTIM0TIE_C2I:       equ    %00000100
+mTIM0TIE_C3I:       equ    %00001000
+mTIM0TIE_C4I:       equ    %00010000
+mTIM0TIE_C5I:       equ    %00100000
+
+
+;*** TIM0TSCR2 - Timer System Control Register 2; 0x000005CD ***
+TIM0TSCR2:          equ    $000005CD                                ;*** TIM0TSCR2 - Timer System Control Register 2; 0x000005CD ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TSCR2_PR0:      equ    0                                         ; Timer Prescaler Select Bit 0
+TIM0TSCR2_PR1:      equ    1                                         ; Timer Prescaler Select Bit 1
+TIM0TSCR2_PR2:      equ    2                                         ; Timer Prescaler Select Bit 2
+TIM0TSCR2_TOI:      equ    7                                         ; Timer Overflow Interrupt Enable
+; bit position masks
+mTIM0TSCR2_PR0:     equ    %00000001
+mTIM0TSCR2_PR1:     equ    %00000010
+mTIM0TSCR2_PR2:     equ    %00000100
+mTIM0TSCR2_TOI:     equ    %10000000
+
+
+;*** TIM0TFLG1 - Main Timer Interrupt Flag 1; 0x000005CE ***
+TIM0TFLG1:          equ    $000005CE                                ;*** TIM0TFLG1 - Main Timer Interrupt Flag 1; 0x000005CE ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TFLG1_C0F:      equ    0                                         ; Input Capture/Output Compare Channel interrupt flag 0
+TIM0TFLG1_C1F:      equ    1                                         ; Input Capture/Output Compare Channel interrupt flag 1
+TIM0TFLG1_C2F:      equ    2                                         ; Input Capture/Output Compare Channel interrupt flag 2
+TIM0TFLG1_C3F:      equ    3                                         ; Input Capture/Output Compare Channel interrupt flag 3
+TIM0TFLG1_C4F:      equ    4                                         ; Input Capture/Output Compare Channel interrupt flag 4
+TIM0TFLG1_C5F:      equ    5                                         ; Input Capture/Output Compare Channel interrupt flag 5
+; bit position masks
+mTIM0TFLG1_C0F:     equ    %00000001
+mTIM0TFLG1_C1F:     equ    %00000010
+mTIM0TFLG1_C2F:     equ    %00000100
+mTIM0TFLG1_C3F:     equ    %00001000
+mTIM0TFLG1_C4F:     equ    %00010000
+mTIM0TFLG1_C5F:     equ    %00100000
+
+
+;*** TIM0TFLG2 - Main Timer Interrupt Flag 2; 0x000005CF ***
+TIM0TFLG2:          equ    $000005CF                                ;*** TIM0TFLG2 - Main Timer Interrupt Flag 2; 0x000005CF ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0TFLG2_TOF:      equ    7                                         ; Timer Overflow interrupt flag
+; bit position masks
+mTIM0TFLG2_TOF:     equ    %10000000
+
+
+;*** TIM0TC0 - Timer Input Capture/Output Compare Register 0; 0x000005D0 ***
+TIM0TC0:            equ    $000005D0                                ;*** TIM0TC0 - Timer Input Capture/Output Compare Register 0; 0x000005D0 ***
+
+
+;*** TIM0TC0Hi - Timer Input Capture/Output Compare Register 0 High (OBSOLETE - defined for backward compatibility); 0x000005D0 ***
+TIM0TC0Hi:          equ    $000005D0                                ;*** TIM0TC0Hi - Timer Input Capture/Output Compare Register 0 High (OBSOLETE - defined for backward compatibility); 0x000005D0 ***
+
+
+;*** TIM0TC0H - Timer Input Capture/Output Compare Register 0 High; 0x000005D0 ***
+TIM0TC0H:           equ    $000005D0                                ;*** TIM0TC0H - Timer Input Capture/Output Compare Register 0 High; 0x000005D0 ***
+
+
+;*** TIM0TC0Lo - Timer Input Capture/Output Compare Register 0 Low (OBSOLETE - defined for backward compatibility); 0x000005D1 ***
+TIM0TC0Lo:          equ    $000005D1                                ;*** TIM0TC0Lo - Timer Input Capture/Output Compare Register 0 Low (OBSOLETE - defined for backward compatibility); 0x000005D1 ***
+
+
+;*** TIM0TC0L - Timer Input Capture/Output Compare Register 0 Low; 0x000005D1 ***
+TIM0TC0L:           equ    $000005D1                                ;*** TIM0TC0L - Timer Input Capture/Output Compare Register 0 Low; 0x000005D1 ***
+
+
+;*** TIM0TC1 - Timer Input Capture/Output Compare Register 1; 0x000005D2 ***
+TIM0TC1:            equ    $000005D2                                ;*** TIM0TC1 - Timer Input Capture/Output Compare Register 1; 0x000005D2 ***
+
+
+;*** TIM0TC1Hi - Timer Input Capture/Output Compare Register 1 High (OBSOLETE - defined for backward compatibility); 0x000005D2 ***
+TIM0TC1Hi:          equ    $000005D2                                ;*** TIM0TC1Hi - Timer Input Capture/Output Compare Register 1 High (OBSOLETE - defined for backward compatibility); 0x000005D2 ***
+
+
+;*** TIM0TC1H - Timer Input Capture/Output Compare Register 1 High; 0x000005D2 ***
+TIM0TC1H:           equ    $000005D2                                ;*** TIM0TC1H - Timer Input Capture/Output Compare Register 1 High; 0x000005D2 ***
+
+
+;*** TIM0TC1Lo - Timer Input Capture/Output Compare Register 1 Low (OBSOLETE - defined for backward compatibility); 0x000005D3 ***
+TIM0TC1Lo:          equ    $000005D3                                ;*** TIM0TC1Lo - Timer Input Capture/Output Compare Register 1 Low (OBSOLETE - defined for backward compatibility); 0x000005D3 ***
+
+
+;*** TIM0TC1L - Timer Input Capture/Output Compare Register 1 Low; 0x000005D3 ***
+TIM0TC1L:           equ    $000005D3                                ;*** TIM0TC1L - Timer Input Capture/Output Compare Register 1 Low; 0x000005D3 ***
+
+
+;*** TIM0TC2 - Timer Input Capture/Output Compare Register 2; 0x000005D4 ***
+TIM0TC2:            equ    $000005D4                                ;*** TIM0TC2 - Timer Input Capture/Output Compare Register 2; 0x000005D4 ***
+
+
+;*** TIM0TC2Hi - Timer Input Capture/Output Compare Register 2 High (OBSOLETE - defined for backward compatibility); 0x000005D4 ***
+TIM0TC2Hi:          equ    $000005D4                                ;*** TIM0TC2Hi - Timer Input Capture/Output Compare Register 2 High (OBSOLETE - defined for backward compatibility); 0x000005D4 ***
+
+
+;*** TIM0TC2H - Timer Input Capture/Output Compare Register 2 High; 0x000005D4 ***
+TIM0TC2H:           equ    $000005D4                                ;*** TIM0TC2H - Timer Input Capture/Output Compare Register 2 High; 0x000005D4 ***
+
+
+;*** TIM0TC2Lo - Timer Input Capture/Output Compare Register 2 Low (OBSOLETE - defined for backward compatibility); 0x000005D5 ***
+TIM0TC2Lo:          equ    $000005D5                                ;*** TIM0TC2Lo - Timer Input Capture/Output Compare Register 2 Low (OBSOLETE - defined for backward compatibility); 0x000005D5 ***
+
+
+;*** TIM0TC2L - Timer Input Capture/Output Compare Register 2 Low; 0x000005D5 ***
+TIM0TC2L:           equ    $000005D5                                ;*** TIM0TC2L - Timer Input Capture/Output Compare Register 2 Low; 0x000005D5 ***
+
+
+;*** TIM0TC3 - Timer Input Capture/Output Compare Register 3; 0x000005D6 ***
+TIM0TC3:            equ    $000005D6                                ;*** TIM0TC3 - Timer Input Capture/Output Compare Register 3; 0x000005D6 ***
+
+
+;*** TIM0TC3Hi - Timer Input Capture/Output Compare Register 3 High (OBSOLETE - defined for backward compatibility); 0x000005D6 ***
+TIM0TC3Hi:          equ    $000005D6                                ;*** TIM0TC3Hi - Timer Input Capture/Output Compare Register 3 High (OBSOLETE - defined for backward compatibility); 0x000005D6 ***
+
+
+;*** TIM0TC3H - Timer Input Capture/Output Compare Register 3 High; 0x000005D6 ***
+TIM0TC3H:           equ    $000005D6                                ;*** TIM0TC3H - Timer Input Capture/Output Compare Register 3 High; 0x000005D6 ***
+
+
+;*** TIM0TC3Lo - Timer Input Capture/Output Compare Register 3 Low (OBSOLETE - defined for backward compatibility); 0x000005D7 ***
+TIM0TC3Lo:          equ    $000005D7                                ;*** TIM0TC3Lo - Timer Input Capture/Output Compare Register 3 Low (OBSOLETE - defined for backward compatibility); 0x000005D7 ***
+
+
+;*** TIM0TC3L - Timer Input Capture/Output Compare Register 3 Low; 0x000005D7 ***
+TIM0TC3L:           equ    $000005D7                                ;*** TIM0TC3L - Timer Input Capture/Output Compare Register 3 Low; 0x000005D7 ***
+
+
+;*** TIM0TC4 - Timer Input Capture/Output Compare Register 4; 0x000005D8 ***
+TIM0TC4:            equ    $000005D8                                ;*** TIM0TC4 - Timer Input Capture/Output Compare Register 4; 0x000005D8 ***
+
+
+;*** TIM0TC4Hi - Timer Input Capture/Output Compare Register 4 High (OBSOLETE - defined for backward compatibility); 0x000005D8 ***
+TIM0TC4Hi:          equ    $000005D8                                ;*** TIM0TC4Hi - Timer Input Capture/Output Compare Register 4 High (OBSOLETE - defined for backward compatibility); 0x000005D8 ***
+
+
+;*** TIM0TC4H - Timer Input Capture/Output Compare Register 4 High; 0x000005D8 ***
+TIM0TC4H:           equ    $000005D8                                ;*** TIM0TC4H - Timer Input Capture/Output Compare Register 4 High; 0x000005D8 ***
+
+
+;*** TIM0TC4Lo - Timer Input Capture/Output Compare Register 4 Low (OBSOLETE - defined for backward compatibility); 0x000005D9 ***
+TIM0TC4Lo:          equ    $000005D9                                ;*** TIM0TC4Lo - Timer Input Capture/Output Compare Register 4 Low (OBSOLETE - defined for backward compatibility); 0x000005D9 ***
+
+
+;*** TIM0TC4L - Timer Input Capture/Output Compare Register 4 Low (OBSOLETE - defined for backward compatibility); 0x000005D9 ***
+TIM0TC4L:           equ    $000005D9                                ;*** TIM0TC4L - Timer Input Capture/Output Compare Register 4 Low (OBSOLETE - defined for backward compatibility); 0x000005D9 ***
+
+
+;*** TIM0TC5 - Timer Input Capture/Output Compare Register 5; 0x000005DA ***
+TIM0TC5:            equ    $000005DA                                ;*** TIM0TC5 - Timer Input Capture/Output Compare Register 5; 0x000005DA ***
+
+
+;*** TIM0TC5Hi - Timer Input Capture/Output Compare Register 5 High (OBSOLETE - defined for backward compatibility); 0x000005DA ***
+TIM0TC5Hi:          equ    $000005DA                                ;*** TIM0TC5Hi - Timer Input Capture/Output Compare Register 5 High (OBSOLETE - defined for backward compatibility); 0x000005DA ***
+
+
+;*** TIM0TC5H - Timer Input Capture/Output Compare Register 5 High; 0x000005DA ***
+TIM0TC5H:           equ    $000005DA                                ;*** TIM0TC5H - Timer Input Capture/Output Compare Register 5 High; 0x000005DA ***
+
+
+;*** TIM0TC5Lo - Timer Input Capture/Output Compare Register 5 Low (OBSOLETE - defined for backward compatibility); 0x000005DB ***
+TIM0TC5Lo:          equ    $000005DB                                ;*** TIM0TC5Lo - Timer Input Capture/Output Compare Register 5 Low (OBSOLETE - defined for backward compatibility); 0x000005DB ***
+
+
+;*** TIM0TC5L - Timer Input Capture/Output Compare Register 5 Low; 0x000005DB ***
+TIM0TC5L:           equ    $000005DB                                ;*** TIM0TC5L - Timer Input Capture/Output Compare Register 5 Low; 0x000005DB ***
+
+
+;*** TIM0OCPD - Output Compare Pin Disconnect Register; 0x000005EC ***
+TIM0OCPD:           equ    $000005EC                                ;*** TIM0OCPD - Output Compare Pin Disconnect Register; 0x000005EC ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0OCPD_OCPD0:     equ    0                                         ; Output Compare Pin Disconnect Bit 0
+TIM0OCPD_OCPD1:     equ    1                                         ; Output Compare Pin Disconnect Bit 1
+TIM0OCPD_OCPD2:     equ    2                                         ; Output Compare Pin Disconnect Bit 2
+TIM0OCPD_OCPD3:     equ    3                                         ; Output Compare Pin Disconnect Bit 3
+TIM0OCPD_OCPD4:     equ    4                                         ; Output Compare Pin Disconnect Bit 4
+TIM0OCPD_OCPD5:     equ    5                                         ; Output Compare Pin Disconnect Bit 5
+; bit position masks
+mTIM0OCPD_OCPD0:    equ    %00000001
+mTIM0OCPD_OCPD1:    equ    %00000010
+mTIM0OCPD_OCPD2:    equ    %00000100
+mTIM0OCPD_OCPD3:    equ    %00001000
+mTIM0OCPD_OCPD4:    equ    %00010000
+mTIM0OCPD_OCPD5:    equ    %00100000
+
+
+;*** TIM0PTPSR - Precision Timer Prescaler Select Register; 0x000005EE ***
+TIM0PTPSR:          equ    $000005EE                                ;*** TIM0PTPSR - Precision Timer Prescaler Select Register; 0x000005EE ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+TIM0PTPSR_PTPS0:    equ    0                                         ; Precision Timer Prescaler Select Bit 0
+TIM0PTPSR_PTPS1:    equ    1                                         ; Precision Timer Prescaler Select Bit 1
+TIM0PTPSR_PTPS2:    equ    2                                         ; Precision Timer Prescaler Select Bit 2
+TIM0PTPSR_PTPS3:    equ    3                                         ; Precision Timer Prescaler Select Bit 3
+TIM0PTPSR_PTPS4:    equ    4                                         ; Precision Timer Prescaler Select Bit 4
+TIM0PTPSR_PTPS5:    equ    5                                         ; Precision Timer Prescaler Select Bit 5
+TIM0PTPSR_PTPS6:    equ    6                                         ; Precision Timer Prescaler Select Bit 6
+TIM0PTPSR_PTPS7:    equ    7                                         ; Precision Timer Prescaler Select Bit 7
+; bit position masks
+mTIM0PTPSR_PTPS0:   equ    %00000001
+mTIM0PTPSR_PTPS1:   equ    %00000010
+mTIM0PTPSR_PTPS2:   equ    %00000100
+mTIM0PTPSR_PTPS3:   equ    %00001000
+mTIM0PTPSR_PTPS4:   equ    %00010000
+mTIM0PTPSR_PTPS5:   equ    %00100000
+mTIM0PTPSR_PTPS6:   equ    %01000000
+mTIM0PTPSR_PTPS7:   equ    %10000000
+
+
+;*** ADC0CTL - ADC0 Control Register; 0x00000600 ***
+ADC0CTL:            equ    $00000600                                ;*** ADC0CTL - ADC0 Control Register; 0x00000600 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CTL_AUT_RSTA:   equ    4                                         ; Automatic Restart Event after exit from MCU Stop and Wait Mode
+ADC0CTL_SMOD_ACC:   equ    5                                         ; Special Mode Access Control
+ADC0CTL_RVL_BMOD:   equ    6                                         ; RVL Buffer Mode Select
+ADC0CTL_CSL_BMOD:   equ    7                                         ; CSL Buffer Mode Select
+ADC0CTL_MOD_CFG:    equ    8                                         ; Trigger Mode Configuration
+ADC0CTL_STR_SEQA:   equ    9                                         ; Control Of Conversion Result Storage during Sequence abort (SEQA) or Restart request (RSTA)
+ADC0CTL_ACC_CFG:    equ    10                                        ; ADCFLWCTL Register Access Configuration
+ADC0CTL_SWAI:       equ    12                                        ; Wait Mode Configuration
+ADC0CTL_FRZ_MOD:    equ    13                                        ; Freeze Mode Configuration
+ADC0CTL_ADC_SR:     equ    14                                        ; ADC Soft Reset
+ADC0CTL_ADC_EN:     equ    15                                        ; ADC Enable Bit
+; bit position masks
+mADC0CTL_AUT_RSTA:  equ    %00010000
+mADC0CTL_SMOD_ACC:  equ    %00100000
+mADC0CTL_RVL_BMOD:  equ    %01000000
+mADC0CTL_CSL_BMOD:  equ    %10000000
+mADC0CTL_MOD_CFG:   equ    %100000000
+mADC0CTL_STR_SEQA:  equ    %1000000000
+mADC0CTL_ACC_CFG:   equ    %110000000000
+mADC0CTL_SWAI:      equ    %1000000000000
+mADC0CTL_FRZ_MOD:   equ    %10000000000000
+mADC0CTL_ADC_SR:    equ    %100000000000000
+mADC0CTL_ADC_EN:    equ    %1000000000000000
+
+
+;*** ADC0CTL_0 - ADC0 Control Register 0; 0x00000600 ***
+ADC0CTL_0:          equ    $00000600                                ;*** ADC0CTL_0 - ADC0 Control Register 0; 0x00000600 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CTL_0_MOD_CFG:  equ    0                                         ; Trigger Mode Configuration
+ADC0CTL_0_STR_SEQA: equ    1                                         ; Control Of Conversion Result Storage and RSTAR_EIF flag setting at Sequence Abort or Restart Event
+ADC0CTL_0_ACC_CFG:  equ    2                                         ; ADCFLWCTL Register Access Configuration
+ADC0CTL_0_SWAI:     equ    4                                         ; Wait Mode Configuration
+ADC0CTL_0_FRZ_MOD:  equ    5                                         ; Freeze Mode Configuration
+ADC0CTL_0_ADC_SR:   equ    6                                         ; ADC Soft Reset
+ADC0CTL_0_ADC_EN:   equ    7                                         ; ADC Enable Bit
+; bit position masks
+mADC0CTL_0_MOD_CFG: equ    %00000001
+mADC0CTL_0_STR_SEQA: equ    %00000010
+mADC0CTL_0_ACC_CFG: equ    %00001100
+mADC0CTL_0_SWAI:    equ    %00010000
+mADC0CTL_0_FRZ_MOD: equ    %00100000
+mADC0CTL_0_ADC_SR:  equ    %01000000
+mADC0CTL_0_ADC_EN:  equ    %10000000
+
+
+;*** ADC0CTL_1 - ADC0 Control Register 1; 0x00000601 ***
+ADC0CTL_1:          equ    $00000601                                ;*** ADC0CTL_1 - ADC0 Control Register 1; 0x00000601 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CTL_1_AUT_RSTA: equ    4                                         ; Automatic Restart Event after exit from MCU Stop and Wait Mode
+ADC0CTL_1_SMOD_ACC: equ    5                                         ; Special Mode Access Control
+ADC0CTL_1_RVL_BMOD: equ    6                                         ; RVL Buffer Mode Select
+ADC0CTL_1_CSL_BMOD: equ    7                                         ; CSL Buffer Mode Select
+; bit position masks
+mADC0CTL_1_AUT_RSTA: equ    %00010000
+mADC0CTL_1_SMOD_ACC: equ    %00100000
+mADC0CTL_1_RVL_BMOD: equ    %01000000
+mADC0CTL_1_CSL_BMOD: equ    %10000000
+
+
+;*** ADC0STS - ADC0 Status Register; 0x00000602 ***
+ADC0STS:            equ    $00000602                                ;*** ADC0STS - ADC0 Status Register; 0x00000602 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0STS_READY:      equ    3                                         ; Flag indicates that ADC is in its idle state and ready for a Restart Event
+ADC0STS_DBECC_ERR:  equ    5                                         ; Double Bit ECC Error Flag
+ADC0STS_RVL_SEL:    equ    6                                         ; Result Value List Select
+ADC0STS_CSL_SEL:    equ    7                                         ; Command Sequence List Select
+; bit position masks
+mADC0STS_READY:     equ    %00001000
+mADC0STS_DBECC_ERR: equ    %00100000
+mADC0STS_RVL_SEL:   equ    %01000000
+mADC0STS_CSL_SEL:   equ    %10000000
+
+
+;*** ADC0TIM - ADC0 Timing Register; 0x00000603 ***
+ADC0TIM:            equ    $00000603                                ;*** ADC0TIM - ADC0 Timing Register; 0x00000603 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0TIM_PRS:        equ    0                                         ; ADC Clock Prescaler
+; bit position masks
+mADC0TIM_PRS:       equ    %01111111
+
+
+;*** ADC0FMT - ADC0 Format Register; 0x00000604 ***
+ADC0FMT:            equ    $00000604                                ;*** ADC0FMT - ADC0 Format Register; 0x00000604 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0FMT_SRES:       equ    0                                         ; ADC Resolution Select
+ADC0FMT_DJM:        equ    7                                         ; Result Register Data Justification
+; bit position masks
+mADC0FMT_SRES:      equ    %00000111
+mADC0FMT_DJM:       equ    %10000000
+
+
+;*** ADC0FLWCTL - ADC0 Conversion Flow Control Register; 0x00000605 ***
+ADC0FLWCTL:         equ    $00000605                                ;*** ADC0FLWCTL - ADC0 Conversion Flow Control Register; 0x00000605 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0FLWCTL_LDOK:    equ    4                                         ; Load OK for alternative Command Sequence List
+ADC0FLWCTL_RSTA:    equ    5                                         ; Restart Event (Restart from Top of Command Sequence List)
+ADC0FLWCTL_TRIG:    equ    6                                         ; Conversion Sequence Trigger
+ADC0FLWCTL_SEQA:    equ    7                                         ; Conversion Sequence Abort Event
+; bit position masks
+mADC0FLWCTL_LDOK:   equ    %00010000
+mADC0FLWCTL_RSTA:   equ    %00100000
+mADC0FLWCTL_TRIG:   equ    %01000000
+mADC0FLWCTL_SEQA:   equ    %10000000
+
+
+;*** ADC0EIE - ADC0 Error Interrupt Enable Register; 0x00000606 ***
+ADC0EIE:            equ    $00000606                                ;*** ADC0EIE - ADC0 Error Interrupt Enable Register; 0x00000606 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0EIE_LDOK_EIE:   equ    1                                         ; Load OK Error Interrupt Enable
+ADC0EIE_RSTAR_EIE:  equ    2                                         ; Restart Request Error Interrupt Enable
+ADC0EIE_TRIG_EIE:   equ    3                                         ; Conversion Sequence Trigger Error Interrupt Enable
+ADC0EIE_EOL_EIE:    equ    5                                         ; End Of List Error Interrupt Enable
+ADC0EIE_CMD_EIE:    equ    6                                         ; Command Value Error Interrupt Enable
+ADC0EIE_IA_EIE:     equ    7                                         ; Illegal Access Error Interrupt Enable
+; bit position masks
+mADC0EIE_LDOK_EIE:  equ    %00000010
+mADC0EIE_RSTAR_EIE: equ    %00000100
+mADC0EIE_TRIG_EIE:  equ    %00001000
+mADC0EIE_EOL_EIE:   equ    %00100000
+mADC0EIE_CMD_EIE:   equ    %01000000
+mADC0EIE_IA_EIE:    equ    %10000000
+
+
+;*** ADC0IE - ADC0 Interrupt Enable Register; 0x00000607 ***
+ADC0IE:             equ    $00000607                                ;*** ADC0IE - ADC0 Interrupt Enable Register; 0x00000607 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0IE_CONIF_OIE:   equ    6                                         ; ADCCONIF Register Flags Overrun Interrupt Enable
+ADC0IE_SEQAD_IE:    equ    7                                         ; Conversion Sequence Abort Done Interrupt Enable
+; bit position masks
+mADC0IE_CONIF_OIE:  equ    %01000000
+mADC0IE_SEQAD_IE:   equ    %10000000
+
+
+;*** ADC0EIF - ADC0 Error Interrupt Flag Register; 0x00000608 ***
+ADC0EIF:            equ    $00000608                                ;*** ADC0EIF - ADC0 Error Interrupt Flag Register; 0x00000608 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0EIF_LDOK_EIF:   equ    1                                         ; Load OK Error Interrupt Flag
+ADC0EIF_RSTAR_EIF:  equ    2                                         ; Restart Request Error Interrupt Flag
+ADC0EIF_TRIG_EIF:   equ    3                                         ; Trigger Error Interrupt Flag
+ADC0EIF_EOL_EIF:    equ    5                                         ; End Of List Error Interrupt Flag
+ADC0EIF_CMD_EIF:    equ    6                                         ; Command Value Error Interrupt Flag
+ADC0EIF_IA_EIF:     equ    7                                         ; Illegal Access Error Interrupt Flag
+; bit position masks
+mADC0EIF_LDOK_EIF:  equ    %00000010
+mADC0EIF_RSTAR_EIF: equ    %00000100
+mADC0EIF_TRIG_EIF:  equ    %00001000
+mADC0EIF_EOL_EIF:   equ    %00100000
+mADC0EIF_CMD_EIF:   equ    %01000000
+mADC0EIF_IA_EIF:    equ    %10000000
+
+
+;*** ADC0IF - ADC0 Interrupt Flag Register; 0x00000609 ***
+ADC0IF:             equ    $00000609                                ;*** ADC0IF - ADC0 Interrupt Flag Register; 0x00000609 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0IF_CONIF_OIF:   equ    6                                         ; ADCxCONIF Register Flags Overrun Interrupt Flag
+ADC0IF_SEQAD_IF:    equ    7                                         ; Conversion Sequence Abort Done Interrupt Flag
+; bit position masks
+mADC0IF_CONIF_OIF:  equ    %01000000
+mADC0IF_SEQAD_IF:   equ    %10000000
+
+
+;*** ADC0CONIE - ADC0 Conversion Interrupt Enable Register; 0x0000060A ***
+ADC0CONIE:          equ    $0000060A                                ;*** ADC0CONIE - ADC0 Conversion Interrupt Enable Register; 0x0000060A ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CONIE_EOL_IE:   equ    0                                         ; End Of List Interrupt Enable
+ADC0CONIE_CON_IE1:  equ    1                                         ; Conversion Interrupt 1 Enable
+ADC0CONIE_CON_IE2:  equ    2                                         ; Conversion Interrupt 2 Enable
+ADC0CONIE_CON_IE3:  equ    3                                         ; Conversion Interrupt 3 Enable
+ADC0CONIE_CON_IE4:  equ    4                                         ; Conversion Interrupt 4 Enable
+ADC0CONIE_CON_IE5:  equ    5                                         ; Conversion Interrupt 5 Enable
+ADC0CONIE_CON_IE6:  equ    6                                         ; Conversion Interrupt 6 Enable
+ADC0CONIE_CON_IE7:  equ    7                                         ; Conversion Interrupt 7 Enable
+ADC0CONIE_CON_IE8:  equ    8                                         ; Conversion Interrupt 8 Enable
+ADC0CONIE_CON_IE9:  equ    9                                         ; Conversion Interrupt 9 Enable
+ADC0CONIE_CON_IE10: equ    10                                        ; Conversion Interrupt 10 Enable
+ADC0CONIE_CON_IE11: equ    11                                        ; Conversion Interrupt 11 Enable
+ADC0CONIE_CON_IE12: equ    12                                        ; Conversion Interrupt 12 Enable
+ADC0CONIE_CON_IE13: equ    13                                        ; Conversion Interrupt 13 Enable
+ADC0CONIE_CON_IE14: equ    14                                        ; Conversion Interrupt 14 Enable
+ADC0CONIE_CON_IE15: equ    15                                        ; Conversion Interrupt 15 Enable
+; bit position masks
+mADC0CONIE_EOL_IE:  equ    %00000001
+mADC0CONIE_CON_IE1: equ    %00000010
+mADC0CONIE_CON_IE2: equ    %00000100
+mADC0CONIE_CON_IE3: equ    %00001000
+mADC0CONIE_CON_IE4: equ    %00010000
+mADC0CONIE_CON_IE5: equ    %00100000
+mADC0CONIE_CON_IE6: equ    %01000000
+mADC0CONIE_CON_IE7: equ    %10000000
+mADC0CONIE_CON_IE8: equ    %100000000
+mADC0CONIE_CON_IE9: equ    %1000000000
+mADC0CONIE_CON_IE10: equ    %10000000000
+mADC0CONIE_CON_IE11: equ    %100000000000
+mADC0CONIE_CON_IE12: equ    %1000000000000
+mADC0CONIE_CON_IE13: equ    %10000000000000
+mADC0CONIE_CON_IE14: equ    %100000000000000
+mADC0CONIE_CON_IE15: equ    %1000000000000000
+
+
+;*** ADC0CONIE_0 - ADC0 Conversion Interrupt Enable Register 0; 0x0000060A ***
+ADC0CONIE_0:        equ    $0000060A                                ;*** ADC0CONIE_0 - ADC0 Conversion Interrupt Enable Register 0; 0x0000060A ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CONIE_0_CON_IE8: equ    0                                        ; Conversion Interrupt 8 Enable
+ADC0CONIE_0_CON_IE9: equ    1                                        ; Conversion Interrupt 9 Enable
+ADC0CONIE_0_CON_IE10: equ    2                                       ; Conversion Interrupt 10 Enable
+ADC0CONIE_0_CON_IE11: equ    3                                       ; Conversion Interrupt 11 Enable
+ADC0CONIE_0_CON_IE12: equ    4                                       ; Conversion Interrupt 12 Enable
+ADC0CONIE_0_CON_IE13: equ    5                                       ; Conversion Interrupt 13 Enable
+ADC0CONIE_0_CON_IE14: equ    6                                       ; Conversion Interrupt 14 Enable
+ADC0CONIE_0_CON_IE15: equ    7                                       ; Conversion Interrupt 15 Enable
+; bit position masks
+mADC0CONIE_0_CON_IE8: equ    %00000001
+mADC0CONIE_0_CON_IE9: equ    %00000010
+mADC0CONIE_0_CON_IE10: equ    %00000100
+mADC0CONIE_0_CON_IE11: equ    %00001000
+mADC0CONIE_0_CON_IE12: equ    %00010000
+mADC0CONIE_0_CON_IE13: equ    %00100000
+mADC0CONIE_0_CON_IE14: equ    %01000000
+mADC0CONIE_0_CON_IE15: equ    %10000000
+
+
+;*** ADC0CONIE_1 - ADC0 Conversion Interrupt Enable Register 1; 0x0000060B ***
+ADC0CONIE_1:        equ    $0000060B                                ;*** ADC0CONIE_1 - ADC0 Conversion Interrupt Enable Register 1; 0x0000060B ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CONIE_1_EOL_IE: equ    0                                         ; End Of List Interrupt Enable
+ADC0CONIE_1_CON_IE1: equ    1                                        ; Conversion Interrupt 1 Enable
+ADC0CONIE_1_CON_IE2: equ    2                                        ; Conversion Interrupt 2 Enable
+ADC0CONIE_1_CON_IE3: equ    3                                        ; Conversion Interrupt 3 Enable
+ADC0CONIE_1_CON_IE4: equ    4                                        ; Conversion Interrupt 4 Enable
+ADC0CONIE_1_CON_IE5: equ    5                                        ; Conversion Interrupt 5 Enable
+ADC0CONIE_1_CON_IE6: equ    6                                        ; Conversion Interrupt 6 Enable
+ADC0CONIE_1_CON_IE7: equ    7                                        ; Conversion Interrupt 7 Enable
+; bit position masks
+mADC0CONIE_1_EOL_IE: equ    %00000001
+mADC0CONIE_1_CON_IE1: equ    %00000010
+mADC0CONIE_1_CON_IE2: equ    %00000100
+mADC0CONIE_1_CON_IE3: equ    %00001000
+mADC0CONIE_1_CON_IE4: equ    %00010000
+mADC0CONIE_1_CON_IE5: equ    %00100000
+mADC0CONIE_1_CON_IE6: equ    %01000000
+mADC0CONIE_1_CON_IE7: equ    %10000000
+
+
+;*** ADC0CONIF - ADC0 Conversion Interrupt Flag Register; 0x0000060C ***
+ADC0CONIF:          equ    $0000060C                                ;*** ADC0CONIF - ADC0 Conversion Interrupt Flag Register; 0x0000060C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CONIF_EOL_IF:   equ    0                                         ; End Of List Interrupt Flag
+ADC0CONIF_CON_IF1:  equ    1                                         ; Conversion Interrupt 1 Flag
+ADC0CONIF_CON_IF2:  equ    2                                         ; Conversion Interrupt 2 Flag
+ADC0CONIF_CON_IF3:  equ    3                                         ; Conversion Interrupt 3 Flag
+ADC0CONIF_CON_IF4:  equ    4                                         ; Conversion Interrupt 4 Flag
+ADC0CONIF_CON_IF5:  equ    5                                         ; Conversion Interrupt 5 Flag
+ADC0CONIF_CON_IF6:  equ    6                                         ; Conversion Interrupt 6 Flag
+ADC0CONIF_CON_IF7:  equ    7                                         ; Conversion Interrupt 7 Flag
+ADC0CONIF_CON_IF8:  equ    8                                         ; Conversion Interrupt 8 Flag
+ADC0CONIF_CON_IF9:  equ    9                                         ; Conversion Interrupt 9 Flag
+ADC0CONIF_CON_IF10: equ    10                                        ; Conversion Interrupt 10 Flag
+ADC0CONIF_CON_IF11: equ    11                                        ; Conversion Interrupt 11 Flag
+ADC0CONIF_CON_IF12: equ    12                                        ; Conversion Interrupt 12 Flag
+ADC0CONIF_CON_IF13: equ    13                                        ; Conversion Interrupt 13 Flag
+ADC0CONIF_CON_IF14: equ    14                                        ; Conversion Interrupt 14 Flag
+ADC0CONIF_CON_IF15: equ    15                                        ; Conversion Interrupt 15 Flag
+; bit position masks
+mADC0CONIF_EOL_IF:  equ    %00000001
+mADC0CONIF_CON_IF1: equ    %00000010
+mADC0CONIF_CON_IF2: equ    %00000100
+mADC0CONIF_CON_IF3: equ    %00001000
+mADC0CONIF_CON_IF4: equ    %00010000
+mADC0CONIF_CON_IF5: equ    %00100000
+mADC0CONIF_CON_IF6: equ    %01000000
+mADC0CONIF_CON_IF7: equ    %10000000
+mADC0CONIF_CON_IF8: equ    %100000000
+mADC0CONIF_CON_IF9: equ    %1000000000
+mADC0CONIF_CON_IF10: equ    %10000000000
+mADC0CONIF_CON_IF11: equ    %100000000000
+mADC0CONIF_CON_IF12: equ    %1000000000000
+mADC0CONIF_CON_IF13: equ    %10000000000000
+mADC0CONIF_CON_IF14: equ    %100000000000000
+mADC0CONIF_CON_IF15: equ    %1000000000000000
+
+
+;*** ADC0CONIF_0 - ADC0 Conversion Interrupt Flag Register 0; 0x0000060C ***
+ADC0CONIF_0:        equ    $0000060C                                ;*** ADC0CONIF_0 - ADC0 Conversion Interrupt Flag Register 0; 0x0000060C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CONIF_0_CON_IF8: equ    0                                        ; Conversion Interrupt 8 Flag
+ADC0CONIF_0_CON_IF9: equ    1                                        ; Conversion Interrupt 9 Flag
+ADC0CONIF_0_CON_IF10: equ    2                                       ; Conversion Interrupt 10 Flag
+ADC0CONIF_0_CON_IF11: equ    3                                       ; Conversion Interrupt 11 Flag
+ADC0CONIF_0_CON_IF12: equ    4                                       ; Conversion Interrupt 12 Flag
+ADC0CONIF_0_CON_IF13: equ    5                                       ; Conversion Interrupt 13 Flag
+ADC0CONIF_0_CON_IF14: equ    6                                       ; Conversion Interrupt 14 Flag
+ADC0CONIF_0_CON_IF15: equ    7                                       ; Conversion Interrupt 15 Flag
+; bit position masks
+mADC0CONIF_0_CON_IF8: equ    %00000001
+mADC0CONIF_0_CON_IF9: equ    %00000010
+mADC0CONIF_0_CON_IF10: equ    %00000100
+mADC0CONIF_0_CON_IF11: equ    %00001000
+mADC0CONIF_0_CON_IF12: equ    %00010000
+mADC0CONIF_0_CON_IF13: equ    %00100000
+mADC0CONIF_0_CON_IF14: equ    %01000000
+mADC0CONIF_0_CON_IF15: equ    %10000000
+
+
+;*** ADC0CONIF_1 - ADC0 Conversion Interrupt Flag Register 1; 0x0000060D ***
+ADC0CONIF_1:        equ    $0000060D                                ;*** ADC0CONIF_1 - ADC0 Conversion Interrupt Flag Register 1; 0x0000060D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CONIF_1_EOL_IF: equ    0                                         ; End Of List Interrupt Flag
+ADC0CONIF_1_CON_IF1: equ    1                                        ; Conversion Interrupt 1 Flag
+ADC0CONIF_1_CON_IF2: equ    2                                        ; Conversion Interrupt 2 Flag
+ADC0CONIF_1_CON_IF3: equ    3                                        ; Conversion Interrupt 3 Flag
+ADC0CONIF_1_CON_IF4: equ    4                                        ; Conversion Interrupt 4 Flag
+ADC0CONIF_1_CON_IF5: equ    5                                        ; Conversion Interrupt 5 Flag
+ADC0CONIF_1_CON_IF6: equ    6                                        ; Conversion Interrupt 6 Flag
+ADC0CONIF_1_CON_IF7: equ    7                                        ; Conversion Interrupt 7 Flag
+; bit position masks
+mADC0CONIF_1_EOL_IF: equ    %00000001
+mADC0CONIF_1_CON_IF1: equ    %00000010
+mADC0CONIF_1_CON_IF2: equ    %00000100
+mADC0CONIF_1_CON_IF3: equ    %00001000
+mADC0CONIF_1_CON_IF4: equ    %00010000
+mADC0CONIF_1_CON_IF5: equ    %00100000
+mADC0CONIF_1_CON_IF6: equ    %01000000
+mADC0CONIF_1_CON_IF7: equ    %10000000
+
+
+;*** ADC0IMDRI - ADC0 Intermediate Result Information Register; 0x0000060E ***
+ADC0IMDRI:          equ    $0000060E                                ;*** ADC0IMDRI - ADC0 Intermediate Result Information Register; 0x0000060E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0IMDRI_RIDX_IMD: equ    0                                         ; RES_IDX Value At Intermediate Event
+ADC0IMDRI_RVL_IMD:  equ    14                                        ; Active RVL At Intermediate Event
+ADC0IMDRI_CSL_IMD:  equ    15                                        ; Active CSL At Intermediate Event
+; bit position masks
+mADC0IMDRI_RIDX_IMD: equ    %00111111
+mADC0IMDRI_RVL_IMD: equ    %100000000000000
+mADC0IMDRI_CSL_IMD: equ    %1000000000000000
+
+
+;*** ADC0IMDRI_0 - ADC0 Intermediate Result Information Register 0; 0x0000060E ***
+ADC0IMDRI_0:        equ    $0000060E                                ;*** ADC0IMDRI_0 - ADC0 Intermediate Result Information Register 0; 0x0000060E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0IMDRI_0_RVL_IMD: equ    6                                        ; Active RVL At Intermediate Event
+ADC0IMDRI_0_CSL_IMD: equ    7                                        ; Active CSL At Intermediate Event
+; bit position masks
+mADC0IMDRI_0_RVL_IMD: equ    %01000000
+mADC0IMDRI_0_CSL_IMD: equ    %10000000
+
+
+;*** ADC0IMDRI_1 - ADC0 Intermediate Result Information Register 1; 0x0000060F ***
+ADC0IMDRI_1:        equ    $0000060F                                ;*** ADC0IMDRI_1 - ADC0 Intermediate Result Information Register 1; 0x0000060F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0IMDRI_1_RIDX_IMD: equ    0                                       ; RES_IDX Value At Intermediate Event
+; bit position masks
+mADC0IMDRI_1_RIDX_IMD: equ    %00111111
+
+
+;*** ADC0EOLRI - ADC0 End Of List Result Information Register; 0x00000610 ***
+ADC0EOLRI:          equ    $00000610                                ;*** ADC0EOLRI - ADC0 End Of List Result Information Register; 0x00000610 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0EOLRI_RVL_EOL:  equ    6                                         ; Active RVL When End Of List Command Type Was Executed
+ADC0EOLRI_CSL_EOL:  equ    7                                         ; Active CSL When End Of List Command Type Was Executed
+; bit position masks
+mADC0EOLRI_RVL_EOL: equ    %01000000
+mADC0EOLRI_CSL_EOL: equ    %10000000
+
+
+;*** ADC0CMD - ADC0 Command Register; 0x00000614 ***
+ADC0CMD:            equ    $00000614                                ;*** ADC0CMD - ADC0 Command Register; 0x00000614 ***
+
+
+;*** ADC0CMD_01 - ADC0 Command Register 01; 0x00000614 ***
+ADC0CMD_01:         equ    $00000614                                ;*** ADC0CMD_01 - ADC0 Command Register 01; 0x00000614 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CMD_01_CH_SEL:  equ    0                                         ; ADC Input Channel Select
+ADC0CMD_01_VRL_SEL: equ    6                                         ; Reference Low Voltage Select
+ADC0CMD_01_VRH_SEL: equ    7                                         ; Reference High Voltage Select
+ADC0CMD_01_INTFLG_SEL: equ    8                                      ; Conversion Interrupt Flag Select
+ADC0CMD_01_OPT:     equ    12                                        ; Option Bits
+ADC0CMD_01_CMD_SEL: equ    14                                        ; Conversion Command Select
+; bit position masks
+mADC0CMD_01_CH_SEL: equ    %00111111
+mADC0CMD_01_VRL_SEL: equ    %01000000
+mADC0CMD_01_VRH_SEL: equ    %10000000
+mADC0CMD_01_INTFLG_SEL: equ    %111100000000
+mADC0CMD_01_OPT:    equ    %11000000000000
+mADC0CMD_01_CMD_SEL: equ    %1100000000000000
+
+
+;*** ADC0CMD_0 - ADC0 Command Register 0; 0x00000614 ***
+ADC0CMD_0:          equ    $00000614                                ;*** ADC0CMD_0 - ADC0 Command Register 0; 0x00000614 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CMD_0_INTFLG_SEL: equ    0                                       ; Conversion Interrupt Flag Select
+ADC0CMD_0_OPT:      equ    4                                         ; Option Bits
+ADC0CMD_0_CMD_SEL:  equ    6                                         ; Conversion Command Select
+; bit position masks
+mADC0CMD_0_INTFLG_SEL: equ    %00001111
+mADC0CMD_0_OPT:     equ    %00110000
+mADC0CMD_0_CMD_SEL: equ    %11000000
+
+
+;*** ADC0CMD_1 - ADC0 Command Register 1; 0x00000615 ***
+ADC0CMD_1:          equ    $00000615                                ;*** ADC0CMD_1 - ADC0 Command Register 1; 0x00000615 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CMD_1_CH_SEL:   equ    0                                         ; ADC Input Channel Select
+ADC0CMD_1_VRL_SEL:  equ    6                                         ; Reference Low Voltage Select
+ADC0CMD_1_VRH_SEL:  equ    7                                         ; Reference High Voltage Select
+; bit position masks
+mADC0CMD_1_CH_SEL:  equ    %00111111
+mADC0CMD_1_VRL_SEL: equ    %01000000
+mADC0CMD_1_VRH_SEL: equ    %10000000
+
+
+;*** ADC0CMD_23 - ADC0 Command Register 23; 0x00000616 ***
+ADC0CMD_23:         equ    $00000616                                ;*** ADC0CMD_23 - ADC0 Command Register 23; 0x00000616 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CMD_23_OPT:     equ    9                                         ; Option Bits
+ADC0CMD_23_SMP:     equ    11                                        ; Sample Time Select
+; bit position masks
+mADC0CMD_23_OPT:    equ    %11000000000
+mADC0CMD_23_SMP:    equ    %1111100000000000
+
+
+;*** ADC0CMD_2 - ADC0 Command Register 2; 0x00000616 ***
+ADC0CMD_2:          equ    $00000616                                ;*** ADC0CMD_2 - ADC0 Command Register 2; 0x00000616 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CMD_2_OPT:      equ    1                                         ; Option Bits
+ADC0CMD_2_SMP:      equ    3                                         ; Sample Time Select
+; bit position masks
+mADC0CMD_2_OPT:     equ    %00000110
+mADC0CMD_2_SMP:     equ    %11111000
+
+
+;*** ADC0CMD_3 - ADC0 Command Register 3; 0x00000617 ***
+ADC0CMD_3:          equ    $00000617                                ;*** ADC0CMD_3 - ADC0 Command Register 3; 0x00000617 ***
+
+
+;*** ADC0CIDX - ADC0 Command Index Register; 0x0000061C ***
+ADC0CIDX:           equ    $0000061C                                ;*** ADC0CIDX - ADC0 Command Index Register; 0x0000061C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CIDX_CMD_IDX:   equ    0                                         ; ADC Command Index
+; bit position masks
+mADC0CIDX_CMD_IDX:  equ    %00111111
+
+
+;*** ADC0CBP_0 - ADC0 Command Base Pointer Register 0; 0x0000061D ***
+ADC0CBP_0:          equ    $0000061D                                ;*** ADC0CBP_0 - ADC0 Command Base Pointer Register 0; 0x0000061D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CBP_0_CMD_PTR:  equ    0                                         ; ADC Command Base Pointer Address
+; bit position masks
+mADC0CBP_0_CMD_PTR: equ    %11111111
+
+
+;*** ADC0CBP_1 - ADC0 Command Base Pointer Register 1; 0x0000061E ***
+ADC0CBP_1:          equ    $0000061E                                ;*** ADC0CBP_1 - ADC0 Command Base Pointer Register 1; 0x0000061E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CBP_1_CMD_PTR:  equ    0                                         ; ADC Command Base Pointer Address
+; bit position masks
+mADC0CBP_1_CMD_PTR: equ    %11111111
+
+
+;*** ADC0CBP_2 - ADC0 Command Base Pointer Register 2; 0x0000061F ***
+ADC0CBP_2:          equ    $0000061F                                ;*** ADC0CBP_2 - ADC0 Command Base Pointer Register 2; 0x0000061F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CBP_2_CMD_PTR:  equ    2                                         ; ADC Command Base Pointer Address
+; bit position masks
+mADC0CBP_2_CMD_PTR: equ    %11111100
+
+
+;*** ADC0RIDX - ADC0 Result Index Register; 0x00000620 ***
+ADC0RIDX:           equ    $00000620                                ;*** ADC0RIDX - ADC0 Result Index Register; 0x00000620 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0RIDX_RES_IDX:   equ    0                                         ; ADC Result Index
+; bit position masks
+mADC0RIDX_RES_IDX:  equ    %00111111
+
+
+;*** ADC0RBP_0 - ADC0 Result Base Pointer Register 0; 0x00000621 ***
+ADC0RBP_0:          equ    $00000621                                ;*** ADC0RBP_0 - ADC0 Result Base Pointer Register 0; 0x00000621 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0RBP_0_RES_PTR:  equ    0                                         ; ADC Result Base Pointer Address
+; bit position masks
+mADC0RBP_0_RES_PTR: equ    %00001111
+
+
+;*** ADC0RBP_1 - ADC0 Result Base Pointer Register 1; 0x00000622 ***
+ADC0RBP_1:          equ    $00000622                                ;*** ADC0RBP_1 - ADC0 Result Base Pointer Register 1; 0x00000622 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0RBP_1_RES_PTR:  equ    0                                         ; ADC Result Base Pointer Address
+; bit position masks
+mADC0RBP_1_RES_PTR: equ    %11111111
+
+
+;*** ADC0RBP_2 - ADC0 Result Base Pointer Register 2; 0x00000623 ***
+ADC0RBP_2:          equ    $00000623                                ;*** ADC0RBP_2 - ADC0 Result Base Pointer Register 2; 0x00000623 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0RBP_2_RES_PTR:  equ    2                                         ; ADC Result Base Pointer Address
+; bit position masks
+mADC0RBP_2_RES_PTR: equ    %11111100
+
+
+;*** ADC0CROFF0 - ADC0 Command and Result Offset Register 0; 0x00000624 ***
+ADC0CROFF0:         equ    $00000624                                ;*** ADC0CROFF0 - ADC0 Command and Result Offset Register 0; 0x00000624 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CROFF0_CMDRES_OFF0: equ    0                                     ; ADC Command and Result Offset Value refer to CSL_0 and RVL_0
+; bit position masks
+mADC0CROFF0_CMDRES_OFF0: equ    %01111111
+
+
+;*** ADC0CROFF1 - ADC0 Command and Result Offset Register 1; 0x00000625 ***
+ADC0CROFF1:         equ    $00000625                                ;*** ADC0CROFF1 - ADC0 Command and Result Offset Register 1; 0x00000625 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+ADC0CROFF1_CMDRES_OFF1: equ    0                                     ; ADC Command and Result Offset Value refer to CSL_1 and RVL_1
+; bit position masks
+mADC0CROFF1_CMDRES_OFF1: equ    %01111111
+
+
+;*** CPMUVREGCTL2 - Voltage Regulator Control Register 2; 0x000006C2 ***
+CPMUVREGCTL2:       equ    $000006C2                                ;*** CPMUVREGCTL2 - Voltage Regulator Control Register 2; 0x000006C2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUVREGCTL2_VREGTRIM33V: equ    0                                   ; VREG Trimming for 3.3 Volt operation bits
+CPMUVREGCTL2_VREGTRIM5V: equ    3                                    ; VREG Trimming for 5 Volt operation bits
+CPMUVREGCTL2_VREG5VEN: equ    7                                      ; VREG 5 Volt Operation Enable Bit
+; bit position masks
+mCPMUVREGCTL2_VREGTRIM33V: equ    %00000111
+mCPMUVREGCTL2_VREGTRIM5V: equ    %00111000
+mCPMUVREGCTL2_VREG5VEN: equ    %10000000
+
+
+;*** CPMURFLG - CPMU Reset Flags Register; 0x000006C3 ***
+CPMURFLG:           equ    $000006C3                                ;*** CPMURFLG - CPMU Reset Flags Register; 0x000006C3 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMURFLG_PMRF:      equ    0                                         ; PLL Clock Monitor Reset Flag
+CPMURFLG_OMRF:      equ    1                                         ; Oscillator Clock Monitor Reset Flag
+CPMURFLG_COPRF:     equ    3                                         ; COP Reset Flag
+CPMURFLG_LVRF:      equ    5                                         ; Low Voltage Reset Flag
+CPMURFLG_PORF:      equ    6                                         ; Power on Reset Flag
+; bit position masks
+mCPMURFLG_PMRF:     equ    %00000001
+mCPMURFLG_OMRF:     equ    %00000010
+mCPMURFLG_COPRF:    equ    %00001000
+mCPMURFLG_LVRF:     equ    %00100000
+mCPMURFLG_PORF:     equ    %01000000
+
+
+;*** CPMUSYNR - CPMU Synthesizer Register; 0x000006C4 ***
+CPMUSYNR:           equ    $000006C4                                ;*** CPMUSYNR - CPMU Synthesizer Register; 0x000006C4 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUSYNR_SYNDIV0:   equ    0                                         ; Multiplication factor of the IPLL bit 0
+CPMUSYNR_SYNDIV1:   equ    1                                         ; Multiplication factor of the IPLL bit 1
+CPMUSYNR_SYNDIV2:   equ    2                                         ; Multiplication factor of the IPLL bit 2
+CPMUSYNR_SYNDIV3:   equ    3                                         ; Multiplication factor of the IPLL bit 3
+CPMUSYNR_SYNDIV4:   equ    4                                         ; Multiplication factor of the IPLL bit 4
+CPMUSYNR_SYNDIV5:   equ    5                                         ; Multiplication factor of the IPLL bit 5
+CPMUSYNR_VCOFRQ0:   equ    6                                         ; VCO frequency range bit 0
+CPMUSYNR_VCOFRQ1:   equ    7                                         ; VCO frequency range bit 1
+; bit position masks
+mCPMUSYNR_SYNDIV0:  equ    %00000001
+mCPMUSYNR_SYNDIV1:  equ    %00000010
+mCPMUSYNR_SYNDIV2:  equ    %00000100
+mCPMUSYNR_SYNDIV3:  equ    %00001000
+mCPMUSYNR_SYNDIV4:  equ    %00010000
+mCPMUSYNR_SYNDIV5:  equ    %00100000
+mCPMUSYNR_VCOFRQ0:  equ    %01000000
+mCPMUSYNR_VCOFRQ1:  equ    %10000000
+
+
+;*** CPMUREFDIV - CPMU Reference Divider Register; 0x000006C5 ***
+CPMUREFDIV:         equ    $000006C5                                ;*** CPMUREFDIV - CPMU Reference Divider Register; 0x000006C5 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUREFDIV_REFDIV0: equ    0                                         ; Finer granularity for the IPLL multiplier steps bit 0
+CPMUREFDIV_REFDIV1: equ    1                                         ; Finer granularity for the IPLL multiplier steps bit 1
+CPMUREFDIV_REFDIV2: equ    2                                         ; Finer granularity for the IPLL multiplier steps bit 2
+CPMUREFDIV_REFDIV3: equ    3                                         ; Finer granularity for the IPLL multiplier steps bit 3
+CPMUREFDIV_REFFRQ0: equ    6                                         ; IPLL optimal stability and lock time configuration bit 0
+CPMUREFDIV_REFFRQ1: equ    7                                         ; IPLL optimal stability and lock time configuration bit 1
+; bit position masks
+mCPMUREFDIV_REFDIV0: equ    %00000001
+mCPMUREFDIV_REFDIV1: equ    %00000010
+mCPMUREFDIV_REFDIV2: equ    %00000100
+mCPMUREFDIV_REFDIV3: equ    %00001000
+mCPMUREFDIV_REFFRQ0: equ    %01000000
+mCPMUREFDIV_REFFRQ1: equ    %10000000
+
+
+;*** CPMUPOSTDIV - CPMU Post Divider Register; 0x000006C6 ***
+CPMUPOSTDIV:        equ    $000006C6                                ;*** CPMUPOSTDIV - CPMU Post Divider Register; 0x000006C6 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUPOSTDIV_POSTDIV0: equ    0                                       ; Frequency ratio between the VCOCLK and PLLCLK control bit 0
+CPMUPOSTDIV_POSTDIV1: equ    1                                       ; Frequency ratio between the VCOCLK and PLLCLK control bit 1
+CPMUPOSTDIV_POSTDIV2: equ    2                                       ; Frequency ratio between the VCOCLK and PLLCLK control bit 2
+CPMUPOSTDIV_POSTDIV3: equ    3                                       ; Frequency ratio between the VCOCLK and PLLCLK control bit 3
+CPMUPOSTDIV_POSTDIV4: equ    4                                       ; Frequency ratio between the VCOCLK and PLLCLK control bit 4
+; bit position masks
+mCPMUPOSTDIV_POSTDIV0: equ    %00000001
+mCPMUPOSTDIV_POSTDIV1: equ    %00000010
+mCPMUPOSTDIV_POSTDIV2: equ    %00000100
+mCPMUPOSTDIV_POSTDIV3: equ    %00001000
+mCPMUPOSTDIV_POSTDIV4: equ    %00010000
+
+
+;*** CPMUIFLG - CPMU Interrupt Flags Register; 0x000006C7 ***
+CPMUIFLG:           equ    $000006C7                                ;*** CPMUIFLG - CPMU Interrupt Flags Register; 0x000006C7 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUIFLG_UPOSC:     equ    0                                         ; Oscillator Status Bit
+CPMUIFLG_OSCIF:     equ    1                                         ; Oscillator Interrupt Flag
+CPMUIFLG_LOCK:      equ    3                                         ; Lock Status Bit
+CPMUIFLG_LOCKIF:    equ    4                                         ; PLL Lock Interrupt Flag
+CPMUIFLG_RTIF:      equ    7                                         ; Real Time Interrupt Flag
+; bit position masks
+mCPMUIFLG_UPOSC:    equ    %00000001
+mCPMUIFLG_OSCIF:    equ    %00000010
+mCPMUIFLG_LOCK:     equ    %00001000
+mCPMUIFLG_LOCKIF:   equ    %00010000
+mCPMUIFLG_RTIF:     equ    %10000000
+
+
+;*** CPMUINT - CPMU Interrupt Enable Register; 0x000006C8 ***
+CPMUINT:            equ    $000006C8                                ;*** CPMUINT - CPMU Interrupt Enable Register; 0x000006C8 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUINT_OSCIE:      equ    1                                         ; Oscillator Corrupt Interrupt Enable Bit
+CPMUINT_LOCKIE:     equ    4                                         ; Lock Interrupt Enable Bit
+CPMUINT_RTIE:       equ    7                                         ; Real Time Interrupt Enable Bit
+; bit position masks
+mCPMUINT_OSCIE:     equ    %00000010
+mCPMUINT_LOCKIE:    equ    %00010000
+mCPMUINT_RTIE:      equ    %10000000
+
+
+;*** CPMUCLKS - CPMU Clock Select Register; 0x000006C9 ***
+CPMUCLKS:           equ    $000006C9                                ;*** CPMUCLKS - CPMU Clock Select Register; 0x000006C9 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUCLKS_COPOSCSEL0: equ    0                                        ; COP Clock Select 0
+CPMUCLKS_RTIOSCSEL: equ    1                                         ; RTI Clock Select
+CPMUCLKS_PCE:       equ    2                                         ; COP Enable During Pseudo Stop Bit
+CPMUCLKS_PRE:       equ    3                                         ; RTI Enable During Pseudo Stop Bit
+CPMUCLKS_COPOSCSEL1: equ    4                                        ; COP Clock Select 1
+CPMUCLKS_CSAD:      equ    5                                         ; COP in Stop Mode ACLK Disable
+CPMUCLKS_PSTP:      equ    6                                         ; Pseudo Stop Bit
+CPMUCLKS_PLLSEL:    equ    7                                         ; PLL Select Bit
+; bit position masks
+mCPMUCLKS_COPOSCSEL0: equ    %00000001
+mCPMUCLKS_RTIOSCSEL: equ    %00000010
+mCPMUCLKS_PCE:      equ    %00000100
+mCPMUCLKS_PRE:      equ    %00001000
+mCPMUCLKS_COPOSCSEL1: equ    %00010000
+mCPMUCLKS_CSAD:     equ    %00100000
+mCPMUCLKS_PSTP:     equ    %01000000
+mCPMUCLKS_PLLSEL:   equ    %10000000
+
+
+;*** CPMUPLL - CPMU PLL Control Register; 0x000006CA ***
+CPMUPLL:            equ    $000006CA                                ;*** CPMUPLL - CPMU PLL Control Register; 0x000006CA ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUPLL_FM0:        equ    4                                         ; PLL Frequency Modulation Enable Bit 0
+CPMUPLL_FM1:        equ    5                                         ; PLL Frequency Modulation Enable Bit 1
+; bit position masks
+mCPMUPLL_FM0:       equ    %00010000
+mCPMUPLL_FM1:       equ    %00100000
+
+
+;*** CPMURTI - CPMU RTI Control Register; 0x000006CB ***
+CPMURTI:            equ    $000006CB                                ;*** CPMURTI - CPMU RTI Control Register; 0x000006CB ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMURTI_RTR0:       equ    0                                         ; Real Time Interrupt Modulus Counter Select Bit 0
+CPMURTI_RTR1:       equ    1                                         ; Real Time Interrupt Modulus Counter Select Bit 1
+CPMURTI_RTR2:       equ    2                                         ; Real Time Interrupt Modulus Counter Select Bit 2
+CPMURTI_RTR3:       equ    3                                         ; Real Time Interrupt Modulus Counter Select Bit 3
+CPMURTI_RTR4:       equ    4                                         ; Real Time Interrupt Prescale Rate Select Bit 4
+CPMURTI_RTR5:       equ    5                                         ; Real Time Interrupt Prescale Rate Select Bit 5
+CPMURTI_RTR6:       equ    6                                         ; Real Time Interrupt Prescale Rate Select Bit 6
+CPMURTI_RTDEC:      equ    7                                         ; Decimal or Binary Divider Select Bit
+; bit position masks
+mCPMURTI_RTR0:      equ    %00000001
+mCPMURTI_RTR1:      equ    %00000010
+mCPMURTI_RTR2:      equ    %00000100
+mCPMURTI_RTR3:      equ    %00001000
+mCPMURTI_RTR4:      equ    %00010000
+mCPMURTI_RTR5:      equ    %00100000
+mCPMURTI_RTR6:      equ    %01000000
+mCPMURTI_RTDEC:     equ    %10000000
+
+
+;*** CPMUCOP - CPMU COP Control Register; 0x000006CC ***
+CPMUCOP:            equ    $000006CC                                ;*** CPMUCOP - CPMU COP Control Register; 0x000006CC ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUCOP_CR0:        equ    0                                         ; COP Watchdog Timer Rate select Bit 0
+CPMUCOP_CR1:        equ    1                                         ; COP Watchdog Timer Rate select Bit 1
+CPMUCOP_CR2:        equ    2                                         ; COP Watchdog Timer Rate select Bit 2
+CPMUCOP_WRTMASK:    equ    5                                         ; Write Mask for WCOP
+CPMUCOP_RSBCK:      equ    6                                         ; COP and RTI stop in Active BDM mode Bit
+CPMUCOP_WCOP:       equ    7                                         ; Window COP mode
+; bit position masks
+mCPMUCOP_CR0:       equ    %00000001
+mCPMUCOP_CR1:       equ    %00000010
+mCPMUCOP_CR2:       equ    %00000100
+mCPMUCOP_WRTMASK:   equ    %00100000
+mCPMUCOP_RSBCK:     equ    %01000000
+mCPMUCOP_WCOP:      equ    %10000000
+
+
+;*** CPMUARMCOP - CPMU COP Timer Arm/Reset Register; 0x000006CF ***
+CPMUARMCOP:         equ    $000006CF                                ;*** CPMUARMCOP - CPMU COP Timer Arm/Reset Register; 0x000006CF ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUARMCOP_BIT0:    equ    0                                         ; CPMU COP Timer Arm/Reset Bit 0
+CPMUARMCOP_BIT1:    equ    1                                         ; CPMU COP Timer Arm/Reset Bit 1
+CPMUARMCOP_BIT2:    equ    2                                         ; CPMU COP Timer Arm/Reset Bit 2
+CPMUARMCOP_BIT3:    equ    3                                         ; CPMU COP Timer Arm/Reset Bit 3
+CPMUARMCOP_BIT4:    equ    4                                         ; CPMU COP Timer Arm/Reset Bit 4
+CPMUARMCOP_BIT5:    equ    5                                         ; CPMU COP Timer Arm/Reset Bit 5
+CPMUARMCOP_BIT6:    equ    6                                         ; CPMU COP Timer Arm/Reset Bit 6
+CPMUARMCOP_BIT7:    equ    7                                         ; CPMU COP Timer Arm/Reset Bit 7
+; bit position masks
+mCPMUARMCOP_BIT0:   equ    %00000001
+mCPMUARMCOP_BIT1:   equ    %00000010
+mCPMUARMCOP_BIT2:   equ    %00000100
+mCPMUARMCOP_BIT3:   equ    %00001000
+mCPMUARMCOP_BIT4:   equ    %00010000
+mCPMUARMCOP_BIT5:   equ    %00100000
+mCPMUARMCOP_BIT6:   equ    %01000000
+mCPMUARMCOP_BIT7:   equ    %10000000
+
+
+;*** CPMUHTCTL - High Temperature Control Register; 0x000006D0 ***
+CPMUHTCTL:          equ    $000006D0                                ;*** CPMUHTCTL - High Temperature Control Register; 0x000006D0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUHTCTL_HTIF:     equ    0                                         ; High Temperature Interrupt Flag
+CPMUHTCTL_HTIE:     equ    1                                         ; High Temperature Interrupt Enable Bit
+CPMUHTCTL_HTDS:     equ    2                                         ; High Temperature Detect Status Bit
+CPMUHTCTL_HTE:      equ    3                                         ; High Temperature Sensor/Bandgap Voltage Enable Bit
+CPMUHTCTL_VSEL:     equ    5                                         ; Voltage Access Select Bit
+; bit position masks
+mCPMUHTCTL_HTIF:    equ    %00000001
+mCPMUHTCTL_HTIE:    equ    %00000010
+mCPMUHTCTL_HTDS:    equ    %00000100
+mCPMUHTCTL_HTE:     equ    %00001000
+mCPMUHTCTL_VSEL:    equ    %00100000
+
+
+;*** CPMULVCTL - Low Voltage Control Register; 0x000006D1 ***
+CPMULVCTL:          equ    $000006D1                                ;*** CPMULVCTL - Low Voltage Control Register; 0x000006D1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMULVCTL_LVIF:     equ    0                                         ; Low-Voltage Interrupt Flag
+CPMULVCTL_LVIE:     equ    1                                         ; Low-Voltage Interrupt Enable Bit
+CPMULVCTL_LVDS:     equ    2                                         ; Low-Voltage Detect Status Bit
+; bit position masks
+mCPMULVCTL_LVIF:    equ    %00000001
+mCPMULVCTL_LVIE:    equ    %00000010
+mCPMULVCTL_LVDS:    equ    %00000100
+
+
+;*** CPMUAPICTL - Autonomous Periodical Interrupt Control Register; 0x000006D2 ***
+CPMUAPICTL:         equ    $000006D2                                ;*** CPMUAPICTL - Autonomous Periodical Interrupt Control Register; 0x000006D2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUAPICTL_APIF:    equ    0                                         ; Autonomous Periodical Interrupt Flag
+CPMUAPICTL_APIE:    equ    1                                         ; Autonomous Periodical Interrupt Enable Bit
+CPMUAPICTL_APIFE:   equ    2                                         ; Autonomous Periodical Interrupt Feature Enable Bit
+CPMUAPICTL_APIEA:   equ    3                                         ; Autonomous Periodical Interrupt External Access Enable Bit
+CPMUAPICTL_APIES:   equ    4                                         ; Autonomous Periodical Interrupt External Select Bit
+CPMUAPICTL_APICLK:  equ    7                                         ; Autonomous Periodical Interrupt Clock Select Bit
+; bit position masks
+mCPMUAPICTL_APIF:   equ    %00000001
+mCPMUAPICTL_APIE:   equ    %00000010
+mCPMUAPICTL_APIFE:  equ    %00000100
+mCPMUAPICTL_APIEA:  equ    %00001000
+mCPMUAPICTL_APIES:  equ    %00010000
+mCPMUAPICTL_APICLK: equ    %10000000
+
+
+;*** CPMUACLKTR - Autonomous Clock Trimming Register; 0x000006D3 ***
+CPMUACLKTR:         equ    $000006D3                                ;*** CPMUACLKTR - Autonomous Clock Trimming Register; 0x000006D3 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUACLKTR_ACLKTR0: equ    2                                         ; Autonomous Clock Period Trimming Bit 0
+CPMUACLKTR_ACLKTR1: equ    3                                         ; Autonomous Clock Period Trimming Bit 1
+CPMUACLKTR_ACLKTR2: equ    4                                         ; Autonomous Clock Period Trimming Bit 2
+CPMUACLKTR_ACLKTR3: equ    5                                         ; Autonomous Clock Period Trimming Bit 3
+CPMUACLKTR_ACLKTR4: equ    6                                         ; Autonomous Clock Period Trimming Bit 4
+CPMUACLKTR_ACLKTR5: equ    7                                         ; Autonomous Clock Period Trimming Bit 5
+; bit position masks
+mCPMUACLKTR_ACLKTR0: equ    %00000100
+mCPMUACLKTR_ACLKTR1: equ    %00001000
+mCPMUACLKTR_ACLKTR2: equ    %00010000
+mCPMUACLKTR_ACLKTR3: equ    %00100000
+mCPMUACLKTR_ACLKTR4: equ    %01000000
+mCPMUACLKTR_ACLKTR5: equ    %10000000
+
+
+;*** CPMUAPIR - Autonomous Periodical Interrupt Rate Register; 0x000006D4 ***
+CPMUAPIR:           equ    $000006D4                                ;*** CPMUAPIR - Autonomous Periodical Interrupt Rate Register; 0x000006D4 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUAPIR_APIR0:     equ    0                                         ; Autonomous Periodical Interrupt Rate Bit 0
+CPMUAPIR_APIR1:     equ    1                                         ; Autonomous Periodical Interrupt Rate Bit 1
+CPMUAPIR_APIR2:     equ    2                                         ; Autonomous Periodical Interrupt Rate Bit 2
+CPMUAPIR_APIR3:     equ    3                                         ; Autonomous Periodical Interrupt Rate Bit 3
+CPMUAPIR_APIR4:     equ    4                                         ; Autonomous Periodical Interrupt Rate Bit 4
+CPMUAPIR_APIR5:     equ    5                                         ; Autonomous Periodical Interrupt Rate Bit 5
+CPMUAPIR_APIR6:     equ    6                                         ; Autonomous Periodical Interrupt Rate Bit 6
+CPMUAPIR_APIR7:     equ    7                                         ; Autonomous Periodical Interrupt Rate Bit 7
+CPMUAPIR_APIR8:     equ    8                                         ; Autonomous Periodical Interrupt Rate Bit 8
+CPMUAPIR_APIR9:     equ    9                                         ; Autonomous Periodical Interrupt Rate Bit 9
+CPMUAPIR_APIR10:    equ    10                                        ; Autonomous Periodical Interrupt Rate Bit 10
+CPMUAPIR_APIR11:    equ    11                                        ; Autonomous Periodical Interrupt Rate Bit 11
+CPMUAPIR_APIR12:    equ    12                                        ; Autonomous Periodical Interrupt Rate Bit 12
+CPMUAPIR_APIR13:    equ    13                                        ; Autonomous Periodical Interrupt Rate Bit 13
+CPMUAPIR_APIR14:    equ    14                                        ; Autonomous Periodical Interrupt Rate Bit 14
+CPMUAPIR_APIR15:    equ    15                                        ; Autonomous Periodical Interrupt Rate Bit 15
+; bit position masks
+mCPMUAPIR_APIR0:    equ    %00000001
+mCPMUAPIR_APIR1:    equ    %00000010
+mCPMUAPIR_APIR2:    equ    %00000100
+mCPMUAPIR_APIR3:    equ    %00001000
+mCPMUAPIR_APIR4:    equ    %00010000
+mCPMUAPIR_APIR5:    equ    %00100000
+mCPMUAPIR_APIR6:    equ    %01000000
+mCPMUAPIR_APIR7:    equ    %10000000
+mCPMUAPIR_APIR8:    equ    %100000000
+mCPMUAPIR_APIR9:    equ    %1000000000
+mCPMUAPIR_APIR10:   equ    %10000000000
+mCPMUAPIR_APIR11:   equ    %100000000000
+mCPMUAPIR_APIR12:   equ    %1000000000000
+mCPMUAPIR_APIR13:   equ    %10000000000000
+mCPMUAPIR_APIR14:   equ    %100000000000000
+mCPMUAPIR_APIR15:   equ    %1000000000000000
+
+
+;*** CPMUAPIRH - Autonomous Periodical Interrupt Rate Register High; 0x000006D4 ***
+CPMUAPIRH:          equ    $000006D4                                ;*** CPMUAPIRH - Autonomous Periodical Interrupt Rate Register High; 0x000006D4 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUAPIRH_APIR8:    equ    0                                         ; Autonomous Periodical Interrupt Rate Bit 8
+CPMUAPIRH_APIR9:    equ    1                                         ; Autonomous Periodical Interrupt Rate Bit 9
+CPMUAPIRH_APIR10:   equ    2                                         ; Autonomous Periodical Interrupt Rate Bit 10
+CPMUAPIRH_APIR11:   equ    3                                         ; Autonomous Periodical Interrupt Rate Bit 11
+CPMUAPIRH_APIR12:   equ    4                                         ; Autonomous Periodical Interrupt Rate Bit 12
+CPMUAPIRH_APIR13:   equ    5                                         ; Autonomous Periodical Interrupt Rate Bit 13
+CPMUAPIRH_APIR14:   equ    6                                         ; Autonomous Periodical Interrupt Rate Bit 14
+CPMUAPIRH_APIR15:   equ    7                                         ; Autonomous Periodical Interrupt Rate Bit 15
+; bit position masks
+mCPMUAPIRH_APIR8:   equ    %00000001
+mCPMUAPIRH_APIR9:   equ    %00000010
+mCPMUAPIRH_APIR10:  equ    %00000100
+mCPMUAPIRH_APIR11:  equ    %00001000
+mCPMUAPIRH_APIR12:  equ    %00010000
+mCPMUAPIRH_APIR13:  equ    %00100000
+mCPMUAPIRH_APIR14:  equ    %01000000
+mCPMUAPIRH_APIR15:  equ    %10000000
+
+
+;*** CPMUAPIRL - Autonomous Periodical Interrupt Rate Register Low; 0x000006D5 ***
+CPMUAPIRL:          equ    $000006D5                                ;*** CPMUAPIRL - Autonomous Periodical Interrupt Rate Register Low; 0x000006D5 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUAPIRL_APIR0:    equ    0                                         ; Autonomous Periodical Interrupt Rate Bit 0
+CPMUAPIRL_APIR1:    equ    1                                         ; Autonomous Periodical Interrupt Rate Bit 1
+CPMUAPIRL_APIR2:    equ    2                                         ; Autonomous Periodical Interrupt Rate Bit 2
+CPMUAPIRL_APIR3:    equ    3                                         ; Autonomous Periodical Interrupt Rate Bit 3
+CPMUAPIRL_APIR4:    equ    4                                         ; Autonomous Periodical Interrupt Rate Bit 4
+CPMUAPIRL_APIR5:    equ    5                                         ; Autonomous Periodical Interrupt Rate Bit 5
+CPMUAPIRL_APIR6:    equ    6                                         ; Autonomous Periodical Interrupt Rate Bit 6
+CPMUAPIRL_APIR7:    equ    7                                         ; Autonomous Periodical Interrupt Rate Bit 7
+; bit position masks
+mCPMUAPIRL_APIR0:   equ    %00000001
+mCPMUAPIRL_APIR1:   equ    %00000010
+mCPMUAPIRL_APIR2:   equ    %00000100
+mCPMUAPIRL_APIR3:   equ    %00001000
+mCPMUAPIRL_APIR4:   equ    %00010000
+mCPMUAPIRL_APIR5:   equ    %00100000
+mCPMUAPIRL_APIR6:   equ    %01000000
+mCPMUAPIRL_APIR7:   equ    %10000000
+
+
+;*** CPMUHTTR - High Temperature Trimming Register; 0x000006D7 ***
+CPMUHTTR:           equ    $000006D7                                ;*** CPMUHTTR - High Temperature Trimming Register; 0x000006D7 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUHTTR_HTTR:      equ    0                                         ; High Temperature Trimming Bits
+CPMUHTTR_HTOE:      equ    7                                         ; High Temperature Offset Enable Bit
+; bit position masks
+mCPMUHTTR_HTTR:     equ    %00001111
+mCPMUHTTR_HTOE:     equ    %10000000
+
+
+;*** CPMUIRCTRIM - CPMU IRC1M Trim Registers; 0x000006D8 ***
+CPMUIRCTRIM:        equ    $000006D8                                ;*** CPMUIRCTRIM - CPMU IRC1M Trim Registers; 0x000006D8 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUIRCTRIM_IRCTRIM0: equ    0                                       ; IRC1M Frequency Trim Bit 0
+CPMUIRCTRIM_IRCTRIM1: equ    1                                       ; IRC1M Frequency Trim Bit 1
+CPMUIRCTRIM_IRCTRIM2: equ    2                                       ; IRC1M Frequency Trim Bit 2
+CPMUIRCTRIM_IRCTRIM3: equ    3                                       ; IRC1M Frequency Trim Bit 3
+CPMUIRCTRIM_IRCTRIM4: equ    4                                       ; IRC1M Frequency Trim Bit 4
+CPMUIRCTRIM_IRCTRIM5: equ    5                                       ; IRC1M Frequency Trim Bit 5
+CPMUIRCTRIM_IRCTRIM6: equ    6                                       ; IRC1M Frequency Trim Bit 6
+CPMUIRCTRIM_IRCTRIM7: equ    7                                       ; IRC1M Frequency Trim Bit 7
+CPMUIRCTRIM_IRCTRIM8: equ    8                                       ; IRC1M Frequency Trim Bit 8
+CPMUIRCTRIM_IRCTRIM9: equ    9                                       ; IRC1M Frequency Trim Bit 9
+CPMUIRCTRIM_TCTRIM0: equ    11                                       ; IRC1M temperature coefficient Trim Bit 0
+CPMUIRCTRIM_TCTRIM1: equ    12                                       ; IRC1M temperature coefficient Trim Bit 1
+CPMUIRCTRIM_TCTRIM2: equ    13                                       ; IRC1M temperature coefficient Trim Bit 2
+CPMUIRCTRIM_TCTRIM3: equ    14                                       ; IRC1M temperature coefficient Trim Bit 3
+CPMUIRCTRIM_TCTRIM4: equ    15                                       ; IRC1M temperature coefficient Trim Bit 4
+; bit position masks
+mCPMUIRCTRIM_IRCTRIM0: equ    %00000001
+mCPMUIRCTRIM_IRCTRIM1: equ    %00000010
+mCPMUIRCTRIM_IRCTRIM2: equ    %00000100
+mCPMUIRCTRIM_IRCTRIM3: equ    %00001000
+mCPMUIRCTRIM_IRCTRIM4: equ    %00010000
+mCPMUIRCTRIM_IRCTRIM5: equ    %00100000
+mCPMUIRCTRIM_IRCTRIM6: equ    %01000000
+mCPMUIRCTRIM_IRCTRIM7: equ    %10000000
+mCPMUIRCTRIM_IRCTRIM8: equ    %100000000
+mCPMUIRCTRIM_IRCTRIM9: equ    %1000000000
+mCPMUIRCTRIM_TCTRIM0: equ    %100000000000
+mCPMUIRCTRIM_TCTRIM1: equ    %1000000000000
+mCPMUIRCTRIM_TCTRIM2: equ    %10000000000000
+mCPMUIRCTRIM_TCTRIM3: equ    %100000000000000
+mCPMUIRCTRIM_TCTRIM4: equ    %1000000000000000
+
+
+;*** CPMUIRCTRIMH - CPMU IRC1M Trim Registers High; 0x000006D8 ***
+CPMUIRCTRIMH:       equ    $000006D8                                ;*** CPMUIRCTRIMH - CPMU IRC1M Trim Registers High; 0x000006D8 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUIRCTRIMH_IRCTRIM8: equ    0                                      ; IRC1M Frequency Trim Bit 8
+CPMUIRCTRIMH_IRCTRIM9: equ    1                                      ; IRC1M Frequency Trim Bit 9
+CPMUIRCTRIMH_TCTRIM0: equ    3                                       ; IRC1M temperature coefficient Trim Bit 0
+CPMUIRCTRIMH_TCTRIM1: equ    4                                       ; IRC1M temperature coefficient Trim Bit 1
+CPMUIRCTRIMH_TCTRIM2: equ    5                                       ; IRC1M temperature coefficient Trim Bit 2
+CPMUIRCTRIMH_TCTRIM3: equ    6                                       ; IRC1M temperature coefficient Trim Bit 3
+CPMUIRCTRIMH_TCTRIM4: equ    7                                       ; IRC1M temperature coefficient Trim Bit 4
+; bit position masks
+mCPMUIRCTRIMH_IRCTRIM8: equ    %00000001
+mCPMUIRCTRIMH_IRCTRIM9: equ    %00000010
+mCPMUIRCTRIMH_TCTRIM0: equ    %00001000
+mCPMUIRCTRIMH_TCTRIM1: equ    %00010000
+mCPMUIRCTRIMH_TCTRIM2: equ    %00100000
+mCPMUIRCTRIMH_TCTRIM3: equ    %01000000
+mCPMUIRCTRIMH_TCTRIM4: equ    %10000000
+
+
+;*** CPMUIRCTRIML - CPMU IRC1M Trim Registers Low; 0x000006D9 ***
+CPMUIRCTRIML:       equ    $000006D9                                ;*** CPMUIRCTRIML - CPMU IRC1M Trim Registers Low; 0x000006D9 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUIRCTRIML_IRCTRIM0: equ    0                                      ; IRC1M Frequency Trim Bit 0
+CPMUIRCTRIML_IRCTRIM1: equ    1                                      ; IRC1M Frequency Trim Bit 1
+CPMUIRCTRIML_IRCTRIM2: equ    2                                      ; IRC1M Frequency Trim Bit 2
+CPMUIRCTRIML_IRCTRIM3: equ    3                                      ; IRC1M Frequency Trim Bit 3
+CPMUIRCTRIML_IRCTRIM4: equ    4                                      ; IRC1M Frequency Trim Bit 4
+CPMUIRCTRIML_IRCTRIM5: equ    5                                      ; IRC1M Frequency Trim Bit 5
+CPMUIRCTRIML_IRCTRIM6: equ    6                                      ; IRC1M Frequency Trim Bit 6
+CPMUIRCTRIML_IRCTRIM7: equ    7                                      ; IRC1M Frequency Trim Bit 7
+; bit position masks
+mCPMUIRCTRIML_IRCTRIM0: equ    %00000001
+mCPMUIRCTRIML_IRCTRIM1: equ    %00000010
+mCPMUIRCTRIML_IRCTRIM2: equ    %00000100
+mCPMUIRCTRIML_IRCTRIM3: equ    %00001000
+mCPMUIRCTRIML_IRCTRIM4: equ    %00010000
+mCPMUIRCTRIML_IRCTRIM5: equ    %00100000
+mCPMUIRCTRIML_IRCTRIM6: equ    %01000000
+mCPMUIRCTRIML_IRCTRIM7: equ    %10000000
+
+
+;*** CPMUOSC - CPMU Oscillator Register; 0x000006DA ***
+CPMUOSC:            equ    $000006DA                                ;*** CPMUOSC - CPMU Oscillator Register; 0x000006DA ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUOSC_OSCE:       equ    7                                         ; Oscillator Enable Bit
+; bit position masks
+mCPMUOSC_OSCE:      equ    %10000000
+
+
+;*** CPMUPROT - CPMUV1 Protection Register; 0x000006DB ***
+CPMUPROT:           equ    $000006DB                                ;*** CPMUPROT - CPMUV1 Protection Register; 0x000006DB ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUPROT_PROT:      equ    0                                         ; Clock Configuration Registers Protection Bit
+; bit position masks
+mCPMUPROT_PROT:     equ    %00000001
+
+
+;*** CPMUVREGCTL - Voltage Regulator Control Register; 0x000006DD ***
+CPMUVREGCTL:        equ    $000006DD                                ;*** CPMUVREGCTL - Voltage Regulator Control Register; 0x000006DD ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUVREGCTL_INTXON: equ    0                                         ; Internal voltage regulator Enable for VDDX domain
+CPMUVREGCTL_EXTXON: equ    1                                         ; External voltage regulator Enable for VDDX domain
+; bit position masks
+mCPMUVREGCTL_INTXON: equ    %00000001
+mCPMUVREGCTL_EXTXON: equ    %00000010
+
+
+;*** CPMUOSC2 - CPMU Oscillator Register 2; 0x000006DE ***
+CPMUOSC2:           equ    $000006DE                                ;*** CPMUOSC2 - CPMU Oscillator Register 2; 0x000006DE ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+CPMUOSC2_OSCMOD:    equ    0                                         ; This bit selects the mode of the external oscillator (XOSCLCP)
+CPMUOSC2_OMRE:      equ    1                                         ; This bit enables the oscillator clock monitor reset
+; bit position masks
+mCPMUOSC2_OSCMOD:   equ    %00000001
+mCPMUOSC2_OMRE:     equ    %00000010
+
+
+;*** BATE - BATS Module Enable Register; 0x000006F0 ***
+BATE:               equ    $000006F0                                ;*** BATE - BATS Module Enable Register; 0x000006F0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BATE_BSUSE:         equ    2                                         ; BATS VSUP Level Sense Enable
+BATE_BSUAE:         equ    3                                         ; BATS VSUP ADC Connection Enable
+BATE_BVLS:          equ    4                                         ; BATS Voltage Low Select
+BATE_BVHS:          equ    6                                         ; BATS Voltage High Select
+; bit position masks
+mBATE_BSUSE:        equ    %00000100
+mBATE_BSUAE:        equ    %00001000
+mBATE_BVLS:         equ    %00110000
+mBATE_BVHS:         equ    %01000000
+
+
+;*** BATSR - BATS Module Status Register; 0x000006F1 ***
+BATSR:              equ    $000006F1                                ;*** BATSR - BATS Module Status Register; 0x000006F1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BATSR_BVLC:         equ    0                                         ; BATS Voltage Sense Low Condition Bit
+BATSR_BVHC:         equ    1                                         ; BATS Voltage Sense High Condition Bit
+; bit position masks
+mBATSR_BVLC:        equ    %00000001
+mBATSR_BVHC:        equ    %00000010
+
+
+;*** BATIE - BATS Interrupt Enable Register; 0x000006F2 ***
+BATIE:              equ    $000006F2                                ;*** BATIE - BATS Interrupt Enable Register; 0x000006F2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BATIE_BVLIE:        equ    0                                         ; BATS Interrupt Enable Low
+BATIE_BVHIE:        equ    1                                         ; BATS Interrupt Enable High
+; bit position masks
+mBATIE_BVLIE:       equ    %00000001
+mBATIE_BVHIE:       equ    %00000010
+
+
+;*** BATIF - BATS Interrupt Flag Register; 0x000006F3 ***
+BATIF:              equ    $000006F3                                ;*** BATIF - BATS Interrupt Flag Register; 0x000006F3 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BATIF_BVLIF:        equ    0                                         ; BATS Interrupt Flag Low Detect
+BATIF_BVHIF:        equ    1                                         ; BATS Interrupt Flag High Detect
+; bit position masks
+mBATIF_BVLIF:       equ    %00000001
+mBATIF_BVHIF:       equ    %00000010
+
+
+;*** SCI0BD - SCI 0 Baud Rate Register; 0x00000700 ***
+SCI0BD:             equ    $00000700                                ;*** SCI0BD - SCI 0 Baud Rate Register; 0x00000700 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0BD_SBR0:        equ    0                                         ; SCI Baud Rate Bit 0
+SCI0BD_SBR1:        equ    1                                         ; SCI Baud Rate Bit 1
+SCI0BD_SBR2:        equ    2                                         ; SCI Baud Rate Bit 2
+SCI0BD_SBR3:        equ    3                                         ; SCI Baud Rate Bit 3
+SCI0BD_SBR4:        equ    4                                         ; SCI Baud Rate Bit 4
+SCI0BD_SBR5:        equ    5                                         ; SCI Baud Rate Bit 5
+SCI0BD_SBR6:        equ    6                                         ; SCI Baud Rate Bit 6
+SCI0BD_SBR7:        equ    7                                         ; SCI Baud Rate Bit 7
+SCI0BD_SBR8:        equ    8                                         ; SCI Baud Rate Bit 8
+SCI0BD_SBR9:        equ    9                                         ; SCI Baud Rate Bit 9
+SCI0BD_SBR10:       equ    10                                        ; SCI Baud Rate Bit 10
+SCI0BD_SBR11:       equ    11                                        ; SCI Baud Rate Bit 11
+SCI0BD_SBR12:       equ    12                                        ; SCI Baud Rate Bit 12
+SCI0BD_SBR13:       equ    13                                        ; SCI Baud Rate Bit 13
+SCI0BD_SBR14:       equ    14                                        ; SCI Baud Rate Bit 14
+SCI0BD_SBR15:       equ    15                                        ; SCI Baud Rate Bit 15
+; bit position masks
+mSCI0BD_SBR0:       equ    %00000001
+mSCI0BD_SBR1:       equ    %00000010
+mSCI0BD_SBR2:       equ    %00000100
+mSCI0BD_SBR3:       equ    %00001000
+mSCI0BD_SBR4:       equ    %00010000
+mSCI0BD_SBR5:       equ    %00100000
+mSCI0BD_SBR6:       equ    %01000000
+mSCI0BD_SBR7:       equ    %10000000
+mSCI0BD_SBR8:       equ    %100000000
+mSCI0BD_SBR9:       equ    %1000000000
+mSCI0BD_SBR10:      equ    %10000000000
+mSCI0BD_SBR11:      equ    %100000000000
+mSCI0BD_SBR12:      equ    %1000000000000
+mSCI0BD_SBR13:      equ    %10000000000000
+mSCI0BD_SBR14:      equ    %100000000000000
+mSCI0BD_SBR15:      equ    %1000000000000000
+
+
+;*** SCI0ASR1 - SCI 0 Alternative Status Register 1; 0x00000700 ***
+SCI0ASR1:           equ    $00000700                                ;*** SCI0ASR1 - SCI 0 Alternative Status Register 1; 0x00000700 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0ASR1_BKDIF:     equ    0                                         ; Break Detect Interrupt Flag
+SCI0ASR1_BERRIF:    equ    1                                         ; Bit Error Interrupt Flag
+SCI0ASR1_BERRV:     equ    2                                         ; Bit Error Value
+SCI0ASR1_RXEDGIF:   equ    7                                         ; Receive Input Active Edge Interrupt Flag
+; bit position masks
+mSCI0ASR1_BKDIF:    equ    %00000001
+mSCI0ASR1_BERRIF:   equ    %00000010
+mSCI0ASR1_BERRV:    equ    %00000100
+mSCI0ASR1_RXEDGIF:  equ    %10000000
+
+
+;*** SCI0BDH - SCI 0 Baud Rate Register High; 0x00000700 ***
+SCI0BDH:            equ    $00000700                                ;*** SCI0BDH - SCI 0 Baud Rate Register High; 0x00000700 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0BDH_SBR8:       equ    0                                         ; SCI Baud Rate Bit 8
+SCI0BDH_SBR9:       equ    1                                         ; SCI Baud Rate Bit 9
+SCI0BDH_SBR10:      equ    2                                         ; SCI Baud Rate Bit 10
+SCI0BDH_SBR11:      equ    3                                         ; SCI Baud Rate Bit 11
+SCI0BDH_SBR12:      equ    4                                         ; SCI Baud Rate Bit 12
+SCI0BDH_SBR13:      equ    5                                         ; SCI Baud Rate Bit 13
+SCI0BDH_SBR14:      equ    6                                         ; SCI Baud Rate Bit 14
+SCI0BDH_SBR15:      equ    7                                         ; SCI Baud Rate Bit 15
+; bit position masks
+mSCI0BDH_SBR8:      equ    %00000001
+mSCI0BDH_SBR9:      equ    %00000010
+mSCI0BDH_SBR10:     equ    %00000100
+mSCI0BDH_SBR11:     equ    %00001000
+mSCI0BDH_SBR12:     equ    %00010000
+mSCI0BDH_SBR13:     equ    %00100000
+mSCI0BDH_SBR14:     equ    %01000000
+mSCI0BDH_SBR15:     equ    %10000000
+
+
+;*** SCI0ACR1 - SCI 0 Alternative Control Register 1; 0x00000701 ***
+SCI0ACR1:           equ    $00000701                                ;*** SCI0ACR1 - SCI 0 Alternative Control Register 1; 0x00000701 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0ACR1_BKDIE:     equ    0                                         ; Break Detect Interrupt Enable
+SCI0ACR1_BERRIE:    equ    1                                         ; Bit Error Interrupt Enable
+SCI0ACR1_RXEDGIE:   equ    7                                         ; Receive Input Active Edge Interrupt Enable
+; bit position masks
+mSCI0ACR1_BKDIE:    equ    %00000001
+mSCI0ACR1_BERRIE:   equ    %00000010
+mSCI0ACR1_RXEDGIE:  equ    %10000000
+
+
+;*** SCI0BDL - SCI 0 Baud Rate Register Low; 0x00000701 ***
+SCI0BDL:            equ    $00000701                                ;*** SCI0BDL - SCI 0 Baud Rate Register Low; 0x00000701 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0BDL_SBR0:       equ    0                                         ; SCI Baud Rate Bit 0
+SCI0BDL_SBR1:       equ    1                                         ; SCI Baud Rate Bit 1
+SCI0BDL_SBR2:       equ    2                                         ; SCI Baud Rate Bit 2
+SCI0BDL_SBR3:       equ    3                                         ; SCI Baud Rate Bit 3
+SCI0BDL_SBR4:       equ    4                                         ; SCI Baud Rate Bit 4
+SCI0BDL_SBR5:       equ    5                                         ; SCI Baud Rate Bit 5
+SCI0BDL_SBR6:       equ    6                                         ; SCI Baud Rate Bit 6
+SCI0BDL_SBR7:       equ    7                                         ; SCI Baud Rate Bit 7
+; bit position masks
+mSCI0BDL_SBR0:      equ    %00000001
+mSCI0BDL_SBR1:      equ    %00000010
+mSCI0BDL_SBR2:      equ    %00000100
+mSCI0BDL_SBR3:      equ    %00001000
+mSCI0BDL_SBR4:      equ    %00010000
+mSCI0BDL_SBR5:      equ    %00100000
+mSCI0BDL_SBR6:      equ    %01000000
+mSCI0BDL_SBR7:      equ    %10000000
+
+
+;*** SCI0ACR2 - SCI 0 Alternative Control Register 2; 0x00000702 ***
+SCI0ACR2:           equ    $00000702                                ;*** SCI0ACR2 - SCI 0 Alternative Control Register 2; 0x00000702 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0ACR2_BKDFE:     equ    0                                         ; Break Detect Feature Enable
+SCI0ACR2_BERRM0:    equ    1                                         ; Bit Error Mode 0
+SCI0ACR2_BERRM1:    equ    2                                         ; Bit Error Mode 1
+SCI0ACR2_TNP0:      equ    5                                         ; Transmitter Narrow Pulse Bit 0
+SCI0ACR2_TNP1:      equ    6                                         ; Transmitter Narrow Pulse Bit 1
+SCI0ACR2_IREN:      equ    7                                         ; Infrared Enable Bit
+; bit position masks
+mSCI0ACR2_BKDFE:    equ    %00000001
+mSCI0ACR2_BERRM0:   equ    %00000010
+mSCI0ACR2_BERRM1:   equ    %00000100
+mSCI0ACR2_TNP0:     equ    %00100000
+mSCI0ACR2_TNP1:     equ    %01000000
+mSCI0ACR2_IREN:     equ    %10000000
+
+
+;*** SCI0CR1 - SCI 0 Control Register 1; 0x00000702 ***
+SCI0CR1:            equ    $00000702                                ;*** SCI0CR1 - SCI 0 Control Register 1; 0x00000702 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0CR1_PT:         equ    0                                         ; Parity Type Bit
+SCI0CR1_PE:         equ    1                                         ; Parity Enable Bit
+SCI0CR1_ILT:        equ    2                                         ; Idle Line Type Bit
+SCI0CR1_WAKE:       equ    3                                         ; Wakeup Condition Bit
+SCI0CR1_M:          equ    4                                         ; Data Format Mode Bit
+SCI0CR1_RSRC:       equ    5                                         ; Receiver Source Bit
+SCI0CR1_SCISWAI:    equ    6                                         ; SCI Stop in Wait Mode Bit
+SCI0CR1_LOOPS:      equ    7                                         ; Loop Select Bit
+; bit position masks
+mSCI0CR1_PT:        equ    %00000001
+mSCI0CR1_PE:        equ    %00000010
+mSCI0CR1_ILT:       equ    %00000100
+mSCI0CR1_WAKE:      equ    %00001000
+mSCI0CR1_M:         equ    %00010000
+mSCI0CR1_RSRC:      equ    %00100000
+mSCI0CR1_SCISWAI:   equ    %01000000
+mSCI0CR1_LOOPS:     equ    %10000000
+
+
+;*** SCI0CR2 - SCI 0 Control Register 2; 0x00000703 ***
+SCI0CR2:            equ    $00000703                                ;*** SCI0CR2 - SCI 0 Control Register 2; 0x00000703 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0CR2_SBK:        equ    0                                         ; Send Break Bit
+SCI0CR2_RWU:        equ    1                                         ; Receiver Wakeup Bit
+SCI0CR2_RE:         equ    2                                         ; Receiver Enable Bit
+SCI0CR2_TE:         equ    3                                         ; Transmitter Enable Bit
+SCI0CR2_ILIE:       equ    4                                         ; Idle Line Interrupt Enable Bit
+SCI0CR2_RIE:        equ    5                                         ; Receiver Full Interrupt Enable Bit
+SCI0CR2_TCIE:       equ    6                                         ; Transmission Complete Interrupt Enable Bit
+SCI0CR2_TIE:        equ    7                                         ; Transmitter Interrupt Enable Bit
+; bit position masks
+mSCI0CR2_SBK:       equ    %00000001
+mSCI0CR2_RWU:       equ    %00000010
+mSCI0CR2_RE:        equ    %00000100
+mSCI0CR2_TE:        equ    %00001000
+mSCI0CR2_ILIE:      equ    %00010000
+mSCI0CR2_RIE:       equ    %00100000
+mSCI0CR2_TCIE:      equ    %01000000
+mSCI0CR2_TIE:       equ    %10000000
+
+
+;*** SCI0SR1 - SCI 0 Status Register 1; 0x00000704 ***
+SCI0SR1:            equ    $00000704                                ;*** SCI0SR1 - SCI 0 Status Register 1; 0x00000704 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0SR1_PF:         equ    0                                         ; Parity Error Flag
+SCI0SR1_FE:         equ    1                                         ; Framing Error Flag
+SCI0SR1_NF:         equ    2                                         ; Noise Flag
+SCI0SR1_OR:         equ    3                                         ; Overrun Flag
+SCI0SR1_IDLE:       equ    4                                         ; Idle Line Flag
+SCI0SR1_RDRF:       equ    5                                         ; Receive Data Register Full Flag
+SCI0SR1_TC:         equ    6                                         ; Transmit Complete Flag
+SCI0SR1_TDRE:       equ    7                                         ; Transmit Data Register Empty Flag
+; bit position masks
+mSCI0SR1_PF:        equ    %00000001
+mSCI0SR1_FE:        equ    %00000010
+mSCI0SR1_NF:        equ    %00000100
+mSCI0SR1_OR:        equ    %00001000
+mSCI0SR1_IDLE:      equ    %00010000
+mSCI0SR1_RDRF:      equ    %00100000
+mSCI0SR1_TC:        equ    %01000000
+mSCI0SR1_TDRE:      equ    %10000000
+
+
+;*** SCI0SR2 - SCI 0 Status Register 2; 0x00000705 ***
+SCI0SR2:            equ    $00000705                                ;*** SCI0SR2 - SCI 0 Status Register 2; 0x00000705 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0SR2_RAF:        equ    0                                         ; Receiver Active Flag
+SCI0SR2_TXDIR:      equ    1                                         ; Transmitter pin data direction in Single-Wire mode
+SCI0SR2_BRK13:      equ    2                                         ; Break Transmit character length
+SCI0SR2_RXPOL:      equ    3                                         ; Receive Polarity
+SCI0SR2_TXPOL:      equ    4                                         ; Transmit Polarity
+SCI0SR2_AMAP:       equ    7                                         ; Alternative Map
+; bit position masks
+mSCI0SR2_RAF:       equ    %00000001
+mSCI0SR2_TXDIR:     equ    %00000010
+mSCI0SR2_BRK13:     equ    %00000100
+mSCI0SR2_RXPOL:     equ    %00001000
+mSCI0SR2_TXPOL:     equ    %00010000
+mSCI0SR2_AMAP:      equ    %10000000
+
+
+;*** SCI0DRH - SCI 0 Data Register High; 0x00000706 ***
+SCI0DRH:            equ    $00000706                                ;*** SCI0DRH - SCI 0 Data Register High; 0x00000706 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0DRH_T8:         equ    6                                         ; Transmit Bit 8
+SCI0DRH_R8:         equ    7                                         ; Received Bit 8
+; bit position masks
+mSCI0DRH_T8:        equ    %01000000
+mSCI0DRH_R8:        equ    %10000000
+
+
+;*** SCI0DRL - SCI 0 Data Register Low; 0x00000707 ***
+SCI0DRL:            equ    $00000707                                ;*** SCI0DRL - SCI 0 Data Register Low; 0x00000707 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI0DRL_R0_T0:      equ    0                                         ; Received bit 0 or Transmit bit 0
+SCI0DRL_R1_T1:      equ    1                                         ; Received bit 1 or Transmit bit 1
+SCI0DRL_R2_T2:      equ    2                                         ; Received bit 2 or Transmit bit 2
+SCI0DRL_R3_T3:      equ    3                                         ; Received bit 3 or Transmit bit 3
+SCI0DRL_R4_T4:      equ    4                                         ; Received bit 4 or Transmit bit 4
+SCI0DRL_R5_T5:      equ    5                                         ; Received bit 5 or Transmit bit 5
+SCI0DRL_R6_T6:      equ    6                                         ; Received bit 6 or Transmit bit 6
+SCI0DRL_R7_T7:      equ    7                                         ; Received bit 7 or Transmit bit 7
+; bit position masks
+mSCI0DRL_R0_T0:     equ    %00000001
+mSCI0DRL_R1_T1:     equ    %00000010
+mSCI0DRL_R2_T2:     equ    %00000100
+mSCI0DRL_R3_T3:     equ    %00001000
+mSCI0DRL_R4_T4:     equ    %00010000
+mSCI0DRL_R5_T5:     equ    %00100000
+mSCI0DRL_R6_T6:     equ    %01000000
+mSCI0DRL_R7_T7:     equ    %10000000
+
+
+;*** SCI1BD - SCI 1 Baud Rate Register; 0x00000710 ***
+SCI1BD:             equ    $00000710                                ;*** SCI1BD - SCI 1 Baud Rate Register; 0x00000710 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1BD_SBR0:        equ    0                                         ; SCI Baud Rate Bit 0
+SCI1BD_SBR1:        equ    1                                         ; SCI Baud Rate Bit 1
+SCI1BD_SBR2:        equ    2                                         ; SCI Baud Rate Bit 2
+SCI1BD_SBR3:        equ    3                                         ; SCI Baud Rate Bit 3
+SCI1BD_SBR4:        equ    4                                         ; SCI Baud Rate Bit 4
+SCI1BD_SBR5:        equ    5                                         ; SCI Baud Rate Bit 5
+SCI1BD_SBR6:        equ    6                                         ; SCI Baud Rate Bit 6
+SCI1BD_SBR7:        equ    7                                         ; SCI Baud Rate Bit 7
+SCI1BD_SBR8:        equ    8                                         ; SCI Baud Rate Bit 8
+SCI1BD_SBR9:        equ    9                                         ; SCI Baud Rate Bit 9
+SCI1BD_SBR10:       equ    10                                        ; SCI Baud Rate Bit 10
+SCI1BD_SBR11:       equ    11                                        ; SCI Baud Rate Bit 11
+SCI1BD_SBR12:       equ    12                                        ; SCI Baud Rate Bit 12
+SCI1BD_SBR13:       equ    13                                        ; SCI Baud Rate Bit 13
+SCI1BD_SBR14:       equ    14                                        ; SCI Baud Rate Bit 14
+SCI1BD_SBR15:       equ    15                                        ; SCI Baud Rate Bit 15
+; bit position masks
+mSCI1BD_SBR0:       equ    %00000001
+mSCI1BD_SBR1:       equ    %00000010
+mSCI1BD_SBR2:       equ    %00000100
+mSCI1BD_SBR3:       equ    %00001000
+mSCI1BD_SBR4:       equ    %00010000
+mSCI1BD_SBR5:       equ    %00100000
+mSCI1BD_SBR6:       equ    %01000000
+mSCI1BD_SBR7:       equ    %10000000
+mSCI1BD_SBR8:       equ    %100000000
+mSCI1BD_SBR9:       equ    %1000000000
+mSCI1BD_SBR10:      equ    %10000000000
+mSCI1BD_SBR11:      equ    %100000000000
+mSCI1BD_SBR12:      equ    %1000000000000
+mSCI1BD_SBR13:      equ    %10000000000000
+mSCI1BD_SBR14:      equ    %100000000000000
+mSCI1BD_SBR15:      equ    %1000000000000000
+
+
+;*** SCI1ASR1 - SCI 1 Alternative Status Register 1; 0x00000710 ***
+SCI1ASR1:           equ    $00000710                                ;*** SCI1ASR1 - SCI 1 Alternative Status Register 1; 0x00000710 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1ASR1_BKDIF:     equ    0                                         ; Break Detect Interrupt Flag
+SCI1ASR1_BERRIF:    equ    1                                         ; Bit Error Interrupt Flag
+SCI1ASR1_BERRV:     equ    2                                         ; Bit Error Value
+SCI1ASR1_RXEDGIF:   equ    7                                         ; Receive Input Active Edge Interrupt Flag
+; bit position masks
+mSCI1ASR1_BKDIF:    equ    %00000001
+mSCI1ASR1_BERRIF:   equ    %00000010
+mSCI1ASR1_BERRV:    equ    %00000100
+mSCI1ASR1_RXEDGIF:  equ    %10000000
+
+
+;*** SCI1BDH - SCI 1 Baud Rate Register High; 0x00000710 ***
+SCI1BDH:            equ    $00000710                                ;*** SCI1BDH - SCI 1 Baud Rate Register High; 0x00000710 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1BDH_SBR8:       equ    0                                         ; SCI Baud Rate Bit 8
+SCI1BDH_SBR9:       equ    1                                         ; SCI Baud Rate Bit 9
+SCI1BDH_SBR10:      equ    2                                         ; SCI Baud Rate Bit 10
+SCI1BDH_SBR11:      equ    3                                         ; SCI Baud Rate Bit 11
+SCI1BDH_SBR12:      equ    4                                         ; SCI Baud Rate Bit 12
+SCI1BDH_SBR13:      equ    5                                         ; SCI Baud Rate Bit 13
+SCI1BDH_SBR14:      equ    6                                         ; SCI Baud Rate Bit 14
+SCI1BDH_SBR15:      equ    7                                         ; SCI Baud Rate Bit 15
+; bit position masks
+mSCI1BDH_SBR8:      equ    %00000001
+mSCI1BDH_SBR9:      equ    %00000010
+mSCI1BDH_SBR10:     equ    %00000100
+mSCI1BDH_SBR11:     equ    %00001000
+mSCI1BDH_SBR12:     equ    %00010000
+mSCI1BDH_SBR13:     equ    %00100000
+mSCI1BDH_SBR14:     equ    %01000000
+mSCI1BDH_SBR15:     equ    %10000000
+
+
+;*** SCI1ACR1 - SCI 1 Alternative Control Register 1; 0x00000711 ***
+SCI1ACR1:           equ    $00000711                                ;*** SCI1ACR1 - SCI 1 Alternative Control Register 1; 0x00000711 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1ACR1_BKDIE:     equ    0                                         ; Break Detect Interrupt Enable
+SCI1ACR1_BERRIE:    equ    1                                         ; Bit Error Interrupt Enable
+SCI1ACR1_RXEDGIE:   equ    7                                         ; Receive Input Active Edge Interrupt Enable
+; bit position masks
+mSCI1ACR1_BKDIE:    equ    %00000001
+mSCI1ACR1_BERRIE:   equ    %00000010
+mSCI1ACR1_RXEDGIE:  equ    %10000000
+
+
+;*** SCI1BDL - SCI 1 Baud Rate Register Low; 0x00000711 ***
+SCI1BDL:            equ    $00000711                                ;*** SCI1BDL - SCI 1 Baud Rate Register Low; 0x00000711 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1BDL_SBR0:       equ    0                                         ; SCI Baud Rate Bit 0
+SCI1BDL_SBR1:       equ    1                                         ; SCI Baud Rate Bit 1
+SCI1BDL_SBR2:       equ    2                                         ; SCI Baud Rate Bit 2
+SCI1BDL_SBR3:       equ    3                                         ; SCI Baud Rate Bit 3
+SCI1BDL_SBR4:       equ    4                                         ; SCI Baud Rate Bit 4
+SCI1BDL_SBR5:       equ    5                                         ; SCI Baud Rate Bit 5
+SCI1BDL_SBR6:       equ    6                                         ; SCI Baud Rate Bit 6
+SCI1BDL_SBR7:       equ    7                                         ; SCI Baud Rate Bit 7
+; bit position masks
+mSCI1BDL_SBR0:      equ    %00000001
+mSCI1BDL_SBR1:      equ    %00000010
+mSCI1BDL_SBR2:      equ    %00000100
+mSCI1BDL_SBR3:      equ    %00001000
+mSCI1BDL_SBR4:      equ    %00010000
+mSCI1BDL_SBR5:      equ    %00100000
+mSCI1BDL_SBR6:      equ    %01000000
+mSCI1BDL_SBR7:      equ    %10000000
+
+
+;*** SCI1ACR2 - SCI 1 Alternative Control Register 2; 0x00000712 ***
+SCI1ACR2:           equ    $00000712                                ;*** SCI1ACR2 - SCI 1 Alternative Control Register 2; 0x00000712 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1ACR2_BKDFE:     equ    0                                         ; Break Detect Feature Enable
+SCI1ACR2_BERRM0:    equ    1                                         ; Bit Error Mode 0
+SCI1ACR2_BERRM1:    equ    2                                         ; Bit Error Mode 1
+SCI1ACR2_TNP0:      equ    5                                         ; Transmitter Narrow Pulse Bit 0
+SCI1ACR2_TNP1:      equ    6                                         ; Transmitter Narrow Pulse Bit 1
+SCI1ACR2_IREN:      equ    7                                         ; Infrared Enable Bit
+; bit position masks
+mSCI1ACR2_BKDFE:    equ    %00000001
+mSCI1ACR2_BERRM0:   equ    %00000010
+mSCI1ACR2_BERRM1:   equ    %00000100
+mSCI1ACR2_TNP0:     equ    %00100000
+mSCI1ACR2_TNP1:     equ    %01000000
+mSCI1ACR2_IREN:     equ    %10000000
+
+
+;*** SCI1CR1 - SCI 1 Control Register 1; 0x00000712 ***
+SCI1CR1:            equ    $00000712                                ;*** SCI1CR1 - SCI 1 Control Register 1; 0x00000712 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1CR1_PT:         equ    0                                         ; Parity Type Bit
+SCI1CR1_PE:         equ    1                                         ; Parity Enable Bit
+SCI1CR1_ILT:        equ    2                                         ; Idle Line Type Bit
+SCI1CR1_WAKE:       equ    3                                         ; Wakeup Condition Bit
+SCI1CR1_M:          equ    4                                         ; Data Format Mode Bit
+SCI1CR1_RSRC:       equ    5                                         ; Receiver Source Bit
+SCI1CR1_SCISWAI:    equ    6                                         ; SCI Stop in Wait Mode Bit
+SCI1CR1_LOOPS:      equ    7                                         ; Loop Select Bit
+; bit position masks
+mSCI1CR1_PT:        equ    %00000001
+mSCI1CR1_PE:        equ    %00000010
+mSCI1CR1_ILT:       equ    %00000100
+mSCI1CR1_WAKE:      equ    %00001000
+mSCI1CR1_M:         equ    %00010000
+mSCI1CR1_RSRC:      equ    %00100000
+mSCI1CR1_SCISWAI:   equ    %01000000
+mSCI1CR1_LOOPS:     equ    %10000000
+
+
+;*** SCI1CR2 - SCI 1 Control Register 2; 0x00000713 ***
+SCI1CR2:            equ    $00000713                                ;*** SCI1CR2 - SCI 1 Control Register 2; 0x00000713 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1CR2_SBK:        equ    0                                         ; Send Break Bit
+SCI1CR2_RWU:        equ    1                                         ; Receiver Wakeup Bit
+SCI1CR2_RE:         equ    2                                         ; Receiver Enable Bit
+SCI1CR2_TE:         equ    3                                         ; Transmitter Enable Bit
+SCI1CR2_ILIE:       equ    4                                         ; Idle Line Interrupt Enable Bit
+SCI1CR2_RIE:        equ    5                                         ; Receiver Full Interrupt Enable Bit
+SCI1CR2_TCIE:       equ    6                                         ; Transmission Complete Interrupt Enable Bit
+SCI1CR2_TIE:        equ    7                                         ; Transmitter Interrupt Enable Bit
+; bit position masks
+mSCI1CR2_SBK:       equ    %00000001
+mSCI1CR2_RWU:       equ    %00000010
+mSCI1CR2_RE:        equ    %00000100
+mSCI1CR2_TE:        equ    %00001000
+mSCI1CR2_ILIE:      equ    %00010000
+mSCI1CR2_RIE:       equ    %00100000
+mSCI1CR2_TCIE:      equ    %01000000
+mSCI1CR2_TIE:       equ    %10000000
+
+
+;*** SCI1SR1 - SCI 1 Status Register 1; 0x00000714 ***
+SCI1SR1:            equ    $00000714                                ;*** SCI1SR1 - SCI 1 Status Register 1; 0x00000714 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1SR1_PF:         equ    0                                         ; Parity Error Flag
+SCI1SR1_FE:         equ    1                                         ; Framing Error Flag
+SCI1SR1_NF:         equ    2                                         ; Noise Flag
+SCI1SR1_OR:         equ    3                                         ; Overrun Flag
+SCI1SR1_IDLE:       equ    4                                         ; Idle Line Flag
+SCI1SR1_RDRF:       equ    5                                         ; Receive Data Register Full Flag
+SCI1SR1_TC:         equ    6                                         ; Transmit Complete Flag
+SCI1SR1_TDRE:       equ    7                                         ; Transmit Data Register Empty Flag
+; bit position masks
+mSCI1SR1_PF:        equ    %00000001
+mSCI1SR1_FE:        equ    %00000010
+mSCI1SR1_NF:        equ    %00000100
+mSCI1SR1_OR:        equ    %00001000
+mSCI1SR1_IDLE:      equ    %00010000
+mSCI1SR1_RDRF:      equ    %00100000
+mSCI1SR1_TC:        equ    %01000000
+mSCI1SR1_TDRE:      equ    %10000000
+
+
+;*** SCI1SR2 - SCI 1 Status Register 2; 0x00000715 ***
+SCI1SR2:            equ    $00000715                                ;*** SCI1SR2 - SCI 1 Status Register 2; 0x00000715 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1SR2_RAF:        equ    0                                         ; Receiver Active Flag
+SCI1SR2_TXDIR:      equ    1                                         ; Transmitter pin data direction in Single-Wire mode
+SCI1SR2_BRK13:      equ    2                                         ; Break Transmit character length
+SCI1SR2_RXPOL:      equ    3                                         ; Receive Polarity
+SCI1SR2_TXPOL:      equ    4                                         ; Transmit Polarity
+SCI1SR2_AMAP:       equ    7                                         ; Alternative Map
+; bit position masks
+mSCI1SR2_RAF:       equ    %00000001
+mSCI1SR2_TXDIR:     equ    %00000010
+mSCI1SR2_BRK13:     equ    %00000100
+mSCI1SR2_RXPOL:     equ    %00001000
+mSCI1SR2_TXPOL:     equ    %00010000
+mSCI1SR2_AMAP:      equ    %10000000
+
+
+;*** SCI1DRH - SCI 1 Data Register High; 0x00000716 ***
+SCI1DRH:            equ    $00000716                                ;*** SCI1DRH - SCI 1 Data Register High; 0x00000716 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1DRH_T8:         equ    6                                         ; Transmit Bit 8
+SCI1DRH_R8:         equ    7                                         ; Received Bit 8
+; bit position masks
+mSCI1DRH_T8:        equ    %01000000
+mSCI1DRH_R8:        equ    %10000000
+
+
+;*** SCI1DRL - SCI 1 Data Register Low; 0x00000717 ***
+SCI1DRL:            equ    $00000717                                ;*** SCI1DRL - SCI 1 Data Register Low; 0x00000717 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SCI1DRL_R0_T0:      equ    0                                         ; Received bit 0 or Transmit bit 0
+SCI1DRL_R1_T1:      equ    1                                         ; Received bit 1 or Transmit bit 1
+SCI1DRL_R2_T2:      equ    2                                         ; Received bit 2 or Transmit bit 2
+SCI1DRL_R3_T3:      equ    3                                         ; Received bit 3 or Transmit bit 3
+SCI1DRL_R4_T4:      equ    4                                         ; Received bit 4 or Transmit bit 4
+SCI1DRL_R5_T5:      equ    5                                         ; Received bit 5 or Transmit bit 5
+SCI1DRL_R6_T6:      equ    6                                         ; Received bit 6 or Transmit bit 6
+SCI1DRL_R7_T7:      equ    7                                         ; Received bit 7 or Transmit bit 7
+; bit position masks
+mSCI1DRL_R0_T0:     equ    %00000001
+mSCI1DRL_R1_T1:     equ    %00000010
+mSCI1DRL_R2_T2:     equ    %00000100
+mSCI1DRL_R3_T3:     equ    %00001000
+mSCI1DRL_R4_T4:     equ    %00010000
+mSCI1DRL_R5_T5:     equ    %00100000
+mSCI1DRL_R6_T6:     equ    %01000000
+mSCI1DRL_R7_T7:     equ    %10000000
+
+
+;*** SPI0CR1 - SPI 0 Control Register 1; 0x00000780 ***
+SPI0CR1:            equ    $00000780                                ;*** SPI0CR1 - SPI 0 Control Register 1; 0x00000780 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SPI0CR1_LSBFE:      equ    0                                         ; SPI LSB-First Enable
+SPI0CR1_SSOE:       equ    1                                         ; Slave Select Output Enable
+SPI0CR1_CPHA:       equ    2                                         ; SPI Clock Phase Bit
+SPI0CR1_CPOL:       equ    3                                         ; SPI Clock Polarity Bit
+SPI0CR1_MSTR:       equ    4                                         ; SPI Master/Slave Mode Select Bit
+SPI0CR1_SPTIE:      equ    5                                         ; SPI Transmit Interrupt Enable
+SPI0CR1_SPE:        equ    6                                         ; SPI System Enable Bit
+SPI0CR1_SPIE:       equ    7                                         ; SPI Interrupt Enable Bit
+; bit position masks
+mSPI0CR1_LSBFE:     equ    %00000001
+mSPI0CR1_SSOE:      equ    %00000010
+mSPI0CR1_CPHA:      equ    %00000100
+mSPI0CR1_CPOL:      equ    %00001000
+mSPI0CR1_MSTR:      equ    %00010000
+mSPI0CR1_SPTIE:     equ    %00100000
+mSPI0CR1_SPE:       equ    %01000000
+mSPI0CR1_SPIE:      equ    %10000000
+
+
+;*** SPI0CR2 - SPI 0 Control Register 2; 0x00000781 ***
+SPI0CR2:            equ    $00000781                                ;*** SPI0CR2 - SPI 0 Control Register 2; 0x00000781 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SPI0CR2_SPC0:       equ    0                                         ; Serial Pin Control Bit 0
+SPI0CR2_SPISWAI:    equ    1                                         ; SPI Stop in Wait Mode Bit
+SPI0CR2_BIDIROE:    equ    3                                         ; Output enable in the Bidirectional mode of operation
+SPI0CR2_MODFEN:     equ    4                                         ; Mode Fault Enable Bit
+SPI0CR2_XFRW:       equ    6                                         ; Transfer Width
+; bit position masks
+mSPI0CR2_SPC0:      equ    %00000001
+mSPI0CR2_SPISWAI:   equ    %00000010
+mSPI0CR2_BIDIROE:   equ    %00001000
+mSPI0CR2_MODFEN:    equ    %00010000
+mSPI0CR2_XFRW:      equ    %01000000
+
+
+;*** SPI0BR - SPI 0 Baud Rate Register; 0x00000782 ***
+SPI0BR:             equ    $00000782                                ;*** SPI0BR - SPI 0 Baud Rate Register; 0x00000782 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SPI0BR_SPR0:        equ    0                                         ; SPI Baud Rate Selection Bit 0
+SPI0BR_SPR1:        equ    1                                         ; SPI Baud Rate Selection Bit 1
+SPI0BR_SPR2:        equ    2                                         ; SPI Baud Rate Selection Bit 2
+SPI0BR_SPPR0:       equ    4                                         ; SPI Baud Rate Preselection Bits 0
+SPI0BR_SPPR1:       equ    5                                         ; SPI Baud Rate Preselection Bits 1
+SPI0BR_SPPR2:       equ    6                                         ; SPI Baud Rate Preselection Bits 2
+; bit position masks
+mSPI0BR_SPR0:       equ    %00000001
+mSPI0BR_SPR1:       equ    %00000010
+mSPI0BR_SPR2:       equ    %00000100
+mSPI0BR_SPPR0:      equ    %00010000
+mSPI0BR_SPPR1:      equ    %00100000
+mSPI0BR_SPPR2:      equ    %01000000
+
+
+;*** SPI0SR - SPI 0 Status Register; 0x00000783 ***
+SPI0SR:             equ    $00000783                                ;*** SPI0SR - SPI 0 Status Register; 0x00000783 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SPI0SR_MODF:        equ    4                                         ; Mode Fault Flag
+SPI0SR_SPTEF:       equ    5                                         ; SPI Transmit Empty Interrupt Flag
+SPI0SR_SPIF:        equ    7                                         ; SPIF Receive Interrupt Flag
+; bit position masks
+mSPI0SR_MODF:       equ    %00010000
+mSPI0SR_SPTEF:      equ    %00100000
+mSPI0SR_SPIF:       equ    %10000000
+
+
+;*** SPI0DR - SPI 0 Data Register; 0x00000784 ***
+SPI0DR:             equ    $00000784                                ;*** SPI0DR - SPI 0 Data Register; 0x00000784 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SPI0DR_R0_T0:       equ    0                                         ; SPI 0 Data Bit 0
+SPI0DR_R1_T1:       equ    1                                         ; SPI 0 Data Bit 1
+SPI0DR_R2_T2:       equ    2                                         ; SPI 0 Data Bit 2
+SPI0DR_R3_T3:       equ    3                                         ; SPI 0 Data Bit 3
+SPI0DR_R4_T4:       equ    4                                         ; SPI 0 Data Bit 4
+SPI0DR_R5_T5:       equ    5                                         ; SPI 0 Data Bit 5
+SPI0DR_R6_T6:       equ    6                                         ; SPI 0 Data Bit 6
+SPI0DR_R7_T7:       equ    7                                         ; SPI 0 Data Bit 7
+SPI0DR_R8_T8:       equ    8                                         ; SPI 0 Data Bit 8
+SPI0DR_R9_T9:       equ    9                                         ; SPI 0 Data Bit 9
+SPI0DR_R10_T10:     equ    10                                        ; SPI 0 Data Bit 10
+SPI0DR_R11_T11:     equ    11                                        ; SPI 0 Data Bit 11
+SPI0DR_R12_T12:     equ    12                                        ; SPI 0 Data Bit 12
+SPI0DR_R13_T13:     equ    13                                        ; SPI 0 Data Bit 13
+SPI0DR_R14_T14:     equ    14                                        ; SPI 0 Data Bit 14
+SPI0DR_R15_T15:     equ    15                                        ; SPI 0 Data Bit 15
+; bit position masks
+mSPI0DR_R0_T0:      equ    %00000001
+mSPI0DR_R1_T1:      equ    %00000010
+mSPI0DR_R2_T2:      equ    %00000100
+mSPI0DR_R3_T3:      equ    %00001000
+mSPI0DR_R4_T4:      equ    %00010000
+mSPI0DR_R5_T5:      equ    %00100000
+mSPI0DR_R6_T6:      equ    %01000000
+mSPI0DR_R7_T7:      equ    %10000000
+mSPI0DR_R8_T8:      equ    %100000000
+mSPI0DR_R9_T9:      equ    %1000000000
+mSPI0DR_R10_T10:    equ    %10000000000
+mSPI0DR_R11_T11:    equ    %100000000000
+mSPI0DR_R12_T12:    equ    %1000000000000
+mSPI0DR_R13_T13:    equ    %10000000000000
+mSPI0DR_R14_T14:    equ    %100000000000000
+mSPI0DR_R15_T15:    equ    %1000000000000000
+
+
+;*** SPI0DRH - SPI 0 Data Register High; 0x00000784 ***
+SPI0DRH:            equ    $00000784                                ;*** SPI0DRH - SPI 0 Data Register High; 0x00000784 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SPI0DRH_R8_T8:      equ    0                                         ; SPI 0 Data Bit 8
+SPI0DRH_R9_T9:      equ    1                                         ; SPI 0 Data Bit 9
+SPI0DRH_R10_T10:    equ    2                                         ; SPI 0 Data Bit 10
+SPI0DRH_R11_T11:    equ    3                                         ; SPI 0 Data Bit 11
+SPI0DRH_R12_T12:    equ    4                                         ; SPI 0 Data Bit 12
+SPI0DRH_R13_T13:    equ    5                                         ; SPI 0 Data Bit 13
+SPI0DRH_R14_T14:    equ    6                                         ; SPI 0 Data Bit 14
+SPI0DRH_R15_T15:    equ    7                                         ; SPI 0 Data Bit 15
+; bit position masks
+mSPI0DRH_R8_T8:     equ    %00000001
+mSPI0DRH_R9_T9:     equ    %00000010
+mSPI0DRH_R10_T10:   equ    %00000100
+mSPI0DRH_R11_T11:   equ    %00001000
+mSPI0DRH_R12_T12:   equ    %00010000
+mSPI0DRH_R13_T13:   equ    %00100000
+mSPI0DRH_R14_T14:   equ    %01000000
+mSPI0DRH_R15_T15:   equ    %10000000
+
+
+;*** SPI0DRL - SPI 0 Data Register Low; 0x00000785 ***
+SPI0DRL:            equ    $00000785                                ;*** SPI0DRL - SPI 0 Data Register Low; 0x00000785 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+SPI0DRL_R0_T0:      equ    0                                         ; SPI 0 Data Bit 0
+SPI0DRL_R1_T1:      equ    1                                         ; SPI 0 Data Bit 1
+SPI0DRL_R2_T2:      equ    2                                         ; SPI 0 Data Bit 2
+SPI0DRL_R3_T3:      equ    3                                         ; SPI 0 Data Bit 3
+SPI0DRL_R4_T4:      equ    4                                         ; SPI 0 Data Bit 4
+SPI0DRL_R5_T5:      equ    5                                         ; SPI 0 Data Bit 5
+SPI0DRL_R6_T6:      equ    6                                         ; SPI 0 Data Bit 6
+SPI0DRL_R7_T7:      equ    7                                         ; SPI 0 Data Bit 7
+; bit position masks
+mSPI0DRL_R0_T0:     equ    %00000001
+mSPI0DRL_R1_T1:     equ    %00000010
+mSPI0DRL_R2_T2:     equ    %00000100
+mSPI0DRL_R3_T3:     equ    %00001000
+mSPI0DRL_R4_T4:     equ    %00010000
+mSPI0DRL_R5_T5:     equ    %00100000
+mSPI0DRL_R6_T6:     equ    %01000000
+mSPI0DRL_R7_T7:     equ    %10000000
+
+
+;*** IIC0IBAD - IIC Address Register; 0x000007C0 ***
+IIC0IBAD:           equ    $000007C0                                ;*** IIC0IBAD - IIC Address Register; 0x000007C0 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IIC0IBAD_ADR1:      equ    1                                         ; Slave Address Bit 1
+IIC0IBAD_ADR2:      equ    2                                         ; Slave Address Bit 2
+IIC0IBAD_ADR3:      equ    3                                         ; Slave Address Bit 3
+IIC0IBAD_ADR4:      equ    4                                         ; Slave Address Bit 4
+IIC0IBAD_ADR5:      equ    5                                         ; Slave Address Bit 5
+IIC0IBAD_ADR6:      equ    6                                         ; Slave Address Bit 6
+IIC0IBAD_ADR7:      equ    7                                         ; Slave Address Bit 7
+; bit position masks
+mIIC0IBAD_ADR1:     equ    %00000010
+mIIC0IBAD_ADR2:     equ    %00000100
+mIIC0IBAD_ADR3:     equ    %00001000
+mIIC0IBAD_ADR4:     equ    %00010000
+mIIC0IBAD_ADR5:     equ    %00100000
+mIIC0IBAD_ADR6:     equ    %01000000
+mIIC0IBAD_ADR7:     equ    %10000000
+
+
+;*** IIC0IBFD - IIC Frequency Divider Register; 0x000007C1 ***
+IIC0IBFD:           equ    $000007C1                                ;*** IIC0IBFD - IIC Frequency Divider Register; 0x000007C1 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IIC0IBFD_IBC0:      equ    0                                         ; I-Bus Clock Rate 0
+IIC0IBFD_IBC1:      equ    1                                         ; I-Bus Clock Rate 1
+IIC0IBFD_IBC2:      equ    2                                         ; I-Bus Clock Rate 2
+IIC0IBFD_IBC3:      equ    3                                         ; I-Bus Clock Rate 3
+IIC0IBFD_IBC4:      equ    4                                         ; I-Bus Clock Rate 4
+IIC0IBFD_IBC5:      equ    5                                         ; I-Bus Clock Rate 5
+IIC0IBFD_IBC6:      equ    6                                         ; I-Bus Clock Rate 6
+IIC0IBFD_IBC7:      equ    7                                         ; I-Bus Clock Rate 7
+; bit position masks
+mIIC0IBFD_IBC0:     equ    %00000001
+mIIC0IBFD_IBC1:     equ    %00000010
+mIIC0IBFD_IBC2:     equ    %00000100
+mIIC0IBFD_IBC3:     equ    %00001000
+mIIC0IBFD_IBC4:     equ    %00010000
+mIIC0IBFD_IBC5:     equ    %00100000
+mIIC0IBFD_IBC6:     equ    %01000000
+mIIC0IBFD_IBC7:     equ    %10000000
+
+
+;*** IIC0IBCR - IIC Control Register; 0x000007C2 ***
+IIC0IBCR:           equ    $000007C2                                ;*** IIC0IBCR - IIC Control Register; 0x000007C2 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IIC0IBCR_IBSWAI:    equ    0                                         ; I-Bus Interface Stop in WAIT mode
+IIC0IBCR_RSTA:      equ    2                                         ; Repeat Start
+IIC0IBCR_TXAK:      equ    3                                         ; Transmit Acknowledge enable
+IIC0IBCR_TX_RX:     equ    4                                         ; Transmit/Receive mode select bit
+IIC0IBCR_MS_SL:     equ    5                                         ; Master/Slave mode select bit
+IIC0IBCR_IBIE:      equ    6                                         ; I-Bus Interrupt Enable
+IIC0IBCR_IBEN:      equ    7                                         ; I-Bus Enable
+; bit position masks
+mIIC0IBCR_IBSWAI:   equ    %00000001
+mIIC0IBCR_RSTA:     equ    %00000100
+mIIC0IBCR_TXAK:     equ    %00001000
+mIIC0IBCR_TX_RX:    equ    %00010000
+mIIC0IBCR_MS_SL:    equ    %00100000
+mIIC0IBCR_IBIE:     equ    %01000000
+mIIC0IBCR_IBEN:     equ    %10000000
+
+
+;*** IIC0IBSR - IIC Status Register; 0x000007C3 ***
+IIC0IBSR:           equ    $000007C3                                ;*** IIC0IBSR - IIC Status Register; 0x000007C3 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IIC0IBSR_RXAK:      equ    0                                         ; Received Acknowledge
+IIC0IBSR_IBIF:      equ    1                                         ; I-Bus Interrupt
+IIC0IBSR_SRW:       equ    2                                         ; Slave Read/Write
+IIC0IBSR_IBAL:      equ    4                                         ; Arbitration Lost
+IIC0IBSR_IBB:       equ    5                                         ; Bus busy bit
+IIC0IBSR_IAAS:      equ    6                                         ; Addressed as a slave bit
+IIC0IBSR_TCF:       equ    7                                         ; Data transferring bit
+; bit position masks
+mIIC0IBSR_RXAK:     equ    %00000001
+mIIC0IBSR_IBIF:     equ    %00000010
+mIIC0IBSR_SRW:      equ    %00000100
+mIIC0IBSR_IBAL:     equ    %00010000
+mIIC0IBSR_IBB:      equ    %00100000
+mIIC0IBSR_IAAS:     equ    %01000000
+mIIC0IBSR_TCF:      equ    %10000000
+
+
+;*** IIC0IBDR - IIC Data I/O Register; 0x000007C4 ***
+IIC0IBDR:           equ    $000007C4                                ;*** IIC0IBDR - IIC Data I/O Register; 0x000007C4 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IIC0IBDR_D0:        equ    0                                         ; IIC Data Bit 0
+IIC0IBDR_D1:        equ    1                                         ; IIC Data Bit 1
+IIC0IBDR_D2:        equ    2                                         ; IIC Data Bit 2
+IIC0IBDR_D3:        equ    3                                         ; IIC Data Bit 3
+IIC0IBDR_D4:        equ    4                                         ; IIC Data Bit 4
+IIC0IBDR_D5:        equ    5                                         ; IIC Data Bit 5
+IIC0IBDR_D6:        equ    6                                         ; IIC Data Bit 6
+IIC0IBDR_D7:        equ    7                                         ; IIC Data Bit 7
+; bit position masks
+mIIC0IBDR_D0:       equ    %00000001
+mIIC0IBDR_D1:       equ    %00000010
+mIIC0IBDR_D2:       equ    %00000100
+mIIC0IBDR_D3:       equ    %00001000
+mIIC0IBDR_D4:       equ    %00010000
+mIIC0IBDR_D5:       equ    %00100000
+mIIC0IBDR_D6:       equ    %01000000
+mIIC0IBDR_D7:       equ    %10000000
+
+
+;*** IIC0IBCR2 - IIC Control Register 2; 0x000007C5 ***
+IIC0IBCR2:          equ    $000007C5                                ;*** IIC0IBCR2 - IIC Control Register 2; 0x000007C5 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+IIC0IBCR2_ADR8:     equ    0                                         ; Slave Address Bit 8
+IIC0IBCR2_ADR9:     equ    1                                         ; Slave Address Bit 9
+IIC0IBCR2_ADR10:    equ    2                                         ; Slave Address Bit 10
+IIC0IBCR2_ADTYPE:   equ    6                                         ; Address Type
+IIC0IBCR2_GCEN:     equ    7                                         ; General Call Enable
+; bit position masks
+mIIC0IBCR2_ADR8:    equ    %00000001
+mIIC0IBCR2_ADR9:    equ    %00000010
+mIIC0IBCR2_ADR10:   equ    %00000100
+mIIC0IBCR2_ADTYPE:  equ    %01000000
+mIIC0IBCR2_GCEN:    equ    %10000000
+
+
+;*** LP0DR - Port LP Data Register; 0x00000980 ***
+LP0DR:              equ    $00000980                                ;*** LP0DR - Port LP Data Register; 0x00000980 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+LP0DR_LPDR0:        equ    0                                         ; LIN Rx data
+LP0DR_LPDR1:        equ    1                                         ; LIN Tx data
+; bit position masks
+mLP0DR_LPDR0:       equ    %00000001
+mLP0DR_LPDR1:       equ    %00000010
+
+
+;*** LP0CR - LIN Control Register; 0x00000981 ***
+LP0CR:              equ    $00000981                                ;*** LP0CR - LIN Control Register; 0x00000981 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+LP0CR_LPPUE:        equ    0                                         ; LIN pull-up enable
+LP0CR_LPWUE:        equ    1                                         ; LIN wake-up enable
+LP0CR_RXONLY:       equ    2                                         ; Receive only mode
+LP0CR_LPE:          equ    3                                         ; LIN enable
+; bit position masks
+mLP0CR_LPPUE:       equ    %00000001
+mLP0CR_LPWUE:       equ    %00000010
+mLP0CR_RXONLY:      equ    %00000100
+mLP0CR_LPE:         equ    %00001000
+
+
+;*** LP0SLRM - LIN Slew Rate Register; 0x00000983 ***
+LP0SLRM:            equ    $00000983                                ;*** LP0SLRM - LIN Slew Rate Register; 0x00000983 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+LP0SLRM_LPSLR:      equ    0                                         ; Slew rate select
+LP0SLRM_LPDTDIS:    equ    7                                         ; TxD-dominant timeout disable
+; bit position masks
+mLP0SLRM_LPSLR:     equ    %00000011
+mLP0SLRM_LPDTDIS:   equ    %10000000
+
+
+;*** LP0SR - LIN Status Register; 0x00000985 ***
+LP0SR:              equ    $00000985                                ;*** LP0SR - LIN Status Register; 0x00000985 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+LP0SR_LPDT:         equ    7                                         ; LIN Transmitter TxD-dominant timeout Status
+; bit position masks
+mLP0SR_LPDT:        equ    %10000000
+
+
+;*** LP0IE - LIN Interrupt Enable Register; 0x00000986 ***
+LP0IE:              equ    $00000986                                ;*** LP0IE - LIN Interrupt Enable Register; 0x00000986 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+LP0IE_LPOCIE:       equ    6                                         ; LIN over-current interrupt enable
+LP0IE_LPDTIE:       equ    7                                         ; LIN TxD-dominant timeout Interrupt Enable
+; bit position masks
+mLP0IE_LPOCIE:      equ    %01000000
+mLP0IE_LPDTIE:      equ    %10000000
+
+
+;*** LP0IF - LIN Interrupt Flags Register; 0x00000987 ***
+LP0IF:              equ    $00000987                                ;*** LP0IF - LIN Interrupt Flags Register; 0x00000987 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+LP0IF_LPOCIF:       equ    6                                         ; LIN transmitter over-current interrupt flag
+LP0IF_LPDTIF:       equ    7                                         ; LIN Transmitter TxD-dominant timeout Interrupt Flag
+; bit position masks
+mLP0IF_LPOCIF:      equ    %01000000
+mLP0IF_LPDTIF:      equ    %10000000
+
+
+;*** BAKEY0 - Backdoor Comparison Key 0; 0x00FFFE00 ***
+BAKEY0:             equ    $00FFFE00                                ;*** BAKEY0 - Backdoor Comparison Key 0; 0x00FFFE00 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BAKEY0_KEY:         equ    0                                         ; Backdoor Comparison Key Bits
+; bit position masks
+mBAKEY0_KEY:        equ    %1111111111111111
+
+
+;*** BAKEY1 - Backdoor Comparison Key 1; 0x00FFFE02 ***
+BAKEY1:             equ    $00FFFE02                                ;*** BAKEY1 - Backdoor Comparison Key 1; 0x00FFFE02 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BAKEY1_KEY:         equ    0                                         ; Backdoor Comparison Key Bits
+; bit position masks
+mBAKEY1_KEY:        equ    %1111111111111111
+
+
+;*** BAKEY2 - Backdoor Comparison Key 2; 0x00FFFE04 ***
+BAKEY2:             equ    $00FFFE04                                ;*** BAKEY2 - Backdoor Comparison Key 2; 0x00FFFE04 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BAKEY2_KEY:         equ    0                                         ; Backdoor Comparison Key Bits
+; bit position masks
+mBAKEY2_KEY:        equ    %1111111111111111
+
+
+;*** BAKEY3 - Backdoor Comparison Key 3; 0x00FFFE06 ***
+BAKEY3:             equ    $00FFFE06                                ;*** BAKEY3 - Backdoor Comparison Key 3; 0x00FFFE06 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+BAKEY3_KEY:         equ    0                                         ; Backdoor Comparison Key Bits
+; bit position masks
+mBAKEY3_KEY:        equ    %1111111111111111
+
+
+;*** PROTKEY - Non Volatile Protection Override Comparison Key; 0x00FFFE08 ***
+PROTKEY:            equ    $00FFFE08                                ;*** PROTKEY - Non Volatile Protection Override Comparison Key; 0x00FFFE08 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PROTKEY_KEY:        equ    0                                         ; Protection Override Comparison Key Bits
+; bit position masks
+mPROTKEY_KEY:       equ    %1111111111111111
+
+
+;*** NVFPROT - Non Volatile P-Flash Protection Register; 0x00FFFE0C ***
+NVFPROT:            equ    $00FFFE0C                                ;*** NVFPROT - Non Volatile P-Flash Protection Register; 0x00FFFE0C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+NVFPROT_FPLS0:      equ    0                                         ; Flash Protection Lower Address Size Bit 0. Note: bitfield is unavailable on 8K and 16K Flash memory variants
+NVFPROT_FPLS1:      equ    1                                         ; Flash Protection Lower Address Size Bit 1. Note: bitfield is unavailable on 8K and 16K Flash memory variants
+NVFPROT_FPLDIS:     equ    2                                         ; Flash Protection Lower Address Range Disable. Note: bitfield is unavailable on 8K and 16K Flash memory variants
+NVFPROT_FPHS0:      equ    3                                         ; Flash Protection Higher Address Size Bit 0
+NVFPROT_FPHS1:      equ    4                                         ; Flash Protection Higher Address Size Bit 1
+NVFPROT_FPHDIS:     equ    5                                         ; Flash Protection Higher Address Range Disable
+NVFPROT_RNV6:       equ    6                                         ; Reserved Nonvolatile Bit
+NVFPROT_FPOPEN:     equ    7                                         ; Flash Protection Operation Enable
+; bit position masks
+mNVFPROT_FPLS0:     equ    %00000001
+mNVFPROT_FPLS1:     equ    %00000010
+mNVFPROT_FPLDIS:    equ    %00000100
+mNVFPROT_FPHS0:     equ    %00001000
+mNVFPROT_FPHS1:     equ    %00010000
+mNVFPROT_FPHDIS:    equ    %00100000
+mNVFPROT_RNV6:      equ    %01000000
+mNVFPROT_FPOPEN:    equ    %10000000
+
+
+;*** NVDFPROT - Non Volatile D-Flash Protection Register; 0x00FFFE0D ***
+NVDFPROT:           equ    $00FFFE0D                                ;*** NVDFPROT - Non Volatile D-Flash Protection Register; 0x00FFFE0D ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+NVDFPROT_DPS0:      equ    0                                         ; D-Flash Protection Size Bit 0
+NVDFPROT_DPS1:      equ    1                                         ; D-Flash Protection Size Bit 1
+NVDFPROT_DPOPEN:    equ    7                                         ; D-Flash Protection Control
+; bit position masks
+mNVDFPROT_DPS0:     equ    %00000001
+mNVDFPROT_DPS1:     equ    %00000010
+mNVDFPROT_DPOPEN:   equ    %10000000
+
+
+;*** NVFOPT - Non Volatile Flash Option Register; 0x00FFFE0E ***
+NVFOPT:             equ    $00FFFE0E                                ;*** NVFOPT - Non Volatile Flash Option Register; 0x00FFFE0E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+NVFOPT_NV0:         equ    0                                         ; Nonvolatile Bit 0
+NVFOPT_NV1:         equ    1                                         ; Nonvolatile Bit 1
+NVFOPT_NV2:         equ    2                                         ; Nonvolatile Bit 2
+NVFOPT_NV3:         equ    3                                         ; Nonvolatile Bit 3
+NVFOPT_NV4:         equ    4                                         ; Nonvolatile Bit 4
+NVFOPT_NV5:         equ    5                                         ; Nonvolatile Bit 5
+NVFOPT_NV6:         equ    6                                         ; Nonvolatile Bit 6
+NVFOPT_NV7:         equ    7                                         ; Nonvolatile Bit 7
+; bit position masks
+mNVFOPT_NV0:        equ    %00000001
+mNVFOPT_NV1:        equ    %00000010
+mNVFOPT_NV2:        equ    %00000100
+mNVFOPT_NV3:        equ    %00001000
+mNVFOPT_NV4:        equ    %00010000
+mNVFOPT_NV5:        equ    %00100000
+mNVFOPT_NV6:        equ    %01000000
+mNVFOPT_NV7:        equ    %10000000
+
+
+;*** NVFSEC - Non Volatile Flash Security Register; 0x00FFFE0F ***
+NVFSEC:             equ    $00FFFE0F                                ;*** NVFSEC - Non Volatile Flash Security Register; 0x00FFFE0F ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+NVFSEC_SEC0:        equ    0                                         ; Flash Security Bit 0
+NVFSEC_SEC1:        equ    1                                         ; Flash Security Bit 1
+NVFSEC_RNV2:        equ    2                                         ; Reserved Nonvolatile Bit 2
+NVFSEC_RNV3:        equ    3                                         ; Reserved Nonvolatile Bit 3
+NVFSEC_RNV4:        equ    4                                         ; Reserved Nonvolatile Bit 4
+NVFSEC_RNV5:        equ    5                                         ; Reserved Nonvolatile Bit 5
+NVFSEC_KEYEN0:      equ    6                                         ; Backdoor Key Security Enable Bit 0
+NVFSEC_KEYEN1:      equ    7                                         ; Backdoor Key Security Enable Bit 1
+; bit position masks
+mNVFSEC_SEC0:       equ    %00000001
+mNVFSEC_SEC1:       equ    %00000010
+mNVFSEC_RNV2:       equ    %00000100
+mNVFSEC_RNV3:       equ    %00001000
+mNVFSEC_RNV4:       equ    %00010000
+mNVFSEC_RNV5:       equ    %00100000
+mNVFSEC_KEYEN0:     equ    %01000000
+mNVFSEC_KEYEN1:     equ    %10000000
+
+
+;***  24-BIT ADDRESS REGISTERS
+MMCPC:              equ    $00000085                                 ; Captured S12ZCPU Program Counter Low; 0x00000087
+DBGAA:              equ    $00000115                                 ; Debug Comparator A Address Register Low; 0x00000117
+DBGBA:              equ    $00000125                                 ; Debug Comparator B Address Register Low; 0x00000127
+DBGDA:              equ    $00000145                                 ; Debug Comparator D Address Register Low; 0x00000147
+ECCDPTR:            equ    $000003C7                                 ; ECC Debug Pointer Register Low; 0x000003C9
+ADC0CBP:            equ    $0000061D                                 ; ADC0 Command Base Pointer Register 0; 0x000003C9
+ADC0RBP:            equ    $00000621                                 ; ADC0 Result Base Pointer Register 0; 0x000003C9
+
+
+;***********************************************
+;**   D E P R E C I A T E D   S Y M B O L S   **
+;***********************************************
+        IFNDEF  __GENERATE_APPLICATION__                            ; not supported for absolute assembler
+                    XREF    This_symb_has_been_depreciated
+        ENDIF
+; ---------------------------------------------------------------------------
+; The following symbols were removed, because they were invalid or irrelevant
+; ---------------------------------------------------------------------------
+
+
+; /* **** 07/02/2013  */
+        IFNDEF __GENERATE_APPLICATION__
+LPSLRSTR:                               equ         This_symb_has_been_depreciated
+LPSLR_LPSLR:                            equ         This_symb_has_been_depreciated
+LPSLR_LPSLRWD:                          equ         This_symb_has_been_depreciated
+LPSLR_LPSLR_MASK:                       equ         This_symb_has_been_depreciated
+LPSLR_LPSLR_BITNUM:                     equ         This_symb_has_been_depreciated
+LPSLR_LPSLRWD_MASK:                     equ         This_symb_has_been_depreciated
+LPSR_LPOC:                              equ         This_symb_has_been_depreciated
+LPSR_LPOC_MASK                          equ         This_symb_has_been_depreciated
+        ENDIF    
+	
+	
+
+; ****  05/12/2014 06:12:00 PM
+
+DBGC1_EEVE:        equ                       DBGC1_EEVE1
+mDBGC1_EEVE:       equ                       mDBGC1_EEVE1
+PWME:              equ                       PWM0E              
+PWME_PWME0:        equ                       PWM0E_PWME0        
+PWME_PWME1:        equ                       PWM0E_PWME1        
+PWME_PWME2:        equ                       PWM0E_PWME2        
+PWME_PWME3:        equ                       PWM0E_PWME3        
+PWME_PWME4:        equ                       PWM0E_PWME4        
+PWME_PWME5:        equ                       PWM0E_PWME5        
+PWME_PWME6:        equ                       PWM0E_PWME6        
+PWME_PWME7:        equ                       PWM0E_PWME7        
+mPWME_PWME0:       equ                       mPWM0E_PWME0       
+mPWME_PWME1:       equ                       mPWM0E_PWME1       
+mPWME_PWME2:       equ                       mPWM0E_PWME2       
+mPWME_PWME3:       equ                       mPWM0E_PWME3       
+mPWME_PWME4:       equ                       mPWM0E_PWME4       
+mPWME_PWME5:       equ                       mPWM0E_PWME5       
+mPWME_PWME6:       equ                       mPWM0E_PWME6       
+mPWME_PWME7:       equ                       mPWM0E_PWME7       
+PWMPOL:            equ                       PWM0POL            
+PWMPOL_PPOL0:      equ                       PWM0POL_PPOL0      
+PWMPOL_PPOL1:      equ                       PWM0POL_PPOL1      
+PWMPOL_PPOL2:      equ                       PWM0POL_PPOL2      
+PWMPOL_PPOL3:      equ                       PWM0POL_PPOL3      
+PWMPOL_PPOL4:      equ                       PWM0POL_PPOL4      
+PWMPOL_PPOL5:      equ                       PWM0POL_PPOL5      
+PWMPOL_PPOL6:      equ                       PWM0POL_PPOL6      
+PWMPOL_PPOL7:      equ                       PWM0POL_PPOL7      
+mPWMPOL_PPOL0:     equ                       mPWM0POL_PPOL0     
+mPWMPOL_PPOL1:     equ                       mPWM0POL_PPOL1     
+mPWMPOL_PPOL2:     equ                       mPWM0POL_PPOL2     
+mPWMPOL_PPOL3:     equ                       mPWM0POL_PPOL3     
+mPWMPOL_PPOL4:     equ                       mPWM0POL_PPOL4     
+mPWMPOL_PPOL5:     equ                       mPWM0POL_PPOL5     
+mPWMPOL_PPOL6:     equ                       mPWM0POL_PPOL6     
+mPWMPOL_PPOL7:     equ                       mPWM0POL_PPOL7     
+PWMCLK:            equ                       PWM0CLK            
+PWMCLK_PCLK0:      equ                       PWM0CLK_PCLK0      
+PWMCLK_PCLK1:      equ                       PWM0CLK_PCLK1      
+PWMCLK_PCLK2:      equ                       PWM0CLK_PCLK2      
+PWMCLK_PCLK3:      equ                       PWM0CLK_PCLK3      
+PWMCLK_PCLK4:      equ                       PWM0CLK_PCLK4      
+PWMCLK_PCLK5:      equ                       PWM0CLK_PCLK5      
+PWMCLK_PCLK6:      equ                       PWM0CLK_PCLK6      
+PWMCLK_PCLK7:      equ                       PWM0CLK_PCLK7      
+mPWMCLK_PCLK0:     equ                       mPWM0CLK_PCLK0     
+mPWMCLK_PCLK1:     equ                       mPWM0CLK_PCLK1     
+mPWMCLK_PCLK2:     equ                       mPWM0CLK_PCLK2     
+mPWMCLK_PCLK3:     equ                       mPWM0CLK_PCLK3     
+mPWMCLK_PCLK4:     equ                       mPWM0CLK_PCLK4     
+mPWMCLK_PCLK5:     equ                       mPWM0CLK_PCLK5     
+mPWMCLK_PCLK6:     equ                       mPWM0CLK_PCLK6     
+mPWMCLK_PCLK7:     equ                       mPWM0CLK_PCLK7     
+PWMPRCLK:          equ                       PWM0PRCLK          
+PWMPRCLK_PCKA0:    equ                       PWM0PRCLK_PCKA0    
+PWMPRCLK_PCKA1:    equ                       PWM0PRCLK_PCKA1    
+PWMPRCLK_PCKA2:    equ                       PWM0PRCLK_PCKA2    
+PWMPRCLK_PCKB0:    equ                       PWM0PRCLK_PCKB0    
+PWMPRCLK_PCKB1:    equ                       PWM0PRCLK_PCKB1    
+PWMPRCLK_PCKB2:    equ                       PWM0PRCLK_PCKB2    
+mPWMPRCLK_PCKA0:   equ                       mPWM0PRCLK_PCKA0   
+mPWMPRCLK_PCKA1:   equ                       mPWM0PRCLK_PCKA1   
+mPWMPRCLK_PCKA2:   equ                       mPWM0PRCLK_PCKA2   
+mPWMPRCLK_PCKB0:   equ                       mPWM0PRCLK_PCKB0   
+mPWMPRCLK_PCKB1:   equ                       mPWM0PRCLK_PCKB1   
+mPWMPRCLK_PCKB2:   equ                       mPWM0PRCLK_PCKB2   
+PWMCAE:            equ                       PWM0CAE            
+PWMCAE_CAE0:       equ                       PWM0CAE_CAE0       
+PWMCAE_CAE1:       equ                       PWM0CAE_CAE1       
+PWMCAE_CAE2:       equ                       PWM0CAE_CAE2       
+PWMCAE_CAE3:       equ                       PWM0CAE_CAE3       
+PWMCAE_CAE4:       equ                       PWM0CAE_CAE4       
+PWMCAE_CAE5:       equ                       PWM0CAE_CAE5       
+PWMCAE_CAE6:       equ                       PWM0CAE_CAE6       
+PWMCAE_CAE7:       equ                       PWM0CAE_CAE7       
+mPWMCAE_CAE0:      equ                       mPWM0CAE_CAE0      
+mPWMCAE_CAE1:      equ                       mPWM0CAE_CAE1      
+mPWMCAE_CAE2:      equ                       mPWM0CAE_CAE2      
+mPWMCAE_CAE3:      equ                       mPWM0CAE_CAE3      
+mPWMCAE_CAE4:      equ                       mPWM0CAE_CAE4      
+mPWMCAE_CAE5:      equ                       mPWM0CAE_CAE5      
+mPWMCAE_CAE6:      equ                       mPWM0CAE_CAE6      
+mPWMCAE_CAE7:      equ                       mPWM0CAE_CAE7      
+PWMCTL:            equ                       PWM0CTL            
+PWMCTL_PFRZ:       equ                       PWM0CTL_PFRZ       
+PWMCTL_PSWAI:      equ                       PWM0CTL_PSWAI      
+PWMCTL_CON01:      equ                       PWM0CTL_CON01      
+PWMCTL_CON23:      equ                       PWM0CTL_CON23      
+PWMCTL_CON45:      equ                       PWM0CTL_CON45      
+PWMCTL_CON67:      equ                       PWM0CTL_CON67      
+mPWMCTL_PFRZ:      equ                       mPWM0CTL_PFRZ      
+mPWMCTL_PSWAI:     equ                       mPWM0CTL_PSWAI     
+mPWMCTL_CON01:     equ                       mPWM0CTL_CON01     
+mPWMCTL_CON23:     equ                       mPWM0CTL_CON23     
+mPWMCTL_CON45:     equ                       mPWM0CTL_CON45     
+mPWMCTL_CON67:     equ                       mPWM0CTL_CON67     
+PWMCLKAB:          equ                       PWM0CLKAB          
+PWMCLKAB_PCLKAB0:  equ                       PWM0CLKAB_PCLKAB0  
+PWMCLKAB_PCLKAB1:  equ                       PWM0CLKAB_PCLKAB1  
+PWMCLKAB_PCLKAB2:  equ                       PWM0CLKAB_PCLKAB2  
+PWMCLKAB_PCLKAB3:  equ                       PWM0CLKAB_PCLKAB3  
+PWMCLKAB_PCLKAB4:  equ                       PWM0CLKAB_PCLKAB4  
+PWMCLKAB_PCLKAB5:  equ                       PWM0CLKAB_PCLKAB5  
+PWMCLKAB_PCLKAB6:  equ                       PWM0CLKAB_PCLKAB6  
+PWMCLKAB_PCLKAB7:  equ                       PWM0CLKAB_PCLKAB7  
+mPWMCLKAB_PCLKAB0: equ                       mPWM0CLKAB_PCLKAB0 
+mPWMCLKAB_PCLKAB1: equ                       mPWM0CLKAB_PCLKAB1 
+mPWMCLKAB_PCLKAB2: equ                       mPWM0CLKAB_PCLKAB2 
+mPWMCLKAB_PCLKAB3: equ                       mPWM0CLKAB_PCLKAB3 
+mPWMCLKAB_PCLKAB4: equ                       mPWM0CLKAB_PCLKAB4 
+mPWMCLKAB_PCLKAB5: equ                       mPWM0CLKAB_PCLKAB5 
+mPWMCLKAB_PCLKAB6: equ                       mPWM0CLKAB_PCLKAB6 
+mPWMCLKAB_PCLKAB7: equ                       mPWM0CLKAB_PCLKAB7 
+PWMSCLA:           equ                       PWM0SCLA           
+PWMSCLA_BIT0:      equ                       PWM0SCLA_BIT0      
+PWMSCLA_BIT1:      equ                       PWM0SCLA_BIT1      
+PWMSCLA_BIT2:      equ                       PWM0SCLA_BIT2      
+PWMSCLA_BIT3:      equ                       PWM0SCLA_BIT3      
+PWMSCLA_BIT4:      equ                       PWM0SCLA_BIT4      
+PWMSCLA_BIT5:      equ                       PWM0SCLA_BIT5      
+PWMSCLA_BIT6:      equ                       PWM0SCLA_BIT6      
+PWMSCLA_BIT7:      equ                       PWM0SCLA_BIT7      
+mPWMSCLA_BIT0:     equ                       mPWM0SCLA_BIT0     
+mPWMSCLA_BIT1:     equ                       mPWM0SCLA_BIT1     
+mPWMSCLA_BIT2:     equ                       mPWM0SCLA_BIT2     
+mPWMSCLA_BIT3:     equ                       mPWM0SCLA_BIT3     
+mPWMSCLA_BIT4:     equ                       mPWM0SCLA_BIT4     
+mPWMSCLA_BIT5:     equ                       mPWM0SCLA_BIT5     
+mPWMSCLA_BIT6:     equ                       mPWM0SCLA_BIT6     
+mPWMSCLA_BIT7:     equ                       mPWM0SCLA_BIT7     
+PWMSCLB:           equ                       PWM0SCLB           
+PWMSCLB_BIT0:      equ                       PWM0SCLB_BIT0      
+PWMSCLB_BIT1:      equ                       PWM0SCLB_BIT1      
+PWMSCLB_BIT2:      equ                       PWM0SCLB_BIT2      
+PWMSCLB_BIT3:      equ                       PWM0SCLB_BIT3      
+PWMSCLB_BIT4:      equ                       PWM0SCLB_BIT4      
+PWMSCLB_BIT5:      equ                       PWM0SCLB_BIT5      
+PWMSCLB_BIT6:      equ                       PWM0SCLB_BIT6      
+PWMSCLB_BIT7:      equ                       PWM0SCLB_BIT7      
+mPWMSCLB_BIT0:     equ                       mPWM0SCLB_BIT0     
+mPWMSCLB_BIT1:     equ                       mPWM0SCLB_BIT1     
+mPWMSCLB_BIT2:     equ                       mPWM0SCLB_BIT2     
+mPWMSCLB_BIT3:     equ                       mPWM0SCLB_BIT3     
+mPWMSCLB_BIT4:     equ                       mPWM0SCLB_BIT4     
+mPWMSCLB_BIT5:     equ                       mPWM0SCLB_BIT5     
+mPWMSCLB_BIT6:     equ                       mPWM0SCLB_BIT6     
+mPWMSCLB_BIT7:     equ                       mPWM0SCLB_BIT7     
+PWMCNT01:          equ                       PWM0CNT01          
+PWMCNT0:           equ                       PWM0CNT0           
+PWMCNT1:           equ                       PWM0CNT1           
+PWMCNT23:          equ                       PWM0CNT23          
+PWMCNT2:           equ                       PWM0CNT2           
+PWMCNT3:           equ                       PWM0CNT3           
+PWMCNT45:          equ                       PWM0CNT45          
+PWMCNT4:           equ                       PWM0CNT4           
+PWMCNT5:           equ                       PWM0CNT5           
+PWMCNT67:          equ                       PWM0CNT67          
+PWMCNT6:           equ                       PWM0CNT6           
+PWMCNT7:           equ                       PWM0CNT7           
+PWMPER01:          equ                       PWM0PER01          
+PWMPER0:           equ                       PWM0PER0           
+PWMPER1:           equ                       PWM0PER1           
+PWMPER23:          equ                       PWM0PER23          
+PWMPER2:           equ                       PWM0PER2           
+PWMPER3:           equ                       PWM0PER3           
+PWMPER45:          equ                       PWM0PER45          
+PWMPER4:           equ                       PWM0PER4           
+PWMPER5:           equ                       PWM0PER5           
+PWMPER67:          equ                       PWM0PER67          
+PWMPER6:           equ                       PWM0PER6           
+PWMPER7:           equ                       PWM0PER7           
+PWMDTY01:          equ                       PWM0DTY01          
+PWMDTY0:           equ                       PWM0DTY0           
+PWMDTY1:           equ                       PWM0DTY1           
+PWMDTY23:          equ                       PWM0DTY23          
+PWMDTY2:           equ                       PWM0DTY2           
+PWMDTY3:           equ                       PWM0DTY3           
+PWMDTY45:          equ                       PWM0DTY45          
+PWMDTY4:           equ                       PWM0DTY4           
+PWMDTY5:           equ                       PWM0DTY5           
+PWMDTY67:          equ                       PWM0DTY67          
+PWMDTY6:           equ                       PWM0DTY6           
+PWMDTY7:           equ                       PWM0DTY7           
+
+
+
+; EOF
