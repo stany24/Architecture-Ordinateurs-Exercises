@@ -56,19 +56,19 @@ Entry:
         mov.l data1,buf1 ; loading buffers with datas
         mov.l data2,buf2
         
-        mov.w buf1,D3 ; exchange first 2 byte of buf1 and buf2
-        mov.w buf2,D4
+        ld D3,buf1 ; exchange first 2 byte of buf1 and buf2
+        ld D4,buf2
         tfr D3,D2
-        mov.w D2,buf2
+        st D2,buf2
         tfr D4,D2
-        mov.w D2,buf1
+        st D2,buf1
         
-        mov.w buf1+2,D3 ; exchange last 2 byte of buf1 and buf2
-        mov.w buf2+2,D4
+        ld D3,buf1+2 ; exchange last 2 byte of buf1 and buf2
+        ld D4,buf2+2
         tfr D3,D2
-        mov.w D2,buf2+2
+        st D2,buf2+2
         tfr D4,D2
-        mov.w D2,buf1+2
+        st D2,buf1+2
         
         mov.b const1,D0 ; load buf3 from const1
         mov.b D0,buf3
