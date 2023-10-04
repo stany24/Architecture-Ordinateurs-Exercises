@@ -70,47 +70,47 @@ Entry:
         tfr D4,D2
         st D2,buf1+2
         
-        mov.b const1,D0 ; load buf3 from const1
-        mov.b D0,buf3
+        ld D0,const1 ; load buf3 from const1
+        st D0,buf3
         add D0,#1
-        mov.b D0,buf3+1
+        st D0,buf3+1
         add D0,#1
-        mov.b D0,buf3+2
+        st D0,buf3+2
         add D0,#1
-        mov.b D0,buf3+3
+        st D0,buf3+3
         
-        mov.b const2,D0 ; load buf4 from const2
-        mov.b D0,buf4
+        ld D0,const2 ; load buf4 from const2
+        st D0,buf4
         add D0,#1
-        mov.b D0,buf4+1
+        st D0,buf4+1
         add D0,#1
-        mov.b D0,buf4+2
+        st D0,buf4+2
         add D0,#1
-        mov.b D0,buf4+3
+        st D0,buf4+3
         
-        mov.b buf3,D0 ; exchange the first byte of buf3 and buf4
-        mov.b buf4,D1
+        ld D0,buf3 ; exchange the first byte of buf3 and buf4
+        ld D1,buf4
         exg D0,D1
-        mov.b D0,buf3
-        mov.b D1,buf4
+        st D0,buf3
+        st D1,buf4
         
-        mov.b buf3+1,D0 ; exchange the second byte of buf3 and buf4
-        mov.b buf4+1,D1
+        ld D0,buf3+1 ; exchange the second byte of buf3 and buf4
+        ld D1,buf4+1
         exg D0,D1
-        mov.b D0,buf3+1
-        mov.b D1,buf4+1
+        st D0,buf3+1
+        st D1,buf4+1
         
-        mov.b buf3+2,D0 ; exchange the third byte of buf3 and buf4
-        mov.b buf4+2,D1
+        ld D0,buf3+2 ; exchange the third byte of buf3 and buf4
+        ld D1,buf4+2
         exg D0,D1
-        mov.b D0,buf3+2
-        mov.b D1,buf4+2
+        st D0,buf3+2
+        st D1,buf4+2
         
-        mov.b buf3+3,D0 ; exchange the last byte of buf3 and buf4
-        mov.b buf4+3,D1
+        ld D0,buf3+3 ; exchange the last byte of buf3 and buf4
+        ld D1,buf4+3
         exg D0,D1
-        mov.b D0,buf3+3
-        mov.b D1,buf4+3
+        st D0,buf3+3
+        st D1,buf4+3
         
         ld D0,#(val1|val2)
         ld D0,#(val1&val2)
