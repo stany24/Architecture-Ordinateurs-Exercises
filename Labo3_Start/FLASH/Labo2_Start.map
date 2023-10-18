@@ -17,25 +17,26 @@ main_asm.obj                            Model: COMMON,        Lang: Assembler,  
 *********************************************************************************************
 STARTUP SECTION
 ---------------------------------------------------------------------------------------------
-Entry point: 0xFF8000 (_Startup)
+Entry point: 0xFF800A (_Startup)
 
 *********************************************************************************************
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
-.init                             26     R   0xFF8000   0xFF8019   ROM
+.init                            272     R   0xFF8000   0xFF810F   ROM
 .stack                           256   R/W     0x1000     0x10FF   RAM
+.data                             16   R/W     0x1100     0x110F   RAM
 .vectSeg0_vect                     3     R   0xFFFFFD   0xFFFFFF   .vectSeg0
 
 Summary of section sizes per section type:
-READ_ONLY (R):          1D (dec:       29)
-READ_WRITE (R/W):      100 (dec:      256)
+READ_ONLY (R):         113 (dec:      275)
+READ_WRITE (R/W):      110 (dec:      272)
 
 *********************************************************************************************
 VECTOR-ALLOCATION SECTION
     Address     InitValue   InitFunction
 ---------------------------------------------------------------------------------------------
-   0xFFFFFD      0xFF8000   _Startup
+   0xFFFFFD      0xFF800A   _Startup
 
 *********************************************************************************************
 OBJECT-ALLOCATION SECTION
@@ -43,33 +44,51 @@ OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 MODULE:                 -- main_asm.obj --
 - PROCEDURES:
-     Entry                                   FF8000      17      23       0   .init       
-     _Startup                                FF8000       0       0       0   .init       
-     main                                    FF8000       0       0       0   .init       
-     loop                                    FF8017       3       3       0   .init       
+     data1                                   FF8000       4       4       1   .init       
+     data2                                   FF8004       4       4       1   .init       
+     const1                                  FF8008       1       1       1   .init       
+     const2                                  FF8009       1       1       1   .init       
+     Entry                                   FF800A     103     259       0   .init       
+     _Startup                                FF800A       0       0       0   .init       
+     main                                    FF800A       0       0       0   .init       
+     loop                                    FF810D       3       3       0   .init       
 - VARIABLES:
+     buf1                                      1100       4       4       9   .data       
+     buf2                                      1104       4       4       9   .data       
+     buf3                                      1108       4       4      12   .data       
+     buf4                                      110C       4       4      12   .data       
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
-  main_asm.obj                                 0     26      0
+  main_asm.obj                                16    272      0
   other                                      256      3      0
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
+SECTION: ".data"
+  buf1 buf2 buf3 buf4 
 SECTION: ".init"
-  main _Startup Entry loop 
+  data1 data2 const1 const2 main _Startup Entry loop 
 
 *********************************************************************************************
 OBJECT LIST SORTED BY ADDRESS
      Name                                      Addr   hSize   dSize     Ref    Section   RLIB
 ---------------------------------------------------------------------------------------------
-     main                                    FF8000       0       0       0   .init       
-     _Startup                                FF8000       0       0       0   .init       
-     Entry                                   FF8000      17      23       0   .init       
-     loop                                    FF8017       3       3       0   .init       
+     buf1                                      1100       4       4       9   .data       
+     buf2                                      1104       4       4       9   .data       
+     buf3                                      1108       4       4      12   .data       
+     buf4                                      110C       4       4      12   .data       
+     data1                                   FF8000       4       4       1   .init       
+     data2                                   FF8004       4       4       1   .init       
+     const1                                  FF8008       1       1       1   .init       
+     const2                                  FF8009       1       1       1   .init       
+     main                                    FF800A       0       0       0   .init       
+     _Startup                                FF800A       0       0       0   .init       
+     Entry                                   FF800A     103     259       0   .init       
+     loop                                    FF810D       3       3       0   .init       
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -82,6 +101,7 @@ COPYDOWN SECTION
 *********************************************************************************************
 OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
+Entry                     USES data1 buf1 data2 buf2 const1 buf3 const2 buf4 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -99,5 +119,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 2
-Total size of all blocks to be downloaded: 29
+Total size of all blocks to be downloaded: 275
 
