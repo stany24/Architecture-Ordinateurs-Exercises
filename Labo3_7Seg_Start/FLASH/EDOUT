@@ -1,5 +1,1 @@
-../Sources\main.asm:71:error:A2402:Comma expected
-../Sources\main.asm:71:error:A23000:Illegal HCS12Z addressing mode
-../Sources\main.asm:71:error:A2400:End of Line expected
-../Sources\main.asm:73:error:A23000:Illegal HCS12Z addressing mode
-../Sources\main.asm:73:error:A2400:End of Line expected
+WARNING L1107: Object _startupData not found

@@ -50,6 +50,8 @@ Entry:
 		mov.b #$FF,DDRS
 		; Le port P en entrée (bit 0 à 3) --> Interrupteur
 		mov.b #$F0,DDRP
+		; éteindre la led
+		mov.b #$70,PTP
 		
 		; Choisir la version du programme
 		ld X,#BCD7SEG
@@ -68,10 +70,8 @@ Affichage1:
 Affichage2:            
             ; Votre code ici ...
             ld D0,PTP
-			mov.b D1,(D0>>4)
-			and D0,#$0f
-			mov.b D0,(X,D1)
-            st D0,PTS
+            and d0,#$0f
+            mov.b (D0,X),PTS
             
             ; Recommence
             bra  Affichage2
