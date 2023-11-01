@@ -5,7 +5,7 @@
 ;Nom du fichier :	main.asm
 ;Auteur et Date :	Monnerat Serge 27.10.2020
 
-;But : Laboratoire 4
+;But : Laboratoire 5.1
 
 ;Modifications
 ;Date		Faite	Ctrl		Description
@@ -30,15 +30,8 @@
 DEFAULT_RAM:     SECTION
 
 ; Vos déclarations de données ici
-V1:ds.l 1 
-V2:ds.l 1 
-V3:ds.l 1 
-RES:ds.l 2 
-
-N1:ds.w 1
-N2:ds.w 1
-N3:ds.w 1
-N4:ds.b 3
+somme:ds.w 1 
+moyenne:ds.b 1 
  
 ;--------------------------------------------------------------
 ; Section pour le code et les constante --> zone de ROM
@@ -46,57 +39,29 @@ N4:ds.b 3
 DEFAULT_ROM:     SECTION
 
 ; Vos constantes ici
-
+numbers:dc.b 61, 200, 47, 188,26
 
 _Startup:
-main:
 Entry:
-	bra exercice2_4
+main:
+        ; Vos initialisations ici
+     	ld D0,numbers
+     	add D0,numbers+1
+     	adc D1,#0
+     	add D0,numbers+2
+     	adc D1,#0
+     	add D0,numbers+3
+     	adc D1,#0
+     	add D0,numbers+4
+     	adc D1,#0
+     	st D1,somme
+     	st D0,somme+1
+     	divu.ww D2,somme,#$0005
+     	st D2,moyenne
         
-
-exercice2_3:
-	;instanciation
-    ld D6,#$AABBCCDD
-    st D6,V1
-    ld D6,#$99887766
-    st D6,V2
-    ld D6,#$FFFFFFFF
-    st D6,V3
-    
-    ;clearing
-    clr D0
-    clr.l RES
-    clr.l RES+1
-    
-    ;addition
-    add D6,V2
-    adc D0,#0
-    add D6,V3
-    adc D0,#0
-    st D6,RES+4
-    st d0,RES+3
-
-exercice2_4:
-	;instanciation
-	ld D2,#$AA
-   	st D2,N1
-   	ld D2,#$AA
-   	st D2,N2
-   	ld D2,#$AA
-   	st D2,N3
-   	
-   	;clearing
-   	clr D0
-   	
-   	;resolution
-   	ld D2,N1
-   	add D2,N2
-   	adc D0,#0
-   	sub D2,N3
-   	sbc D0,#0
-   	st D2,N4+1
-   	st D0,N4
-
 loop:
         ; Votre codes ici
+           	
+       	
+        
 		BRA loop     	; boucle infinie
