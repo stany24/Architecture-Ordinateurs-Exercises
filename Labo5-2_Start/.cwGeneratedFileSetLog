@@ -1,0 +1,6 @@
+Sources/main.asm
+Project_Settings/Linker_Files/mc9s12zvl32.prm
+Project_Headers/derivative.inc
+Project_Headers/mc9s12zvl32.inc
+.settings/com.freescale.core.ide.newprojectwizard.prefs
+ReferencedRSESystems.xml
