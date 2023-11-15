@@ -43,20 +43,30 @@ DEFAULT_ROM:     SECTION
 
 ; Vos constantes ici
 BCD7SEG1: DC.B $3f,$06,$5b,$4f,$66,$6d,$7d,$07,$7f,$6f
-BCD7SEG2: DC.B $7b,$0a,$b3,$9b,$ca,$d9,$f8,$0b,$fb,$db
+BCD7SEG2: DC.B $7b,$0a,$b3,$9b,$ca,$d9,$f9,$0b,$fb,$db
 
 _Startup:
 Entry:
 main:
         ; Vos initialisations ici
-        mov.b #55,val
-        divu.ww D0,val,#10
+        mov.b #$FF,DDRADL
+        mov.b #$FF,DDRS
+        mov.b #$70,PTP
+        
+        mov.b #52,val
+        clr D0;
+        divu.bb D0,val,#10
         st D0,diz
-        modu.ww D0,val,#10
+        modu.bb D0,val,#10
         st D0,unit
         
-        mov.b unit,PTS
-        mov.b diz,PTADL
+        ld X,#BCD7SEG1
+        ld Y,#BCD7SEG2
+        
+        ld D0,unit
+        mov.b (D0,Y),PTADL
+        ld D0,diz
+        mov.b (D0,X),PTS
         
 loop:
         ; Votre codes ici
