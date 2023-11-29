@@ -15,13 +15,14 @@
 ;--------------------------------------------------------------
 ; Exportation des symboles
 ;--------------------------------------------------------------
-            XDEF Entry,_Startup
+            XDEF Entry,_Startup,main
 
 ;--------------------------------------------------------------
 ; Déclaration des constantes d'assemblage
 ;--------------------------------------------------------------
 ; Vos déclarations de constantes d'assemblage ici
-
+PTP:equ $2F0
+DDRP:equ $2F2
 
 
 ;--------------------------------------------------------------
@@ -30,6 +31,7 @@
 DEFAULT_RAM:     SECTION
 
 ; Vos déclarations de données ici
+var0:bs.b 1
 
  
 ;--------------------------------------------------------------
@@ -42,8 +44,10 @@ DEFAULT_ROM:     SECTION
 
 
 _Startup:
+main:
 Entry:
         ; Vos initialisations ici
+        mv $07,DDRP
 
 loop:
         ; Votre codes ici
