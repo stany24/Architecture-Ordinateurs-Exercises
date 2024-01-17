@@ -25,6 +25,7 @@ PTP:equ $2F0
 DDRP:equ $2F2
 
 
+
 ;--------------------------------------------------------------
 ; Section pour les variables et les données --> zone de RAM
 ;--------------------------------------------------------------
@@ -51,6 +52,10 @@ Entry:
 
 loop:
         ; Votre codes ici
+		ld PTP,D0
+		st D0,var0
+		and D0,$0F
+		
 		
 
 		
