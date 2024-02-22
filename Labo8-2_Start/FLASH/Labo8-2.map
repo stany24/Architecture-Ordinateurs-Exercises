@@ -1,0 +1,127 @@
+*** EVALUATION ***
+PROGRAM "Labo8-2.elf"
+
+*********************************************************************************************
+TARGET SECTION
+---------------------------------------------------------------------------------------------
+Processor   : Freescale S12Z
+Memory Model: SMALL
+File Format : ELF\DWARF 2.0
+Linker      : SmartLinker V-5.0.55 Build 19351, Dec 18 2019
+
+*********************************************************************************************
+FILE SECTION
+---------------------------------------------------------------------------------------------
+main_asm.obj                            Model: COMMON,        Lang: Assembler,     Compiler Version: Assembler for HCS12Z V-5.0.020 Build 19351, Dec 18 2019
+
+*********************************************************************************************
+STARTUP SECTION
+---------------------------------------------------------------------------------------------
+Entry point: 0xFF800C (_Startup)
+
+*********************************************************************************************
+SECTION-ALLOCATION SECTION
+Section Name                    Size  Type     From       To       Segment
+---------------------------------------------------------------------------------------------
+.init                             70     R   0xFF8000   0xFF8045   ROM
+.stack                           256   R/W     0x1000     0x10FF   RAM
+.data                              3   R/W     0x1100     0x1102   RAM
+.vectSeg0_vect                     3     R   0xFFFFFD   0xFFFFFF   .vectSeg0
+
+Summary of section sizes per section type:
+READ_ONLY (R):          49 (dec:       73)
+READ_WRITE (R/W):      103 (dec:      259)
+
+*********************************************************************************************
+VECTOR-ALLOCATION SECTION
+    Address     InitValue   InitFunction
+---------------------------------------------------------------------------------------------
+   0xFFFFFD      0xFF800C   _Startup
+
+*********************************************************************************************
+OBJECT-ALLOCATION SECTION
+     Name               Module                 Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+MODULE:                 -- main_asm.obj --
+- PROCEDURES:
+     STATELED                                FF8000       C      12       1   .init       
+     Entry                                   FF800C       8       8       0   .init       
+     _Startup                                FF800C       0       0       0   .init       
+     main                                    FF800C       0       0       0   .init       
+     init_stateled                           FF8014       4       4       0   .init       
+     loop_stateled                           FF8018      11      17       0   .init       
+     loop_counter2                           FF8029       F      15       0   .init       
+     loop_counter1                           FF8038       B      11       0   .init       
+     end_counter2                            FF8043       3       3       0   .init       
+- VARIABLES:
+     Counter1                                  1100       2       2       2   .data       
+     Counter2                                  1102       1       1       2   .data       
+- LABELS:
+     STATEFIN                                FF800C       0       0       1               
+
+*********************************************************************************************
+MODULE STATISTIC
+  Name                                      Data   Code  Const
+---------------------------------------------------------------------------------------------
+  main_asm.obj                                 3     70      0
+  other                                      256      3      0
+
+*********************************************************************************************
+SECTION USE IN OBJECT-ALLOCATION SECTION
+---------------------------------------------------------------------------------------------
+SECTION: ".data"
+  Counter1 Counter2 
+SECTION: ".init"
+  STATELED main _Startup Entry init_stateled loop_stateled loop_counter2 
+  loop_counter1 end_counter2 
+
+*********************************************************************************************
+OBJECT LIST SORTED BY ADDRESS
+     Name                                      Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+     Counter1                                  1100       2       2       2   .data       
+     Counter2                                  1102       1       1       2   .data       
+     STATELED                                FF8000       C      12       1   .init       
+     main                                    FF800C       0       0       0   .init       
+     _Startup                                FF800C       0       0       0   .init       
+     Entry                                   FF800C       8       8       0   .init       
+     init_stateled                           FF8014       4       4       0   .init       
+     loop_stateled                           FF8018      11      17       0   .init       
+     loop_counter2                           FF8029       F      15       0   .init       
+     loop_counter1                           FF8038       B      11       0   .init       
+     end_counter2                            FF8043       3       3       0   .init       
+
+*********************************************************************************************
+UNUSED-OBJECTS SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+COPYDOWN SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+OBJECT-DEPENDENCIES SECTION
+---------------------------------------------------------------------------------------------
+init_stateled             USES STATELED 
+loop_stateled             USES STATEFIN Counter2 
+loop_counter2             USES Counter2 Counter1 
+loop_counter1             USES Counter1 
+
+*********************************************************************************************
+DEPENDENCY TREE
+*********************************************************************************************
+ main and _Startup Group
+ | 
+ +- main                
+ |    
+ +- _Startup            
+      
+*********************************************************************************************
+STATISTIC SECTION
+---------------------------------------------------------------------------------------------
+
+ExeFile:
+--------
+Number of blocks to be downloaded: 2
+Total size of all blocks to be downloaded: 73
+

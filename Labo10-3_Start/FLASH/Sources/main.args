@@ -1,0 +1,6 @@
+-F2
+-I"$(ProjDirPath)/Project_Headers"
+-CMacAngBrackOn
+-ViewHidden
+-AsmDbg
+-WmsgFob"%f%e:%l:%k:%d:%m\n"
